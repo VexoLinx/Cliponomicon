@@ -1,0 +1,105 @@
+.sidebar {
+  width: 240px;
+  background-color: #040412;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 10px;
+  border-right: 1px solid #1f2937;
+  /* background-image: url(./../../../assets/borde.PNG);
+  background-size: cover; */
+}
+
+.sidebar-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.sidebar-header img {
+  width: 40px;
+  height: 40px;
+}
+
+.sidebar-header .title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 700;
+}
+
+.sidebar-nav ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sidebar-nav li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background 0.2s;
+}
+
+li svg, button svg {
+  font-size: 30px;
+}
+
+.sidebar-nav li:hover {
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* Estilo degradado para el botón activo */
+.sidebar-nav li.active {
+  background: linear-gradient(90deg, #d946ef 0%, #f43f5e 100%);
+  color: white;
+}
+
+.sidebar-tools {
+  margin-top: 30px;
+  padding: 0 10px;
+}
+
+.custom-slider {
+  width: 100%;
+  accent-color: #3b82f6;
+  /* Color azul para el slider */
+}
+
+.sidebar-footer {
+  margin-top: auto;
+  /* Empuja el footer hacia el fondo */
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.login-btn {
+  background-color: #1f2937;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  transition: background 0.2s;
+  font-size: 20px;
+}
+
+.login-btn:hover {
+  background-color: #374151;
+}
+
+.version-info {
+  font-size: 0.75rem;
+  color: #6b7280;
+  text-align: center;
+}

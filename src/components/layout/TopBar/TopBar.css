@@ -1,0 +1,60 @@
+.topbar {
+  height: 60px;
+  background-color: #3b2240f0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  border-bottom: 1px solid #1f2937;
+  /* background-image: url(./../../../assets/top.PNG);
+  background-size: cover; */
+}
+
+.search-container {
+  flex: 1;
+  display: flex;
+  justify-content: center; /* Centra la barra de búsqueda */
+  position: relative;
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.search-input {
+  width: 100%;
+  padding: 10px 15px 10px 40px;
+  background-color: #161e2c; /* Fondo oscuro del input */
+  border: 1px solid #2d3748;
+  border-radius: 8px;
+  color: white;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-input:focus {
+  border-color: #3b82f6;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.sort-select {
+  background-color: transparent;
+  color: white;
+  border: 1px solid #2d3748;
+  padding: 8px 15px;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  outline: none;
+  cursor: pointer;
+}
+
+.sort-select option {
+  background-color: #121824; /* Evita que el dropdown sea blanco en algunos navegadores */
+}
