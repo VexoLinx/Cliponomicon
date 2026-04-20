@@ -4,6 +4,7 @@ import { CiLogin } from "react-icons/ci";
 import { GoVideo } from "react-icons/go";
 import React from "react";
 import "./Sidebar.css";
+import { Link } from "react-router-dom";
 
 const Sidebar = () => {
   return (
@@ -32,10 +33,13 @@ const Sidebar = () => {
       </div>
 
       <div className="sidebar-footer">
-        <button className="login-btn">
-          <CiLogin />
-          <span>Login</span>
-        </button>
+        <Link to="/login" className="login-link">
+          <div className="login-btn">
+            <CiLogin />
+            Login
+          </div>
+        </Link>
+        
         <div className="version-info">
           <span>Fireshare v1.0.0</span>
         </div>

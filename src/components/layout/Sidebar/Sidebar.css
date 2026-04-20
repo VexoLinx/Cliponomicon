@@ -47,8 +47,8 @@
   transition: background 0.2s;
 }
 
-li svg, button svg {
-  font-size: 30px;
+li svg, button svg, svg {
+  font-size: 25px;
 }
 
 .sidebar-nav li:hover {
@@ -96,6 +96,10 @@ li svg, button svg {
 
 .login-btn:hover {
   background-color: #374151;
+}
+
+.login-link {
+  text-decoration: none;
 }
 
 .version-info {

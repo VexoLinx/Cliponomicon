@@ -1,6 +1,6 @@
 .topbar {
   height: 60px;
-  background-color: #3b2240f0;
+  background: linear-gradient(175deg, #18153d 0%, #3b2240f0 100%);
   display: flex;
   align-items: center;
   justify-content: space-between;

@@ -1,0 +1,20 @@
+import React from "react";
+import Sidebar from './../components/layout/Sidebar/Sidebar';
+import TopBar from './../components/layout/TopBar/TopBar';
+
+function HomePage() {
+  return (
+    <div className="app-container">
+      <Sidebar />
+      <div className="main-content">
+        <TopBar />
+        {/* Aquí iría el componente de la cuadrícula de videos */}
+        <main className="content-area">
+          <p>Área principal de contenido...</p>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+export default HomePage;
