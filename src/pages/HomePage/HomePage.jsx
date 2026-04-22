@@ -1,6 +1,6 @@
 import React from "react";
-import Sidebar from './../components/layout/Sidebar/Sidebar';
-import TopBar from './../components/layout/TopBar/TopBar';
+import Sidebar from '../../components/layout/Sidebar/Sidebar';
+import TopBar from '../../components/layout/TopBar/TopBar';
 
 function HomePage() {
   return (

@@ -55,7 +55,6 @@ li svg, button svg, svg {
   background-color: rgba(255, 255, 255, 0.05);
 }
 
-/* Estilo degradado para el botón activo */
 .sidebar-nav li.active {
   background: linear-gradient(90deg, #d946ef 0%, #f43f5e 100%);
   color: white;
@@ -69,12 +68,10 @@ li svg, button svg, svg {
 .custom-slider {
   width: 100%;
   accent-color: #3b82f6;
-  /* Color azul para el slider */
 }
 
 .sidebar-footer {
   margin-top: auto;
-  /* Empuja el footer hacia el fondo */
   display: flex;
   flex-direction: column;
   gap: 15px;
