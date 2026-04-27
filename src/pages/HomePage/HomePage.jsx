@@ -9,8 +9,8 @@ function HomePage() {
   const mockVideos = [
     {
       id: 1,
-      thumbnail: "https://via.placeholder.com/300x170/1a1a1a/00ff00?text=Star+Citizen",
-      gameIcon: "https://via.placeholder.com/40/222/00ff00?text=SC",
+      thumbnail: "https://placehold.co/300x170",
+      gameIcon: "https://placehold.co/40x40",
       title: "ESIGUALDijoElVexosA4FPS- Star...",
       gameName: "Star Citizen",
       date: "Apr 3, 2026",
@@ -22,8 +22,8 @@ function HomePage() {
     },
     {
       id: 2,
-      thumbnail: "https://via.placeholder.com/300x170/1a1a1a/ff0000?text=Elden+Ring",
-      gameIcon: "https://via.placeholder.com/40/222/ff0000?text=ER",
+      thumbnail: "https://placehold.co/300x170",
+      gameIcon: "https://placehold.co/40x40",
       title: "Cómo derrotar a Malenia sin recibir daño",
       gameName: "Elden Ring",
       date: "Apr 10, 2026",
@@ -35,8 +35,8 @@ function HomePage() {
     },
     {
       id: 3,
-      thumbnail: "https://via.placeholder.com/300x170/1a1a1a/0000ff?text=Counter+Strike",
-      gameIcon: "https://via.placeholder.com/40/222/0000ff?text=CS",
+      thumbnail: "https://placehold.co/300x170",
+      gameIcon: "https://placehold.co/40x40",
       title: "Clutch 1v5 en Inferno - Increíble",
       gameName: "CS:GO 2",
       date: "Apr 15, 2026",
@@ -48,8 +48,8 @@ function HomePage() {
     },
     {
       id: 3,
-      thumbnail: "https://via.placeholder.com/300x170/1a1a1a/0000ff?text=Counter+Strike",
-      gameIcon: "https://via.placeholder.com/40/222/0000ff?text=CS",
+      thumbnail: "https://placehold.co/300x170",
+      gameIcon: "https://placehold.co/40x40",
       title: "Clutch 1v5 en Inferno - Increíble",
       gameName: "CS:GO 2",
       date: "Apr 15, 2026",

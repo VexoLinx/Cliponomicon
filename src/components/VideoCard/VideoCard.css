@@ -63,10 +63,8 @@
 .progress-bar-fill {
   height: 100%;
   background: #a55a2a;
-  /* Color marrón/naranja de la imagen */
 }
 
-/* Footer de la card */
 .card-footer {
   display: flex;
   padding: 15px;
@@ -91,7 +89,7 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 200px;
+  /* max-width: 200px; */
 }
 
 .game-name,
