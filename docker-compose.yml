@@ -2,6 +2,7 @@ services:
   cliponomicon:
     build:
       context: .
+    container_name: cliponomicon
     ports:
       - "8500:80"
     restart: unless-stopped

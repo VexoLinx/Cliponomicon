@@ -16,8 +16,6 @@ const Login = () => {
     setError(null);
     setIsLoading(true);
 
-    // URL del servidor según la documentación
-
     try {
       const response = await fetch(API_URL, {
         method: 'POST',
