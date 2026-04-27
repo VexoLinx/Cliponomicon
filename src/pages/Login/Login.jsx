@@ -17,7 +17,6 @@ const Login = () => {
     setIsLoading(true);
 
     // URL del servidor según la documentación
-    const API_URL = 'http://luigifunserver.sytes.net:8000/auth/login';
 
     try {
       const response = await fetch(API_URL, {
