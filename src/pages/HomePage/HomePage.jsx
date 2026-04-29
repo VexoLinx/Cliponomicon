@@ -1,8 +1,8 @@
+import Sidebar from '../../components/layout/Sidebar/Sidebar';
+import VideoCard from '../../components/VideoCard/VideoCard';
+import TopBar from '../../components/layout/TopBar/TopBar';
 import React from "react";
 import "./HomePage.css";
-import Sidebar from '../../components/layout/Sidebar/Sidebar';
-import TopBar from '../../components/layout/TopBar/TopBar';
-import VideoCard from '../../components/VideoCard/VideoCard';
 
 function HomePage() {
   // 1. Simulación de una lista de videos (Array)

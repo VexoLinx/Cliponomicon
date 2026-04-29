@@ -3,11 +3,8 @@ services:
     build:
       context: .
     container_name: cliponomicon
-    env_file:
-      - path: stack.env
-        required: false
-      - path: .env
-        required: false
     ports:
       - "8500:80"
+    environment:
+      API_URL=${API_URL}
     restart: unless-stopped
