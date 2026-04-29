@@ -18,7 +18,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(import.meta.env.VITE_API_URL, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -33,14 +33,20 @@ const Login = () => {
       const data = await response.json();
 
       if (!response.ok) {
-        // La documentación indica que el error viene en el campo "detail"
-        throw new Error(data.detail || 'Error en las credenciales');
+        let errorMsg = 'Error en las credenciales';
+        
+        if (data.detail) {
+          errorMsg = Array.isArray(data.detail) 
+            ? data.detail[0].msg  // Si es error de validación (422)
+            : data.detail;        // Si es un error simple (401/404/etc)
+        }
+        
+        throw new Error(errorMsg);
       }
 
-      // El esquema LoginResponse devuelve { access_token, token_type, user }
+      // Login exitoso: El esquema dice { access_token, token_type, user }
       console.log('Login exitoso:', data);
       
-      // Guardamos el token para futuras peticiones
       localStorage.setItem('token', data.access_token);
       localStorage.setItem('userData', JSON.stringify(data.user));
       
