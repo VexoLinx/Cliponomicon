@@ -1,5 +1,6 @@
-import React, { useState, useRef } from "react";
 import { MdFileUpload, MdCheckCircle, MdCloudUpload } from "react-icons/md";
+import React, { useState, useRef } from "react";
+import "./VideoUploader.css";
 
 const VideoUploader = () => {
   const [status, setStatus] = useState("idle"); // idle, uploading, success
