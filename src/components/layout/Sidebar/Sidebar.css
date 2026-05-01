@@ -47,7 +47,9 @@
   transition: background 0.2s;
 }
 
-li svg, button svg, svg {
+li svg,
+button svg,
+svg {
   font-size: 25px;
 }
 
@@ -97,6 +99,13 @@ li svg, button svg, svg {
 
 .login-link {
   text-decoration: none;
+}
+
+.login-user {
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
 }
 
 .version-info {
