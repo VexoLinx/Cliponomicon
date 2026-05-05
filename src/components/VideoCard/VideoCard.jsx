@@ -16,13 +16,6 @@ const VideoCard = ({ data = defaultMock }) => {
         </div>
 
         <span className="overlay-duration">{data.duration}</span>
-
-        <div className="progress-bar-container">
-          <div
-            className="progress-bar-fill"
-            style={{ width: `${data.progress || 40}%` }}
-          ></div>
-        </div>
       </div>
 
       <div className="card-footer">

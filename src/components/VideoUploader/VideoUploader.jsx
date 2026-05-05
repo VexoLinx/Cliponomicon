@@ -14,7 +14,6 @@ const VideoUploader = () => {
     setStatus("uploading");
 
     // --- Simulación de subida automática ---
-    // Aquí es donde integrarías tu llamada a la API (fetch/axios)
     setTimeout(() => {
       setStatus("success");
       

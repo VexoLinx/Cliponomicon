@@ -1,7 +1,11 @@
+import MainLayout from "./components/layout/MainLayout";
 import { Route, Routes } from "react-router-dom";
-import { useState, React } from "react";
 import HomePage from "./pages/HomePage/HomePage";
+import GamesPage from "./pages/GamesPage/GamesPage";
+import FavoritesPage from "./pages/FavoritesPage/FavoritesPage";
+import SettingsPage from "./pages/SettingsPage/SettingsPage";
 import Login from "./pages/Login/Login";
+import { useState, React } from "react";
 import "./App.css";
 
 function App() {
@@ -9,8 +13,16 @@ function App() {
 
   return (
     <>
-      <Routes> 
-        <Route path="/" element={<HomePage />} />
+      <Routes>
+        {/*Rutas con Sidebar y TopBar*/}
+        <Route element={<MainLayout />}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/games" element={<GamesPage />} />
+          <Route path="/favorites" element={<FavoritesPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+        </Route>
+
+        {/*Rutas sin Sidebar ni TopBar*/}
         <Route path="/login" element={<Login />} />
       </Routes>
     </>

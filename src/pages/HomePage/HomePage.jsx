@@ -1,6 +1,4 @@
-import Sidebar from '../../components/layout/Sidebar/Sidebar';
-import VideoCard from '../../components/VideoCard/VideoCard';
-import TopBar from '../../components/layout/TopBar/TopBar';
+import VideoCard from "../../components/VideoCard/VideoCard";
 import React from "react";
 import "./HomePage.css";
 
@@ -16,9 +14,9 @@ function HomePage() {
       date: "Apr 3, 2026",
       duration: "00:18",
       rating: "3",
-      userHandle: "@vexo",
+      userHandle: "@Vexo",
       linkText: "enlace",
-      progress: 40
+      progress: 40,
     },
     {
       id: 2,
@@ -31,7 +29,7 @@ function HomePage() {
       rating: "5",
       userHandle: "@LuigiFun",
       linkText: "enlace",
-      progress: 90
+      progress: 90,
     },
     {
       id: 3,
@@ -44,7 +42,7 @@ function HomePage() {
       rating: "4",
       userHandle: "@Pinocheteado",
       linkText: "enlace",
-      progress: 10
+      progress: 10,
     },
     {
       id: 3,
@@ -57,25 +55,15 @@ function HomePage() {
       rating: "4",
       userHandle: "@PeruDeEpoca",
       linkText: "enlace",
-      progress: 10
-    }
+      progress: 10,
+    },
   ];
 
   return (
-    <div className="app-container">
-      <Sidebar />
-      <div className="main-content">
-        <TopBar />
-        <main className="content-area">
-          {/* Contenedor de la Grid */}
-          <div className="video-grid">
-            {mockVideos.map((video) => (
-              <VideoCard key={video.id} data={video} />
-            ))}
-
-          </div>
-        </main>
-      </div>
+    <div className="video-grid">
+      {mockVideos.map((video) => (
+        <VideoCard key={video.id} data={video} />
+      ))}
     </div>
   );
 }

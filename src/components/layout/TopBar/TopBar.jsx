@@ -10,15 +10,15 @@ const TopBar = () => {
         <span className="search-icon"><BsSearch /></span>
         <input 
           type="text" 
-          placeholder="Search title, game, or tags..." 
+          placeholder="@Username, Game, etc..." 
           className="search-input"
         />
       </div>
       
       <div className="filter-container">
         <select className="sort-select">
-          <option value="newest">Newest</option>
-          <option value="popular">Popular</option>
+          <option value="newest">Nuevos</option>
+          <option value="popular">Mas visto</option>
         </select>
       </div>
     </header>

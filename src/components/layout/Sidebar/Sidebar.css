@@ -37,13 +37,21 @@
 }
 
 .sidebar-nav li {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.nav-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
   padding: 12px 15px;
   border-radius: 8px;
   cursor: pointer;
   font-weight: 500;
+  color: white;
+  text-decoration: none;
   transition: background 0.2s;
 }
 
@@ -53,11 +61,11 @@ svg {
   font-size: 25px;
 }
 
-.sidebar-nav li:hover {
+.nav-item:hover {
   background-color: rgba(255, 255, 255, 0.05);
 }
 
-.sidebar-nav li.active {
+.nav-item.active {
   background: linear-gradient(90deg, #d946ef 0%, #f43f5e 100%);
   color: white;
 }
