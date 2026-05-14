@@ -1,10 +1,13 @@
 import React from "react";
+import { useVideoModal } from "../../helpers/VideoContext";
 import "./VideoCard.css";
 
 const VideoCard = ({ data = defaultMock }) => {
+  const { openVideo } = useVideoModal();
+
   return (
     <div className="video-card">
-      <div className="card-header">
+      <div className="card-header" onClick={() => openVideo(data)}>
         <img src={data.thumbnail} alt={data.title} className="thumbnail" />
         <span className="overlay-link">{data.linkText || "enlace"}</span>
 

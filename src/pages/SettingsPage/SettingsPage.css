@@ -1,0 +1,42 @@
+.settings-container{
+    width: 100%;
+    height: 100%;
+    margin: -20px;
+    padding: 20px;
+    background-color: #251668;
+}
+
+.settings-layout {
+  display: flex;
+  gap: 40px;
+}
+
+.settings-sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 200px;
+  border-right: 1px solid #ddd;
+}
+
+.settings-sidebar button {
+  background: none;
+  border: none;
+  padding: 12px;
+  text-align: left;
+  cursor: pointer;
+  font-size: 1rem;
+  border-radius: 4px 0 0 4px;
+  color: white;
+}
+
+.settings-sidebar button.active {
+  background-color: #f0f0f0;
+  color: black;
+  font-weight: bold;
+  border-right: 3px solid #007bff;
+}
+
+.settings-content {
+  flex: 1;
+  max-width: 500px;
+}
