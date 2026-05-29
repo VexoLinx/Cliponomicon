@@ -9,12 +9,14 @@ import HomePage from "./pages/HomePage/HomePage";
 import Login from "./pages/Login/Login";
 import { useState, React } from "react";
 import "./App.css";
+import ApiTester from "./components/ApiTester";
 
 function App() {
   const [count, setCount] = useState(0);
 
   return (
-    <>
+    <div>
+      <ApiTester />
       <VideoProvider>
 
         <Routes>
@@ -32,7 +34,7 @@ function App() {
         
         <GlobalVideoModal />
       </VideoProvider>
-    </>
+    </div>
   );
 }
 
