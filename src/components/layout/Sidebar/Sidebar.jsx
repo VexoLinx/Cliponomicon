@@ -1,4 +1,4 @@
-import Enchiridion from "../../../assets/Enchiridion.webp";
+import Enchiridion from "../../../assets/logo.png";
 import VideoUploader from "../../VideoUploader/VideoUploader";
 import { GiConsoleController } from "react-icons/gi";
 import { IoMdSettings } from "react-icons/io";

@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Enchiridion from "./../../assets/Enchiridion.webp";
+import Enchiridion from "./../../assets/logo.png";
 import './Login.css';
 
 const Login = () => {
