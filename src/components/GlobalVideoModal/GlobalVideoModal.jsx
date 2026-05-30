@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import { useVideoModal } from "../../helpers/VideoContext";
 import { IoClose } from "react-icons/io5";
 import "./GlobalVideoModal.css";
+import { CiLink } from "react-icons/ci";
 
 const GlobalVideoModal = () => {
   const { activeVideo, closeVideo } = useVideoModal();
@@ -17,6 +18,7 @@ const GlobalVideoModal = () => {
             <source src={activeVideo.videoUrl} type="video/mp4" />
           </video>
         </div>
+
         <div className="modal-sidebar">
           <div className="sidebar-header-video">
             <span className="now-playing">NOW PLAYING</span>
@@ -40,6 +42,27 @@ const GlobalVideoModal = () => {
 
             {/* 3. Juego y Etiqueta */}
             <p className="game-name-modal">{activeVideo.gameName}</p>
+
+            {/* 4. Recuadro de Contexto */}
+            <div className="video-context-box">
+              <p>
+                {activeVideo.context ||
+                  "Aquí irá la descripción o contexto del video..."}
+              </p>
+            </div>
+          </div>
+
+          {/* 5. Separador inferior y Botones */}
+          <div className="sidebar-footer-video">
+            <button
+              className="footer-btn copy-btn"
+              onClick={() =>
+                navigator.clipboard.writeText(window.location.href)
+              }
+            >
+              <CiLink />
+            </button>
+            <button className="footer-btn edit-btn">Editar</button>
           </div>
         </div>
       </div>
