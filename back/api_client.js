@@ -1,9 +1,9 @@
-// api_client.js
-import { mapUserDTO, mapSteamGameDTO,mapVideoDTO } from './mappers.js';
+import { PROXY_CONFIG, getAuthHeaders } from './proxy_config.js';
+import { mapUserDTO, mapSteamGameDTO, mapVideoDTO } from './mappers.js';
 
 class SpiderShareClient {
 
-    constructor(baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8000') {
+    constructor(baseUrl = PROXY_CONFIG.BASE_URL) {
         this.baseUrl = baseUrl;
         this.token = localStorage.getItem('token') || null;
         this.listeners = [];
@@ -17,22 +17,27 @@ class SpiderShareClient {
      * @param {AuthListener} callback 
      * @returns {Function} Unsubscribe function
      */
-    suscribe(callback){
+    subscribe(callback) {
         this.listeners.push(callback);
         return () => this.listeners = this.listeners.filter(cb => cb !== callback);
     }
 
-    notify(){
+    // Alias legacy para evitar romper código existente con errores ortográficos
+    suscribe(callback) {
+        return this.subscribe(callback);
+    }
+
+    notify() {
         this.listeners.forEach(callback => callback(!!this.token));
     }
 
     /**
      * @param {string|null} token 
      */
-    setToken(token){
+    setToken(token) {
         this.token = token;
-        if(token){
-            localStorage.setItem('token',token);
+        if (token) {
+            localStorage.setItem('token', token);
         } else {
             localStorage.removeItem('token');
         }
@@ -40,33 +45,60 @@ class SpiderShareClient {
     }
 
     async _request(endpoint, options = {}) {
+        const isFormData = options.body instanceof FormData;
+        
+        // Creamos una copia limpia de las cabeceras base configuradas
         const headers = {
-            'Content-Type': 'application/json',
-            ...options.headers,
+            ...PROXY_CONFIG.FETCH_OPTIONS.headers
         };
 
-        if (this.token) {
-            headers['Authorization'] = `Bearer ${this.token}`;
+        // Si enviamos un archivo binario/multipart (FormData), dejamos que el navegador
+        // maneje el Content-Type y añada el límite (boundary) correcto automáticamente
+        if (isFormData) {
+            delete headers['Content-Type'];
         }
 
-        try{
+        Object.assign(headers, getAuthHeaders(this.token));
+
+        try {
             const response = await fetch(`${this.baseUrl}${endpoint}`, {
+                mode: PROXY_CONFIG.FETCH_OPTIONS.mode || 'cors',
                 ...options,
                 headers,
             });
 
-            if (response.status === 401){
+            if (response.status === 401) {
                 this.logout();
                 window.dispatchEvent(new CustomEvent('onUnauthorized'));
                 throw new Error('No autorizado - Inicia sesión nuevamente');
             }
-            
+
             if (!response.ok) {
-                const error = await response.json();
+                const error = await response.json().catch(() => ({ detail: 'Error en la petición' }));
+                
+                // Si es un error de validación estructurado de FastAPI (422)
+                if (Array.isArray(error.detail)) {
+                    const errorMessages = error.detail
+                        .map(err => {
+                            const field = err.loc ? err.loc.join('.') : 'campo';
+                            return `${field}: ${err.msg}`;
+                        })
+                        .join(', ');
+                    throw new Error(`Error de validación: ${errorMessages}`);
+                }
+                
                 throw new Error(error.detail || 'Error en la petición');
             }
-            return response.status === 204 ? null : await response.json();
-        }catch(error){
+
+            if (response.status === 204) return null;
+
+            const contentType = response.headers.get('content-type');
+            if (contentType && (contentType.includes('application/octet-stream') || contentType.includes('video/') || contentType.includes('image/'))) {
+                return await response.blob();
+            }
+
+            return await response.json();
+        } catch (error) {
             console.error('API Error:', error);
             throw error;
         }
@@ -74,10 +106,10 @@ class SpiderShareClient {
 
 
     // AUTH
-    async register(username, password){
-        return await this._request(`/auth/register`,{
+    async register(username, password) {
+        return await this._request(`/auth/register`, {
             method: 'POST',
-            body: JSON.stringify({username,password}),
+            body: JSON.stringify({ username, password }),
         });
     }
 
@@ -87,7 +119,7 @@ class SpiderShareClient {
             body: JSON.stringify({ username, password }),
         });
         if (data.access_token) this.setToken(data.access_token);
-        return data;
+        return mapUserDTO(data);
     }
 
     logout() {
@@ -108,7 +140,7 @@ class SpiderShareClient {
      */
     async listUsers() {
         const data = await this._request('/users');
-        return data.map(mapUserDTO);
+        return Array.isArray(data) ? data.map(mapUserDTO) : [];
     }
 
     /**
@@ -121,10 +153,11 @@ class SpiderShareClient {
     }
 
     async patchUser(userId, data = {}) {
-        return await this._request(`/users/${userId}`, {
+        const responseData = await this._request(`/users/${userId}`, {
             method: 'PATCH',
             body: JSON.stringify(data),
         });
+        return mapUserDTO(responseData);
     }
 
     async deleteUser(userId) {
@@ -134,16 +167,28 @@ class SpiderShareClient {
     }
 
     // USERS-->AVATAR
-    async putAvatar(userId) {
-        return await this._request(`/users/${userId}/avatar`, {
+    /**
+     * Sube un archivo de imagen como avatar del usuario.
+     * @param {string} userId 
+     * @param {File|Blob} avatarFile 
+     * @returns {Promise<Object>} Mapped user data
+     */
+    async putAvatar(userId, avatarFile) {
+        const formData = new FormData();
+        formData.append('avatar', avatarFile);
+
+        const data = await this._request(`/users/${userId}/avatar`, {
             method: 'PUT',
+            body: formData,
         });
+        return mapUserDTO(data);
     }
 
     async deleteAvatar(userId) {
-        return await this._request(`/users/${userId}/avatar`, {
+        const data = await this._request(`/users/${userId}/avatar`, {
             method: 'DELETE',
         });
+        return mapUserDTO(data);
     }
 
     async getAvatar(userId) {
@@ -153,10 +198,23 @@ class SpiderShareClient {
     }
 
     // USERS-->PASSWORD
-    async changePassword(userId, password) {
+    /**
+     * Cambia la contraseña del usuario.
+     * @param {string} userId 
+     * @param {string} newPassword 
+     * @param {string|null} [currentPassword] 
+     */
+    async changePassword(userId, newPassword, currentPassword = null) {
+        const payload = {
+            new_password: newPassword
+        };
+        if (currentPassword) {
+            payload.current_password = currentPassword;
+        }
+
         return await this._request(`/users/${userId}/password`, {
-            method: 'PUT',
-            body: JSON.stringify({ password }),
+            method: 'PATCH',
+            body: JSON.stringify(payload),
         });
     }
 
@@ -167,106 +225,160 @@ class SpiderShareClient {
      */
     async getSteamGames(steamIdOrVanity) {
         const data = await this._request(`/steam/users/${steamIdOrVanity}/games`);
-        return data.map(mapSteamGameDTO);
+        if (data && data.games && Array.isArray(data.games)) {
+            return data.games.map(mapSteamGameDTO);
+        }
+        return [];
     }
 
     //VIDEO
     /**
-     * @param {string} file
+     * @param {File} file
      * @param {string} title 
      * @param {string} description
      * @param {boolean} is_registered_only
-     * @param {Array} category_ids
-     * @param {Array} tags
-     * @returns {Promise<Array>}
-     */
-    async postVideo(file, title, description, is_registered_only, category_ids, tags) {
-        is_registered_only = (typeof is_registered_only === 'undefined') ? false : is_registered_only;
-        category_ids = (typeof category_ids === 'undefined') ? [] : category_ids;
-        tags = (typeof tags === 'undefined') ? [] : tags;
-        
-        return await this._request('/videos', {
-            method: 'POST',
-            body: JSON.stringify(file, title, description, is_registered_only, category_ids, tags),
-        });
-    }
-    /** 
+     * @param {Array<string>} category_ids
+     * @param {Array<string>} tags
      * @returns {Promise<Object>}
      */
+    async postVideo(file, title, description, is_registered_only = false, category_ids = [], tags = []) {
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('title', title);
+        formData.append('description', description);
+        formData.append('is_registered_only', is_registered_only);
+        
+        category_ids.forEach(id => formData.append('category_ids', id));
+        tags.forEach(tag => formData.append('tags', tag));
 
-    async getVideos() {
-        const data = await this._request(`/videos`);
-        return data.map(mapVideoDTO);
+        const data = await this._request('/videos', {
+            method: 'POST',
+            body: formData,
+        });
+        return mapVideoDTO(data);
     }
+
+    /**
+     * Obtiene el listado de videos con soporte para filtros y paginación.
+     * @param {Object} [params]
+     * @param {string} [params.title]
+     * @param {Array<string>} [params.tags]
+     * @param {Array<string>} [params.category_ids]
+     * @param {string} [params.owner_id]
+     * @param {number} [params.limit]
+     * @param {number} [params.offset]
+     * @returns {Promise<Object>} Object containing items (mapped), total, limit, offset
+     */
+    async getVideos({ title, tags, category_ids, owner_id, limit = 20, offset = 0 } = {}) {
+        const params = new URLSearchParams();
+        if (title) params.append('title', title);
+        if (limit !== undefined) params.append('limit', limit);
+        if (offset !== undefined) params.append('offset', offset);
+        if (owner_id) params.append('owner_id', owner_id);
+        
+        if (tags && Array.isArray(tags)) {
+            tags.forEach(tag => params.append('tags', tag));
+        }
+        if (category_ids && Array.isArray(category_ids)) {
+            category_ids.forEach(id => params.append('category_ids', id));
+        }
+        
+        const queryString = params.toString();
+        const endpoint = queryString ? `/videos?${queryString}` : '/videos';
+        
+        const data = await this._request(endpoint);
+        
+        return {
+            items: data && data.items ? data.items.map(mapVideoDTO) : [],
+            total: (data && data.total) || 0,
+            limit: (data && data.limit) || limit,
+            offset: (data && data.offset) || offset
+        };
+    }
+
     /**
      * @param {string} video_id 
      * @returns {Promise<Object>}
      */
     async getVideo(video_id) {
         const data = await this._request(`/videos/${video_id}`);
-        return data.map(mapVideoDTO);
+        return mapVideoDTO(data);
     }
-    async patchVideo(video_id, data) {
-        data = (typeof data === 'undefined') ? {} : data;
-        return await this._request(`/videos/${video_id}`, {
+
+    async patchVideo(video_id, data = {}) {
+        const responseData = await this._request(`/videos/${video_id}`, {
             method: 'PATCH',
             body: JSON.stringify(data),
-        }).mapVideoDTO;
+        });
+        return mapVideoDTO(responseData);
     }   
     
-
     async deleteVideo(video_id) {
         return await this._request(`/videos/${video_id}`, {
             method: 'DELETE',
-        }).mapVideoDTO;
+        });
     }
 
     async downloadVideo(video_id) {
-        return await this._request(`/videos/${video_id}/download`, {
+        const blob = await this._request(`/videos/${video_id}/download`, {
             method: 'GET',
-        }).mapVideoDTO;
+        });
+        return blob;
     }
 
-    async streamVideo(video_id) {
-        return await this._request(`/videos/${video_id}/stream`, {
+    async streamVideo(video_id, variant_type = 'low_h264') {
+        const blob = await this._request(`/videos/${video_id}/stream?variant_type=${variant_type}`, {
             method: 'GET',
-        }).mapVideoDTO;
+        });
+        return blob;
     }
 
     async getVideoThumbnail(video_id) {
-        return await this._request.data(`/videos/${video_id}/thumbnail`, {
+        const blob = await this._request(`/videos/${video_id}/thumbnail`, {
             method: 'GET',
-        }).mapVideoDTO;
+        });
+        return blob;
     }
 
     async postFavoriteVideo(video_id) {
         return await this._request(`/videos/${video_id}/favorite`, {
             method: 'POST',
-        }).mapVideoDTO;
+        });
     }
+
     async deleteFavoriteVideo(video_id) {
         return await this._request(`/videos/${video_id}/favorite`, {
             method: 'DELETE',
-        }).mapVideoDTO;
+        });
     }
+
     async getFavoriteVideosList() {
-        return await this._request(`/users/me/video-favorites`, {
-        }).mapVideoDTO;
+        const data = await this._request(`/users/me/video-favorites`);
+        if (data && data.items && Array.isArray(data.items)) {
+            return data.items.map(mapVideoDTO);
+        }
+        if (Array.isArray(data)) {
+            return data.map(mapVideoDTO);
+        }
+        return [];
     }
+
     async getVideoReactions(video_id) {
-        return await this._request(`/videos/${video_id}/reactions`, {
-        }).mapVideoDTO;
+        return await this._request(`/videos/${video_id}/reactions`);
     }
-    async postVideoReaction(video_id, reaction) {
-        return await this._request(`/videos/${video_id}/reactions`, {
+
+    async postVideoReaction(video_id, reaction_type) {
+        const data = await this._request(`/videos/${video_id}/reactions`, {
             method: 'POST',
-            body: JSON.stringify({ reaction }),
-        }).mapVideoDTO;
+            body: JSON.stringify({ reaction_type }),
+        });
+        return data; // VideoReactionResponse
     }
+
     async deleteVideoReaction(video_id) {
         return await this._request(`/videos/${video_id}/reactions`, {
             method: 'DELETE',
-        }).mapVideoDTO;
+        });
     }
 }
 
