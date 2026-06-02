@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import './RegisterForm.css';
 
 const RegisterForm = () => {
   const [formData, setFormData] = useState({
@@ -93,7 +94,7 @@ const RegisterForm = () => {
           disabled={isLoading}
           style={{ marginTop: '10px' }}
         >
-          {isLoading ? 'Registrando...' : 'Crear Usuario'}
+          {isLoading ? 'Registrando...' : 'Registrar Usuario'}
         </button>
       </form>
     </div>

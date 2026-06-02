@@ -3,13 +3,25 @@ import VideoUploader from "../../VideoUploader/VideoUploader";
 import { GiConsoleController } from "react-icons/gi";
 import { IoMdSettings } from "react-icons/io";
 import { GoStarFill } from "react-icons/go";
-import { CiLogin } from "react-icons/ci";
+import { CiLogin, CiLogout } from "react-icons/ci";
 import { GoVideo } from "react-icons/go";
-import { NavLink, Link } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import React from "react";
 import "./Sidebar.css";
 
 const Sidebar = () => {
+  const navigate = useNavigate();
+
+  const token = localStorage.getItem("token");
+  const userData = JSON.parse(localStorage.getItem("userData"));
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("userData");
+
+    navigate("/");
+  };
+
   return (
     <aside className="sidebar">
       <div className="sidebar-header">
@@ -19,7 +31,6 @@ const Sidebar = () => {
 
       <nav className="sidebar-nav">
         <ul>
-          {/* Usamos NavLink para manejar la clase 'active' automáticamente */}
           <li>
             <NavLink
               to="/"
@@ -44,49 +55,63 @@ const Sidebar = () => {
             </NavLink>
           </li>
 
-          <li>
-            <NavLink
-              to="/favorites"
-              className={({ isActive }) =>
-                isActive ? "nav-item active" : "nav-item"
-              }
-            >
-              <GoStarFill />
-              <span className="nav-icon">Favoritos</span>
-            </NavLink>
-          </li>
+          {token && (
+            <>
+              <li>
+                <NavLink
+                  to="/favorites"
+                  className={({ isActive }) =>
+                    isActive ? "nav-item active" : "nav-item"
+                  }
+                >
+                  <GoStarFill />
+                  <span className="nav-icon">Favoritos</span>
+                </NavLink>
+              </li>
 
-          <li>
-            <NavLink
-              to="/settings"
-              className={({ isActive }) =>
-                isActive ? "nav-item active" : "nav-item"
-              }
-            >
-              <IoMdSettings />
-              <span className="nav-icon">Settings</span>
-            </NavLink>
-          </li>
+              <li>
+                <NavLink
+                  to="/settings"
+                  className={({ isActive }) =>
+                    isActive ? "nav-item active" : "nav-item"
+                  }
+                >
+                  <IoMdSettings />
+                  <span className="nav-icon">Settings</span>
+                </NavLink>
+              </li>
+            </>
+          )}
         </ul>
       </nav>
 
       <div className="sidebar-tools">
         <input type="range" min="0" max="100" className="custom-slider" />
 
-        <VideoUploader />
+        {token && <VideoUploader />}
       </div>
 
       <div className="sidebar-footer">
-        <div className="login-user">@Usuario</div>
-        <NavLink to="/login" className="login-link">
-          <div className="login-btn">
-            <CiLogin />
-            Login
-          </div>
-        </NavLink>
+        {token && userData && (
+          <div className="login-user">@{userData.username}</div>
+        )}
+
+        {!token ? (
+          <NavLink to="/login" className="login-link">
+            <div className="login-btn">
+              <CiLogin />
+              Login
+            </div>
+          </NavLink>
+        ) : (
+          <button className="login-btn" onClick={handleLogout}>
+            <CiLogout />
+            Logout
+          </button>
+        )}
 
         <div className="version-info">
-          <span>Fireshare v1.0.0</span>
+          <span>Cliponomicon v0.5</span>
         </div>
       </div>
     </aside>

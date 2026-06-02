@@ -1,0 +1,28 @@
+.save-button {
+  margin-top: 10px;
+  padding: 12px 20px;
+  background: linear-gradient(135deg, #6a5cff, #8f44fd);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+}
+
+.save-button:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.08);
+}
+
+.save-button:active {
+  transform: scale(0.98);
+}
+
+.save-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
