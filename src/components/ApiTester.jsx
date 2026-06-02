@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { api } from './../../back/api_client'; 
+import { api } from '../../back/api_client'; 
 
 const ApiTester = () => {
     const [status, setStatus] = useState('Esperando prueba...');
