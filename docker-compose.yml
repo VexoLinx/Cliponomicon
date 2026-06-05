@@ -8,12 +8,14 @@ services:
     restart: unless-stopped
     networks:
       - proxy_network
+
+    env_file:
+      - path: stack.env
+        required: false
+      - path: .env
+        required: false
+
+networks:
   proxy_network:
     external: true
     name: ${PROXY_NETWORK_NAME}
-
-env_file:
-  - path: stack.env
-    required: false
-  - path: .env
-    required: false
