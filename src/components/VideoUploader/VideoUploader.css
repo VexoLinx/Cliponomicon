@@ -1,83 +1,282 @@
 /* Contenedor general */
-.video-upload-container {
-  margin-top: 25px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+.video-uploader-wrapper {
+    margin-top: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .tool-title {
-  font-size: 11px;
-  text-transform: uppercase;
-  color: #4b5563;
-  letter-spacing: 1px;
-  font-weight: bold;
-  margin-bottom: 5px;
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #4b5563;
+    letter-spacing: 1px;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
-/* Estado Inicial */
 .upload-dropzone {
-  border: 2px dashed #1f2937;
-  border-radius: 10px;
-  padding: 20px 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  background: rgba(255, 255, 255, 0.02);
+    border: 2px dashed #1f2937;
+    border-radius: 10px;
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.02);
 }
 
 .upload-dropzone:hover {
-  border-color: #f43f5e;
-  background: rgba(244, 63, 94, 0.05);
+    border-color: #f43f5e;
+    background: rgba(244, 63, 94, 0.05);
 }
 
 .upload-dropzone span {
-  font-size: 12px;
-  color: #9ca3af;
+    font-size: 12px;
+    color: #9ca3af;
 }
 
 /* Estado: Subiendo y Éxito */
 .upload-status {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 15px;
-  border-radius: 10px;
-  gap: 8px;
-  font-size: 12px;
-  text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 15px;
+    border-radius: 10px;
+    gap: 8px;
+    font-size: 12px;
+    text-align: center;
 }
 
 .upload-status.uploading {
-  background: rgba(59, 130, 246, 0.1);
-  border: 1px solid #3b82f6;
-  color: #3b82f6;
+    background: rgba(59, 130, 246, 0.1);
+    border: 1px solid #3b82f6;
+    color: #3b82f6;
 }
 
 .upload-status.success {
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid #10b981;
-  color: #10b981;
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid #10b981;
+    color: #10b981;
 }
 
 .file-name-scroll {
-  font-size: 10px;
-  color: #d1d5db;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  width: 100%;
+    font-size: 10px;
+    color: #d1d5db;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
 }
 
 .icon-spin {
-  animation: pulse 1.5s infinite ease-in-out;
-  font-size: 24px !important;
+    animation: pulse 1.5s infinite ease-in-out;
+    font-size: 24px !important;
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.2); opacity: 0.7; }
+
+    0%,
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+    50% {
+        transform: scale(1.2);
+        opacity: 0.7;
+    }
+}
+
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(5px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-status-centered {
+    width: 600px;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #040412;
+}
+
+.input-label {
+    font-size: 11px;
+    color: #64748b;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: -4px;
+    margin-top: 5px;
+}
+
+.edit-input-title {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #1e293b;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-transform: uppercase;
+    padding: 6px 0;
+    outline: none;
+}
+
+.edit-input-title:focus {
+    border-color: #38bdf8;
+}
+
+.edit-textarea-context {
+    background: transparent;
+    border: none;
+    width: 100%;
+    height: 65px;
+    resize: none;
+    outline: none;
+    font-family: inherit;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    line-height: 1.5;
+}
+
+/* BOTONES DEL SIDEBAR FOOTER */
+.cancel-btn {
+    background: transparent;
+    border: 1px solid #1e293b;
+    color: #94a3b8;
+    height: 36px;
+    padding: 0 16px;
+}
+
+.cancel-btn:hover {
+    background: #1e293b;
+    color: #ffffff;
+}
+
+.upload-btn {
+    background: #38bdf8;
+    color: #040412;
+    height: 36px;
+    padding: 0 20px;
+    font-weight: 600;
+}
+
+.upload-btn:hover {
+    background: #0ea5e9;
+}
+
+.error-text-sidebar {
+    color: #ef4444;
+    font-size: 0.8rem;
+    margin: 5px 0 0 0;
+}
+
+
+.checkbox-wrapper {
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+}
+
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    user-select: none;
+}
+
+.real-checkbox {
+    position: absolute;
+    opacity: 0;
+    cursor: pointer;
+    height: 0;
+    width: 0;
+}
+
+.custom-checkbox-edit {
+    width: 18px;
+    height: 18px;
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 4px;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.checkbox-label:hover .custom-checkbox-edit {
+    border-color: #38bdf8;
+}
+
+.real-checkbox:checked~.custom-checkbox-edit {
+    background: #38bdf8;
+    border-color: #38bdf8;
+}
+
+.custom-checkbox-edit::after {
+    content: "";
+    position: absolute;
+    display: none;
+    left: 6px;
+    top: 2px;
+    width: 4px;
+    height: 9px;
+    border: solid #040412;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+
+.real-checkbox:checked~.custom-checkbox-edit::after {
+    display: block;
+}
+
+.checkbox-text {
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.modal-content {
+    background: #040412;
+    width: auto;
+    max-width: 95vw;
+    height: 550px;
+    display: flex;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #1e293b;
+    position: relative;
+}
+
+.modal-video-container {
+    height: 100%;
+    background: #000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: aspect-ratio 0.3s ease;
+}
+
+.modal-sidebar {
+    width: 340px;
+    flex-shrink: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    border-left: 1px solid #1e293b;
+    color: white;
+    background: #040412;
 }
