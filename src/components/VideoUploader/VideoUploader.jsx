@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from "react";
 import VideoUploadButton from "./VideoUploadButton";
 import VideoEditModal from "./../VideoEditModal";
+import { useAuth } from "../../helpers/AuthContext";
 import "./VideoUploader.css";
+
+const API_URL = import.meta.env.VITE_API_URL || "";
+const VIDEOS_URL = `${API_URL}/videos`;
 
 const VideoUploader = () => {
   const [status, setStatus] = useState("idle");
@@ -11,6 +15,7 @@ const VideoUploader = () => {
   const [description, setDescription] = useState("");
   const [isRegisteredOnly, setIsRegisteredOnly] = useState(false); // Nuevo estado
   const [errorMessage, setErrorMessage] = useState("");
+  const { token } = useAuth();
 
   useEffect(() => {
     return () => {
@@ -41,8 +46,15 @@ const VideoUploader = () => {
     formData.append("is_registered_only", isRegisteredOnly); 
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/videos`, {
+      console.log("Upload API_URL:", API_URL);
+      console.log("Upload URL:", VIDEOS_URL);
+
+      const response = await fetch(VIDEOS_URL, {
         method: "POST",
+        headers: {
+          Accept: "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: formData,
       });
 

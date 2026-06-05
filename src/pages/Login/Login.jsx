@@ -4,6 +4,9 @@ import Enchiridion from "./../../assets/logo.png";
 import { useAuth } from "../../helpers/AuthContext";
 import './Login.css';
 
+const API_URL = import.meta.env.VITE_API_URL;
+const LOGIN_URL = `${API_URL}/auth/login`;
+
 const Login = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -19,7 +22,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {                
+      const response = await fetch(LOGIN_URL, {                
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
