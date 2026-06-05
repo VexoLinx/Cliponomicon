@@ -2,10 +2,6 @@
 FROM node:24.11.1-alpine AS build
 WORKDIR /usr/src/app
 
-# 1. Definir argumentos primero
-ARG VITE_API_URL
-ENV VITE_API_URL=$VITE_API_URL
-
 # 2. Copiar archivos de dependencias
 COPY package.json package-lock.json ./
 
