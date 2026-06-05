@@ -5,6 +5,7 @@ import SettingsPage from "./pages/SettingsPage/SettingsPage";
 import { VideoProvider } from "./helpers/VideoContext.jsx";
 import MainLayout from "./components/layout/MainLayout";
 import GamesPage from "./pages/GamesPage/GamesPage";
+import { AuthProvider } from "./helpers/AuthContext";
 import { Route, Routes } from "react-router-dom";
 import HomePage from "./pages/HomePage/HomePage";
 import ApiTester from "./components/ApiTester";
@@ -17,7 +18,7 @@ function App() {
   const [showApiTester, setShowApiTester] = useState(false);
 
   return (
-    <div>
+    <AuthProvider>
       {/*La función de mostrar el probador de API se ha movido a la pestaña de Opciones en la página de Settings*/}
       {showApiTester && <ApiTester />}
       <VideoProvider>
@@ -28,8 +29,22 @@ function App() {
             <Route path="/games" element={<GamesPage />} />
 
             {/* Rutas protegidas */}
-            <Route path="/favorites" element={<ProtectedRoute><FavoritesPage /></ProtectedRoute>} />
-            <Route path="/settings" element={<ProtectedRoute><SettingsPage setShowApiTester={setShowApiTester} /></ProtectedRoute>} />
+            <Route
+              path="/favorites"
+              element={
+                <ProtectedRoute>
+                  <FavoritesPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute>
+                  <SettingsPage setShowApiTester={setShowApiTester} />
+                </ProtectedRoute>
+              }
+            />
           </Route>
 
           {/*Rutas sin Sidebar ni TopBar*/}
@@ -38,7 +53,7 @@ function App() {
 
         <GlobalVideoModal />
       </VideoProvider>
-    </div>
+    </AuthProvider>
   );
 }
 

@@ -26,8 +26,8 @@ const VideoUploader = () => {
   };
 
   const handleUpload = async () => {
-    if (!title.trim() || !description.trim()) {
-      setErrorMessage("El título y la descripción son obligatorios.");
+    if (!title.trim()) {
+      setErrorMessage("El título es obligatorio.");
       return;
     }
 

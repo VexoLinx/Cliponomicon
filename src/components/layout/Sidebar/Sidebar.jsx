@@ -1,24 +1,21 @@
-import Enchiridion from "../../../assets/logo.png";
 import VideoUploader from "../../VideoUploader/VideoUploader";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useAuth } from "../../../helpers/AuthContext";
 import { GiConsoleController } from "react-icons/gi";
+import { CiLogin, CiLogout } from "react-icons/ci";
+import Enchiridion from "../../../assets/logo.png";
 import { IoMdSettings } from "react-icons/io";
 import { GoStarFill } from "react-icons/go";
-import { CiLogin, CiLogout } from "react-icons/ci";
 import { GoVideo } from "react-icons/go";
-import { NavLink, useNavigate } from "react-router-dom";
 import React from "react";
 import "./Sidebar.css";
 
 const Sidebar = () => {
   const navigate = useNavigate();
-
-  const token = localStorage.getItem("token");
-  const userData = JSON.parse(localStorage.getItem("userData"));
+  const { token, user, logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("userData");
-
+    logout();
     navigate("/");
   };
 
@@ -92,8 +89,8 @@ const Sidebar = () => {
       </div>
 
       <div className="sidebar-footer">
-        {token && userData && (
-          <div className="login-user">@{userData.username}</div>
+        {token && user && (
+          <div className="login-user">@{user.username}</div>
         )}
 
         {!token ? (

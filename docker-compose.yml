@@ -2,12 +2,18 @@ services:
   cliponomicon:
     build:
       context: .
-      args:
-        # Portainer tomará el valor de su pestaña "ENV" y se lo pasará al Dockerfile
-        - VITE_API_URL=${API_URL}
     container_name: cliponomicon
     ports:
       - "8500:80"
-    environment:
-      - VITE_API_URL=${API_URL}
     restart: unless-stopped
+    networks:
+      - proxy_network
+  proxy_network:
+    external: true
+    name: ${PROXY_NETWORK_NAME}
+
+env_file:
+  - path: stack.env
+    required: false
+  - path: .env
+    required: false

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Enchiridion from "./../../assets/logo.png";
+import { useAuth } from "../../helpers/AuthContext";
 import './Login.css';
 
 const Login = () => {
@@ -10,7 +11,7 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   
   const navigate = useNavigate();
-
+  const { login } = useAuth();
   
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -18,7 +19,7 @@ const Login = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/auth/login`, {                
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -47,9 +48,7 @@ const Login = () => {
       // Login exitoso: El esquema dice { access_token, token_type, user }
       console.log('Login exitoso:', data);
       
-      localStorage.setItem('token', data.access_token);
-      localStorage.setItem('userData', JSON.stringify(data.user));
-      
+      login(data.access_token, data.user);
       navigate('/'); 
 
     } catch (err) {

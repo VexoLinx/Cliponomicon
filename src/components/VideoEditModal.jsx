@@ -70,7 +70,7 @@ const VideoEditModal = ({
                   <span className="video-date-modal">Formato detectado</span>
                 </div>
 
-                <label className="input-label">Descripción o Contexto *</label>
+                <label className="input-label">Descripción o Contexto</label>
                 <div className="video-context-box spec-edit">
                   <textarea 
                     className="edit-textarea-context"
