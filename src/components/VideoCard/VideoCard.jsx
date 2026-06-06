@@ -2,7 +2,7 @@ import React from "react";
 import { useVideoModal } from "../../helpers/VideoContext";
 import "./VideoCard.css";
 
-const VideoCard = ({ data = defaultMock }) => {
+const VideoCard = ({ data = {} }) => {
   const { openVideo } = useVideoModal();
 
   return (
