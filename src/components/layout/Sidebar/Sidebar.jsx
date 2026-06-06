@@ -1,6 +1,6 @@
 import VideoUploader from "../../VideoUploader/VideoUploader";
 import { NavLink, useNavigate } from "react-router-dom";
-import { useAuth } from "../../../helpers/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 import { GiConsoleController } from "react-icons/gi";
 import { CiLogin, CiLogout } from "react-icons/ci";
 import Enchiridion from "../../../assets/logo.png";

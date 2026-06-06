@@ -1,5 +1,5 @@
 import React from "react";
-import { useVideoModal } from "../../helpers/VideoContext";
+import { useVideoModal } from "../../context/VideoContext";
 import "./VideoCard.css";
 
 const VideoCard = ({ data = {} }) => {

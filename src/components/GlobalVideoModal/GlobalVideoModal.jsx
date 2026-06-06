@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { useVideoModal } from "../../helpers/VideoContext";
+import { useVideoModal } from "../../context/VideoContext";
 import { IoClose } from "react-icons/io5";
 import "./GlobalVideoModal.css";
 import { CiLink } from "react-icons/ci";

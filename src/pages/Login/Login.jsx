@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Enchiridion from "./../../assets/logo.png";
-import { useAuth } from "../../helpers/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import './Login.css';
 
 const API_URL = import.meta.env.VITE_API_URL;
