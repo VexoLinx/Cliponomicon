@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import RegisterForm from "./../../components/RegisterForm/RegisterForm";
 import ApiTester from "./../../components/ApiTester";
-import { useAuth } from "../../helpers/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import "./SettingsPage.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "";

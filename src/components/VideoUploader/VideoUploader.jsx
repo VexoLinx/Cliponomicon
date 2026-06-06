@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import VideoUploadButton from "./VideoUploadButton";
 import VideoEditModal from "./../VideoEditModal";
-import { useAuth } from "../../helpers/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import "./VideoUploader.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "";
