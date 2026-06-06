@@ -14,9 +14,25 @@ const GlobalVideoModal = () => {
     <div className="modal-overlay" onClick={closeVideo}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-video-container">
-          <video controls autoPlay className="main-video">
-            <source src={activeVideo.videoUrl} type="video/mp4" />
-          </video>
+          <video
+            key={activeVideo.videoUrl}
+            controls
+            autoPlay
+            playsInline
+            preload="metadata"
+            className="main-video"
+            src={activeVideo.videoUrl}
+            onLoadedMetadata={(event) => {
+              console.log("Video stream URL:", activeVideo.videoUrl);
+              console.log("Video size:", {
+                width: event.currentTarget.videoWidth,
+                height: event.currentTarget.videoHeight,
+              });
+            }}
+            onError={(event) => {
+              console.error("Video playback error:", event.currentTarget.error);
+            }}
+          />
         </div>
 
         <div className="modal-sidebar">

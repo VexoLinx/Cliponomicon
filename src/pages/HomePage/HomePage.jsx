@@ -1,67 +1,80 @@
 import VideoCard from "../../components/VideoCard/VideoCard";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "./HomePage.css";
 
+const API_URL = import.meta.env.VITE_API_URL || "";
+const VIDEOS_URL = `${API_URL}/videos`;
+const getVideoStreamUrl = (videoId) =>
+  `${API_URL}/videos/${videoId}/stream?variant_type=original`;
+
+const formatVideoDate = (date) => {
+  if (!date) return "";
+
+  return new Date(date).toLocaleDateString("es-ES", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  });
+};
+
+const mapApiVideoToCard = (video) => ({
+  id: video.id,
+  thumbnail: "https://placehold.co/300x170",
+  gameIcon: "https://placehold.co/40x40",
+  title: video.title,
+  gameName: video.categories?.[0]?.name || "Sin categoria",
+  date: formatVideoDate(video.created_at),
+  duration: "",
+  rating: String(video.favorite_count ?? 0),
+  userHandle: video.owner_id ? `@${video.owner_id}` : "@usuario",
+  linkText: "enlace",
+  context: video.description || "",
+  videoUrl: getVideoStreamUrl(video.id),
+});
+
 function HomePage() {
-  // 1. Simulación de una lista de videos (Array)
-  const mockVideos = [
-    {
-      id: 1,
-      thumbnail: "https://placehold.co/300x170",
-      gameIcon: "https://placehold.co/40x40",
-      title: "ESIGUALDijoElVexosA4FPS- Star...",
-      gameName: "Star Citizen",
-      date: "Apr 3, 2026",
-      duration: "00:18",
-      rating: "3",
-      userHandle: "@Vexo",
-      linkText: "enlace",
-      progress: 40,
-    },
-    {
-      id: 2,
-      thumbnail: "https://placehold.co/300x170",
-      gameIcon: "https://placehold.co/40x40",
-      title: "Cómo derrotar a Malenia sin recibir daño",
-      gameName: "Elden Ring",
-      date: "Apr 10, 2026",
-      duration: "15:20",
-      rating: "5",
-      userHandle: "@LuigiFun",
-      linkText: "enlace",
-      progress: 90,
-    },
-    {
-      id: 3,
-      thumbnail: "https://placehold.co/300x170",
-      gameIcon: "https://placehold.co/40x40",
-      title: "Clutch 1v5 en Inferno - Increíble",
-      gameName: "CS:GO 2",
-      date: "Apr 15, 2026",
-      duration: "01:05",
-      rating: "4",
-      userHandle: "@Pinocheteado",
-      linkText: "enlace",
-      progress: 10,
-    },
-    {
-      id: 3,
-      thumbnail: "https://placehold.co/300x170",
-      gameIcon: "https://placehold.co/40x40",
-      title: "Clutch 1v5 en Inferno - Increíble",
-      gameName: "CS:GO 2",
-      date: "Apr 15, 2026",
-      duration: "01:05",
-      rating: "4",
-      userHandle: "@PeruDeEpoca",
-      linkText: "enlace",
-      progress: 10,
-    },
-  ];
+  const [videos, setVideos] = useState([]);
+  const [statusText, setStatusText] = useState("Cargando videos...");
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    const loadVideos = async () => {
+      try {
+        console.log("Videos API_URL:", API_URL);
+        console.log("Videos URL:", VIDEOS_URL);
+
+        const response = await fetch(VIDEOS_URL, {
+          headers: {
+            Accept: "application/json",
+          },
+          signal: controller.signal,
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.detail || "Error al cargar videos");
+        }
+
+        const items = Array.isArray(data.items) ? data.items : [];
+        setVideos(items.map(mapApiVideoToCard));
+        setStatusText(items.length ? "" : "No hay videos.");
+      } catch (error) {
+        if (error.name === "AbortError") return;
+        setStatusText(error.message);
+      }
+    };
+
+    loadVideos();
+
+    return () => controller.abort();
+  }, []);
 
   return (
     <div className="video-grid">
-      {mockVideos.map((video) => (
+      {statusText && <p>{statusText}</p>}
+      {videos.map((video) => (
         <VideoCard key={video.id} data={video} />
       ))}
     </div>
