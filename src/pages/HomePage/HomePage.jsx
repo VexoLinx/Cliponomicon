@@ -4,12 +4,18 @@ import "./HomePage.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "";
 const VIDEOS_URL = `${API_URL}/videos`;
+
+// Endpoint dinámico para el streaming del vídeo
 const getVideoStreamUrl = (videoId) =>
   `${API_URL}/videos/${videoId}/stream?variant_type=original`;
 
+// Endpoint real de la API para obtener la miniatura de la imagen
+const getVideoThumbnailUrl = (videoId) =>
+  `${API_URL}/videos/${videoId}/thumbnail`;
+
+// Formateador de fecha
 const formatVideoDate = (date) => {
   if (!date) return "";
-
   return new Date(date).toLocaleDateString("es-ES", {
     day: "2-digit",
     month: "short",
@@ -17,20 +23,37 @@ const formatVideoDate = (date) => {
   });
 };
 
-const mapApiVideoToCard = (video) => ({
-  id: video.id,
-  thumbnail: "https://placehold.co/300x170",
-  gameIcon: "https://placehold.co/40x40",
-  title: video.title,
-  gameName: video.categories?.[0]?.name || "Sin categoria",
-  date: formatVideoDate(video.created_at),
-  duration: "",
-  rating: String(video.favorite_count ?? 0),
-  userHandle: video.owner_id ? `@${video.owner_id}` : "@usuario",
-  linkText: "enlace",
-  context: video.description || "",
-  videoUrl: getVideoStreamUrl(video.id),
-});
+// Formateador de duración (Convierte "duration_seconds" a MM:SS)
+const formatDuration = (seconds) => {
+  if (seconds === undefined || seconds === null || seconds === 0) return ""; 
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60).toString().padStart(2, '0');
+  return `${mins}:${secs}`;
+};
+
+const mapApiVideoToCard = (video) => {
+  // Como la API solo devuelve el UUID en 'owner_id', recortamos un fragmento para que no sea tan largo
+  // Ej: "3fa85f64-5717..." -> "@3fa85f64" hasta que el backend devuelva el nombre real.
+  const shortId = video.owner_id ? `@${video.owner_id.substring(0, 8)}` : "@usuario";
+
+  return {
+    id: video.id,
+    // 1. Corregido: Usamos el endpoint de miniaturas de tu documentación
+    thumbnail: getVideoThumbnailUrl(video.id), 
+    gameIcon: "https://placehold.co/40x40", 
+    title: video.title,
+    gameName: video.categories?.[0]?.name || "Sin categoria",
+    date: formatVideoDate(video.created_at),
+    // 2. Corregido: El campo oficial según tus esquemas es 'duration_seconds'
+    duration: formatDuration(video.duration_seconds), 
+    rating: String(video.favorite_count ?? 0),
+    // 3. Explicación: La API no provee strings de nombres aquí, solo el UUID
+    userHandle: shortId, 
+    linkText: "enlace",
+    context: video.description || "",
+    videoUrl: getVideoStreamUrl(video.id),
+  };
+};
 
 function HomePage() {
   const [videos, setVideos] = useState([]);
@@ -41,9 +64,6 @@ function HomePage() {
 
     const loadVideos = async () => {
       try {
-        console.log("Videos API_URL:", API_URL);
-        console.log("Videos URL:", VIDEOS_URL);
-
         const response = await fetch(VIDEOS_URL, {
           headers: {
             Accept: "application/json",

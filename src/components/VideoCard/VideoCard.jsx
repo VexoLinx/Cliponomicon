@@ -1,14 +1,48 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useVideoModal } from "../../context/VideoContext";
+import { useAuth } from "../../context/AuthContext";
 import "./VideoCard.css";
+
+const API_URL = import.meta.env.VITE_API_URL || "";
 
 const VideoCard = ({ data = {} }) => {
   const { openVideo } = useVideoModal();
+  const { access_token } = useAuth();
+  
+  // Estado para la miniatura. Ponemos el placeholder por defecto mientras carga
+  const [thumbnailSrc, setThumbnailSrc] = useState("https://placehold.co/300x170");
+
+  useEffect(() => {
+    if (!data.id) return;
+
+    const loadSecureThumbnail = async () => {
+      try {
+        const response = await fetch(`${API_URL}/videos/${data.id}/thumbnail`, {
+          headers: {
+            // Pasamos el token por si el endpoint de miniaturas es privado
+            Authorization: `Bearer ${access_token}`, 
+          },
+        });
+
+        if (response.ok) {
+          const blob = await response.blob();
+          const objectUrl = URL.createObjectURL(blob); // Convertimos el binario en URL usable
+          setThumbnailSrc(objectUrl);
+
+          return () => URL.revokeObjectURL(objectUrl);
+        }
+      } catch (error) {
+        console.error("Error cargando la miniatura protegida:", error);
+      }
+    };
+
+    loadSecureThumbnail();
+  }, [data.id, access_token]);
 
   return (
     <div className="video-card">
       <div className="card-header" onClick={() => openVideo(data)}>
-        <img src={data.thumbnail} alt={data.title} className="thumbnail" />
+        <img src={thumbnailSrc} alt={data.title} className="thumbnail" />
         <span className="overlay-link">{data.linkText || "enlace"}</span>
 
         <div className="overlay-rating">
@@ -18,7 +52,8 @@ const VideoCard = ({ data = {} }) => {
           </svg>
         </div>
 
-        <span className="overlay-duration">{data.duration}</span>
+        {/* Si la duración viene vacía porque la API no la da, el CSS no romperá */}
+        {data.duration && <span className="overlay-duration">{data.duration}</span>}
       </div>
 
       <div className="card-footer">

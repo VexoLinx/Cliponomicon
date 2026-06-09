@@ -1,14 +1,28 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { useVideoModal } from "../../context/VideoContext";
+import { useAuth } from "../../context/AuthContext";
 import { IoClose } from "react-icons/io5";
 import "./GlobalVideoModal.css";
 import { CiLink } from "react-icons/ci";
 
 const GlobalVideoModal = () => {
   const { activeVideo, closeVideo } = useVideoModal();
+  const { token, user } = useAuth(); 
 
   if (!activeVideo) return null;
+
+// 1. Limpiamos y normalizamos los textos
+  const videoOwner = activeVideo.userHandle?.replace("@", "").toLowerCase().trim();
+  const currentUser = user?.username?.replace("@", "").toLowerCase().trim();
+  const currentUserId = user?.id?.toLowerCase().trim();
+
+  // 2. Comprobación inteligente de permisos
+  const canEdit = token && user && (
+    user.role === "super_admin" || 
+    (currentUser && videoOwner && currentUser === videoOwner) || // Por si en el futuro arreglas el backend y devuelve "Vexo"
+    (currentUserId && videoOwner && currentUserId.startsWith(videoOwner)) // Compara el UUID '0537ee91...' con el del vídeo
+  );
 
   return ReactDOM.createPortal(
     <div className="modal-overlay" onClick={closeVideo}>
@@ -78,7 +92,13 @@ const GlobalVideoModal = () => {
             >
               <CiLink />
             </button>
-            <button className="footer-btn edit-btn">Editar</button>
+            
+            {/* 4. Renderizado condicional del botón Editar */}
+            {canEdit && (
+              <button className="footer-btn edit-btn">
+                Editar
+              </button>
+            )}
           </div>
         </div>
       </div>

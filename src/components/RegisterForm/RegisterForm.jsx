@@ -6,7 +6,6 @@ const API_URL = import.meta.env.VITE_API_URL;
 const REGISTER_URL = `${API_URL}/auth/register`;
 
 const RegisterForm = () => {
-  // Extraemos el token del contexto de autenticación
   const { token } = useAuth(); 
 
   const [formData, setFormData] = useState({
