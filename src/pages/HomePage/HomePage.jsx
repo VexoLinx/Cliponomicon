@@ -5,15 +5,12 @@ import "./HomePage.css";
 const API_URL = import.meta.env.VITE_API_URL || "";
 const VIDEOS_URL = `${API_URL}/videos`;
 
-// Endpoint dinámico para el streaming del vídeo
 const getVideoStreamUrl = (videoId) =>
   `${API_URL}/videos/${videoId}/stream?variant_type=original`;
 
-// Endpoint real de la API para obtener la miniatura de la imagen
 const getVideoThumbnailUrl = (videoId) =>
   `${API_URL}/videos/${videoId}/thumbnail`;
 
-// Formateador de fecha
 const formatVideoDate = (date) => {
   if (!date) return "";
   return new Date(date).toLocaleDateString("es-ES", {
@@ -23,7 +20,6 @@ const formatVideoDate = (date) => {
   });
 };
 
-// Formateador de duración (Convierte "duration_seconds" a MM:SS)
 const formatDuration = (seconds) => {
   if (seconds === undefined || seconds === null || seconds === 0) return ""; 
   const mins = Math.floor(seconds / 60);
@@ -32,22 +28,17 @@ const formatDuration = (seconds) => {
 };
 
 const mapApiVideoToCard = (video) => {
-  // Como la API solo devuelve el UUID en 'owner_id', recortamos un fragmento para que no sea tan largo
-  // Ej: "3fa85f64-5717..." -> "@3fa85f64" hasta que el backend devuelva el nombre real.
   const shortId = video.owner_id ? `@${video.owner_id.substring(0, 8)}` : "@usuario";
 
   return {
     id: video.id,
-    // 1. Corregido: Usamos el endpoint de miniaturas de tu documentación
     thumbnail: getVideoThumbnailUrl(video.id), 
     gameIcon: "https://placehold.co/40x40", 
     title: video.title,
     gameName: video.categories?.[0]?.name || "Sin categoria",
     date: formatVideoDate(video.created_at),
-    // 2. Corregido: El campo oficial según tus esquemas es 'duration_seconds'
     duration: formatDuration(video.duration_seconds), 
     rating: String(video.favorite_count ?? 0),
-    // 3. Explicación: La API no provee strings de nombres aquí, solo el UUID
     userHandle: shortId, 
     linkText: "enlace",
     context: video.description || "",
@@ -59,36 +50,49 @@ function HomePage() {
   const [videos, setVideos] = useState([]);
   const [statusText, setStatusText] = useState("Cargando videos...");
 
+  // 1. Sacamos la función aquí para poder llamarla en la carga inicial Y cuando haya cambios
+  const loadVideos = async (signal = null) => {
+    try {
+      const response = await fetch(VIDEOS_URL, {
+        headers: {
+          Accept: "application/json",
+        },
+        signal: signal, // El signal solo se usa en el desmontaje inicial
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.detail || "Error al cargar videos");
+      }
+
+      const items = Array.isArray(data.items) ? data.items : [];
+      setVideos(items.map(mapApiVideoToCard));
+      setStatusText(items.length ? "" : "No hay videos.");
+    } catch (error) {
+      if (error.name === "AbortError") return;
+      setStatusText(error.message);
+    }
+  };
+
   useEffect(() => {
     const controller = new AbortController();
 
-    const loadVideos = async () => {
-      try {
-        const response = await fetch(VIDEOS_URL, {
-          headers: {
-            Accept: "application/json",
-          },
-          signal: controller.signal,
-        });
+    // Carga inicial al montar la página
+    loadVideos(controller.signal);
 
-        const data = await response.json();
-
-        if (!response.ok) {
-          throw new Error(data.detail || "Error al cargar videos");
-        }
-
-        const items = Array.isArray(data.items) ? data.items : [];
-        setVideos(items.map(mapApiVideoToCard));
-        setStatusText(items.length ? "" : "No hay videos.");
-      } catch (error) {
-        if (error.name === "AbortError") return;
-        setStatusText(error.message);
-      }
+    // 2. ESCUCHADOR: Si ocurre el evento "videos-changed", recargamos la lista silenciosamente
+    const handleVideosRefresh = () => {
+      loadVideos(); 
     };
 
-    loadVideos();
+    window.addEventListener("videos-changed", handleVideosRefresh);
 
-    return () => controller.abort();
+    return () => {
+      controller.abort();
+      // Limpiamos el escuchador al desmontar el componente para evitar fugas de memoria
+      window.removeEventListener("videos-changed", handleVideosRefresh);
+    };
   }, []);
 
   return (

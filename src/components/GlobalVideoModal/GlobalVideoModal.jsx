@@ -1,34 +1,136 @@
-import React from "react";
-import ReactDOM from "react-dom";
+import VideoUpdateModal from "../VideoUpdateModal/VideoUpdateModal";
 import { useVideoModal } from "../../context/VideoContext";
 import { useAuth } from "../../context/AuthContext";
+import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { IoClose } from "react-icons/io5";
-import "./GlobalVideoModal.css";
 import { CiLink } from "react-icons/ci";
+import ReactDOM from "react-dom";
+import "./GlobalVideoModal.css";
 
 const GlobalVideoModal = () => {
   const { activeVideo, closeVideo } = useVideoModal();
-  const { token, user } = useAuth(); 
+  const { token, user } = useAuth();
+  const navigate = useNavigate();
+  const videoRef = useRef(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editStatus, setEditStatus] = useState("editing"); // "editing", "updating", "deleting", "success", "error"
+  const [editTitle, setEditTitle] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editIsRegistered, setEditIsRegistered] = useState(false);
+  const [updateError, setUpdateError] = useState("");
 
   if (!activeVideo) return null;
 
-// 1. Limpiamos y normalizamos los textos
-  const videoOwner = activeVideo.userHandle?.replace("@", "").toLowerCase().trim();
+  const videoOwner = activeVideo.userHandle
+    ?.replace("@", "")
+    .toLowerCase()
+    .trim();
   const currentUser = user?.username?.replace("@", "").toLowerCase().trim();
   const currentUserId = user?.id?.toLowerCase().trim();
 
-  // 2. Comprobación inteligente de permisos
-  const canEdit = token && user && (
-    user.role === "super_admin" || 
-    (currentUser && videoOwner && currentUser === videoOwner) || // Por si en el futuro arreglas el backend y devuelve "Vexo"
-    (currentUserId && videoOwner && currentUserId.startsWith(videoOwner)) // Compara el UUID '0537ee91...' con el del vídeo
-  );
+  const canEdit =
+    token &&
+    user &&
+    (user.role === "super_admin" ||
+      (currentUser && videoOwner && currentUser === videoOwner) ||
+      (currentUserId && videoOwner && currentUserId.startsWith(videoOwner)));
+
+  const handleOpenEdit = () => {
+    if (videoRef.current) {
+      videoRef.current.pause();
+    }
+    setEditTitle(activeVideo.title || "");
+    setEditDescription(activeVideo.context || "");
+    setEditIsRegistered(activeVideo.isRegisteredOnly || false);
+    setEditStatus("editing");
+    setUpdateError("");
+    setIsEditing(true);
+  };
+
+  const handleSaveChanges = async () => {
+    setEditStatus("updating");
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/videos/${activeVideo.id}`,
+        {
+          method: "PATCH",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            title: editTitle,
+            description: editDescription,
+            is_registered_only: editIsRegistered,
+          }),
+        },
+      );
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.detail || "Error al actualizar");
+
+      setEditStatus("success");
+      window.dispatchEvent(new Event("videos-changed"));
+
+      setTimeout(() => {
+        setIsEditing(false);
+        closeVideo();
+        navigate("/");
+      }, 1500);
+    } catch (err) {
+      setUpdateError(err.message);
+      setEditStatus("error");
+    }
+  };
+
+  const handleDeleteVideo = async () => {
+    if (
+      !window.confirm(
+        "¿Estás seguro de que quieres eliminar este clip permanentemente?",
+      )
+    ) {
+      return;
+    }
+
+    setEditStatus("deleting");
+    try {
+      const response = await fetch(
+        `${import.meta.env.VITE_API_URL}/videos/${activeVideo.id}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.detail || "Error al eliminar el archivo");
+      }
+
+      setEditStatus("success");
+
+      window.dispatchEvent(new Event("videos-changed"));
+
+      setTimeout(() => {
+        setIsEditing(false);
+        closeVideo();
+        navigate("/");
+      }, 1500);
+    } catch (err) {
+      setUpdateError(err.message);
+      setEditStatus("error");
+    }
+  };
 
   return ReactDOM.createPortal(
     <div className="modal-overlay" onClick={closeVideo}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-video-container">
           <video
+            ref={videoRef}
             key={activeVideo.videoUrl}
             controls
             autoPlay
@@ -36,16 +138,6 @@ const GlobalVideoModal = () => {
             preload="metadata"
             className="main-video"
             src={activeVideo.videoUrl}
-            onLoadedMetadata={(event) => {
-              console.log("Video stream URL:", activeVideo.videoUrl);
-              console.log("Video size:", {
-                width: event.currentTarget.videoWidth,
-                height: event.currentTarget.videoHeight,
-              });
-            }}
-            onError={(event) => {
-              console.error("Video playback error:", event.currentTarget.error);
-            }}
           />
         </div>
 
@@ -58,10 +150,7 @@ const GlobalVideoModal = () => {
           </div>
 
           <div className="sidebar-info">
-            {/* 1. Título principal */}
             <h2 className="video-title-modal">{activeVideo.title}</h2>
-
-            {/* 2. Línea de Usuario y Fecha */}
             <div className="video-meta-row">
               <span className="user-handle-modal">
                 {activeVideo.userHandle}
@@ -69,11 +158,7 @@ const GlobalVideoModal = () => {
               <span className="meta-separator">|</span>
               <span className="video-date-modal">{activeVideo.date}</span>
             </div>
-
-            {/* 3. Juego y Etiqueta */}
             <p className="game-name-modal">{activeVideo.gameName}</p>
-
-            {/* 4. Recuadro de Contexto */}
             <div className="video-context-box">
               <p>
                 {activeVideo.context ||
@@ -82,7 +167,6 @@ const GlobalVideoModal = () => {
             </div>
           </div>
 
-          {/* 5. Separador inferior y Botones */}
           <div className="sidebar-footer-video">
             <button
               className="footer-btn copy-btn"
@@ -92,16 +176,33 @@ const GlobalVideoModal = () => {
             >
               <CiLink />
             </button>
-            
-            {/* 4. Renderizado condicional del botón Editar */}
+
             {canEdit && (
-              <button className="footer-btn edit-btn">
+              <button className="footer-btn edit-btn" onClick={handleOpenEdit}>
                 Editar
               </button>
             )}
           </div>
         </div>
       </div>
+
+      {isEditing && (
+        <VideoUpdateModal
+          status={editStatus}
+          video={activeVideo}
+          title={editTitle}
+          setTitle={setEditTitle}
+          description={editDescription}
+          setDescription={setEditDescription}
+          isRegisteredOnly={editIsRegistered}
+          setIsRegisteredOnly={setEditIsRegistered}
+          errorMessage={updateError}
+          onClose={() => setIsEditing(false)}
+          onSave={handleSaveChanges}
+          onDelete={handleDeleteVideo}
+          onRetry={() => setEditStatus("editing")}
+        />
+      )}
     </div>,
     document.body,
   );

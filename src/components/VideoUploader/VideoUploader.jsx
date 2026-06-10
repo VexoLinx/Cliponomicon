@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
-import VideoUploadButton from "./VideoUploadButton";
-import VideoEditModal from "./../VideoEditModal";
 import { useAuth } from "../../context/AuthContext";
+import VideoUploadButton from "./VideoUploadButton";
+import React, { useState, useEffect } from "react";
+import VideoEditModal from "./../VideoEditModal";
 import "./VideoUploader.css";
 
 const API_URL = import.meta.env.VITE_API_URL || "";
@@ -13,7 +13,7 @@ const VideoUploader = () => {
   const [videoPreview, setVideoPreview] = useState("");
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [isRegisteredOnly, setIsRegisteredOnly] = useState(false); // Nuevo estado
+  const [isRegisteredOnly, setIsRegisteredOnly] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
   const { token } = useAuth();
 
@@ -43,7 +43,7 @@ const VideoUploader = () => {
     formData.append("file", file);
     formData.append("title", title);
     formData.append("description", description);
-    formData.append("is_registered_only", isRegisteredOnly); 
+    formData.append("is_registered_only", isRegisteredOnly);
 
     try {
       console.log("Upload API_URL:", API_URL);
@@ -60,16 +60,19 @@ const VideoUploader = () => {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.detail?.[0]?.msg || "Error al subir el archivo");
+        throw new Error(
+          errorData.detail?.[0]?.msg || "Error al subir el archivo",
+        );
       }
 
       await response.json();
       setStatus("success");
 
+      window.dispatchEvent(new Event("videos-changed"));
+
       setTimeout(() => {
         resetUploader();
       }, 3000);
-
     } catch (error) {
       console.error(error);
       setErrorMessage(error.message);
@@ -106,8 +109,8 @@ const VideoUploader = () => {
           setTitle={setTitle}
           description={description}
           setDescription={setDescription}
-          isRegisteredOnly={isRegisteredOnly}        
-          setIsRegisteredOnly={setIsRegisteredOnly}  
+          isRegisteredOnly={isRegisteredOnly}
+          setIsRegisteredOnly={setIsRegisteredOnly}
           errorMessage={errorMessage}
           onClose={resetUploader}
           onUpload={handleUpload}
