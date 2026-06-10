@@ -2,7 +2,7 @@ require("dotenv").config();
 
 const express = require("express");
 const cors = require("cors");
-const puentsRoutes = require("./routes/puents.routes");
+const puentsRoutes = require("./routes/puente.routes");
 
 const app = express();
 

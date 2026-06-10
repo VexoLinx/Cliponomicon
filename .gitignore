@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+
+Api_puente/node_modules
+Api_puente/message.txt

@@ -84,14 +84,14 @@ async function getSteamGames(steamIdOrVanity) {
 }
 
 // VIDEO
-async function uploadtVideo(formData) {
+async function postVideo(formData) {
     const response = await apiExterna.post('/videos', formData, {
         headers: { 'Content-Type': 'multipart/form-data' }
     });
     return mapVideoDTO(response.data);
 }
 
-async function ListVideos(params = {}) {
+async function getVideos(params = {}) {
     const response = await apiExterna.get('/videos', { params });
     const data = response.data;
     return {
