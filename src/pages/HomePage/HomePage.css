@@ -19,15 +19,22 @@
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 1080px) {
   .video-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 16px;
   }
 }
 
-@media (max-width: 550px) {
+@media (max-width: 794px) {
   .video-grid {
-    grid-template-columns: repeat(1, 1fr); /* 1 sola columna ocupando el ancho completo */
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+@media (max-width: 575px) {
+  .video-grid {
+    grid-template-columns: repeat(1, 1fr);
   }
 }
