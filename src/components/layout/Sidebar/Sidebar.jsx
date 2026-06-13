@@ -2,6 +2,7 @@ import VideoUploader from "../../VideoUploader/VideoUploader";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { GiConsoleController } from "react-icons/gi";
+import { IoMdPricetags } from "react-icons/io";
 import { CiLogin, CiLogout } from "react-icons/ci";
 import Enchiridion from "../../../assets/logo.png";
 import { IoMdSettings } from "react-icons/io";
@@ -68,6 +69,18 @@ const Sidebar = () => {
 
               <li>
                 <NavLink
+                  to="/tags"
+                  className={({ isActive }) =>
+                    isActive ? "nav-item active" : "nav-item"
+                  }
+                >
+                  <IoMdPricetags />
+                  <span className="nav-icon">Tags</span>
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
                   to="/settings"
                   className={({ isActive }) =>
                     isActive ? "nav-item active" : "nav-item"
@@ -89,21 +102,19 @@ const Sidebar = () => {
       </div>
 
       <div className="sidebar-footer">
-        {token && user && (
-          <div className="login-user">@{user.username}</div>
-        )}
+        {token && user && <div className="login-user">@{user.username}</div>}
 
         {!token ? (
           <NavLink to="/login" className="login-link">
             <div className="login-btn">
               <CiLogin />
-              Login
+              <span className="nav-icon">Login</span>
             </div>
           </NavLink>
         ) : (
           <button className="login-btn" onClick={handleLogout}>
             <CiLogout />
-            Logout
+            <span className="nav-icon">Logout</span>
           </button>
         )}
 
