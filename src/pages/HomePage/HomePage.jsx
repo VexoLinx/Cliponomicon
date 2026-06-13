@@ -50,7 +50,7 @@ function HomePage() {
   const [videos, setVideos] = useState([]);
   const [statusText, setStatusText] = useState("Cargando videos...");
 
-  // 1. Sacamos la función aquí para poder llamarla en la carga inicial Y cuando haya cambios
+  // Sacamos la función aquí para poder llamarla en la carga inicial Y cuando haya cambios
   const loadVideos = async (signal = null) => {
     try {
       const response = await fetch(VIDEOS_URL, {
@@ -81,7 +81,7 @@ function HomePage() {
     // Carga inicial al montar la página
     loadVideos(controller.signal);
 
-    // 2. ESCUCHADOR: Si ocurre el evento "videos-changed", recargamos la lista silenciosamente
+    // ESCUCHADOR: Si ocurre el evento "videos-changed", recargamos la lista silenciosamente
     const handleVideosRefresh = () => {
       loadVideos(); 
     };
@@ -95,14 +95,19 @@ function HomePage() {
     };
   }, []);
 
-  return (
-    <div className="video-grid">
-      {statusText && <p>{statusText}</p>}
-      {videos.map((video) => (
-        <VideoCard key={video.id} data={video} />
-      ))}
-    </div>
-  );
+return (
+  <>
+    {statusText && <p className="grid-status-text">{statusText}</p>}
+    
+    {videos.length > 0 && (
+      <div className="video-grid">
+        {videos.map((video) => (
+          <VideoCard key={video.id} data={video} />
+        ))}
+      </div>
+    )}
+  </>
+);
 }
 
 export default HomePage;
