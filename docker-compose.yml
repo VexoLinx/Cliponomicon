@@ -2,8 +2,9 @@ services:
   cliponomicon:
     build:
       context: .
+      dockerfile: Dockerfile
+      target: frontend
       args:
-        # Portainer tomará el valor de su pestaña "ENV" y se lo pasará al Dockerfile
         - VITE_API_URL=${API_URL}
     container_name: cliponomicon
     ports:

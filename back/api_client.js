@@ -106,11 +106,19 @@ class SpiderShareClient {
 
 
     // AUTH
-    async register(username, password) {
-        return await this._request(`/auth/register`, {
+    /**
+     * Registra un nuevo usuario. Requiere privilegios administrativos (token en this.token).
+     * @param {string} username 
+     * @param {string} password 
+     * @param {string} [role='user'] - 'user', 'admin' o 'super_admin'
+     * @returns {Promise<Object>} Mapped user data
+     */
+    async register(username, password, role = 'user') {
+        const data = await this._request(`/auth/register`, {
             method: 'POST',
-            body: JSON.stringify({ username, password }),
+            body: JSON.stringify({ username, password, role }),
         });
+        return mapUserDTO(data);
     }
 
     async login(username, password) {
@@ -152,6 +160,12 @@ class SpiderShareClient {
         return mapUserDTO(data);
     }
 
+    /**
+     * Actualiza datos del usuario.
+     * @param {string} userId 
+     * @param {Object} data - Campos a actualizar: username, display_name, bio, role, is_active
+     * @returns {Promise<Object>} Mapped user data
+     */
     async patchUser(userId, data = {}) {
         const responseData = await this._request(`/users/${userId}`, {
             method: 'PATCH',
@@ -174,6 +188,10 @@ class SpiderShareClient {
      * @returns {Promise<Object>} Mapped user data
      */
     async putAvatar(userId, avatarFile) {
+        if (avatarFile.size > 2 * 1024 * 1024) {
+            throw new Error('El tamaño del avatar no puede superar los 2MB');
+        }
+
         const formData = new FormData();
         formData.append('avatar', avatarFile);
 
@@ -241,7 +259,7 @@ class SpiderShareClient {
      * @param {Array<string>} tags
      * @returns {Promise<Object>}
      */
-    async postVideo(file, title, description, is_registered_only = false, category_ids = [], tags = []) {
+    async postVideo(file, title, description, is_registered_only = true, category_ids = [], tags = []) {
         const formData = new FormData();
         formData.append('file', file);
         formData.append('title', title);
