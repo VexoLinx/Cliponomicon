@@ -1,4 +1,4 @@
-name: Deploy Luigi Portainer
+name: Deploy Luigi Coolify
 
 on:
   push:
@@ -10,5 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Trigger Coolify webhook
-        run: curl -k -X POST "${{ secrets.COOLIFY }}" \
-          -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"
+        run: |
+          curl -k -X POST "${{ secrets.COOLIFY }}" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"
