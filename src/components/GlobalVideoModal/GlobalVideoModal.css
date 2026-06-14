@@ -28,11 +28,18 @@
     background: #000;
     display: flex;
     align-items: center;
+    justify-content: center;
+    min-width: 0;
+    height: 100%;
 }
 
 .main-video {
     width: 100%;
+    height: 100%;
     max-height: 100%;
+    object-fit: contain;
+    display: block;
+    background: #000;
 }
 
 .modal-sidebar {
@@ -48,7 +55,6 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     padding-bottom: 15px;
     margin-bottom: 10px;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -109,4 +115,67 @@
     margin: 0;
     color: #64748b;
     font-size: 0.9rem;
+}
+
+/* Recuadro de contexto */
+.video-context-box {
+    background: #0f172a; 
+    border: 1px solid #1e293b;
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: 5px;
+}
+
+.video-context-box p {
+    margin: 0;
+    font-size: 0.85rem;
+    color: #cbd5e1;
+    line-height: 1.5;
+}
+
+.sidebar-footer-video {
+    margin-top: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.footer-btn {
+    border: none;
+    color: white;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.copy-btn {
+    background: #1e293b;
+    width: 36px;
+    height: 36px; 
+    font-size: 1.3rem;
+    padding: 0; 
+}
+
+.copy-btn:hover {
+    background: #334155;
+}
+
+.edit-btn {
+    background: transparent;          
+    border: 1px solid #1e293b;       
+    color: #94a3b8;                  
+    height: 36px;                     
+    padding: 0 16px;
+}
+
+.edit-btn:hover {
+    background: #1e293b; 
+    color: #ffffff;    
 }

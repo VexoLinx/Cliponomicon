@@ -9,23 +9,17 @@ services:
     container_name: cliponomicon
     ports:
       - "8500:80"
-    environment:
-      - VITE_API_URL=${API_URL}
-    depends_on:
-      - api-puente
     restart: unless-stopped
+    networks:
+      - proxy_network
 
-  api-puente:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      target: bridge
-    container_name: api-puente
-    ports:
-      - "3000:3000"
     env_file:
-      - Api_puente/.env
-    environment:
-      - NODE_ENV=production
-      - PORT=3000
-    restart: unless-stopped
+      - path: stack.env
+        required: false
+      - path: .env
+        required: false
+
+networks:
+  proxy_network:
+    external: true
+    name: ${PROXY_NETWORK_NAME}
