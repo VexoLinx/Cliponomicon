@@ -153,7 +153,7 @@ const GlobalVideoModal = () => {
             <h2 className="video-title-modal">{activeVideo.title}</h2>
             <div className="video-meta-row">
               <span className="user-handle-modal">
-                {activeVideo.userHandle}
+                {activeVideo.userHandle || "@usuario"}
               </span>
               <span className="meta-separator">|</span>
               <span className="video-date-modal">{activeVideo.date}</span>

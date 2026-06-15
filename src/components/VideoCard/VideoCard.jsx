@@ -7,10 +7,12 @@ const API_URL = import.meta.env.VITE_API_URL || "";
 
 const VideoCard = ({ data = {} }) => {
   const { openVideo } = useVideoModal();
-  const { access_token } = useAuth();
-  
+  const { token } = useAuth();
+
   // Estado para la miniatura. Ponemos el placeholder por defecto mientras carga
-  const [thumbnailSrc, setThumbnailSrc] = useState("https://placehold.co/300x170");
+  const [thumbnailSrc, setThumbnailSrc] = useState(
+    "https://placehold.co/300x170",
+  );
 
   useEffect(() => {
     if (!data.id) return;
@@ -20,7 +22,7 @@ const VideoCard = ({ data = {} }) => {
         const response = await fetch(`${API_URL}/videos/${data.id}/thumbnail`, {
           headers: {
             // Pasamos el token por si el endpoint de miniaturas es privado
-            Authorization: `Bearer ${access_token}`, 
+            Authorization: `Bearer ${token}`,
           },
         });
 
@@ -37,7 +39,7 @@ const VideoCard = ({ data = {} }) => {
     };
 
     loadSecureThumbnail();
-  }, [data.id, access_token]);
+  }, [data.id, token]);
 
   return (
     <div className="video-card">
@@ -53,7 +55,9 @@ const VideoCard = ({ data = {} }) => {
         </div>
 
         {/* Si la duración viene vacía porque la API no la da, el CSS no romperá */}
-        {data.duration && <span className="overlay-duration">{data.duration}</span>}
+        {data.duration && (
+          <span className="overlay-duration">{data.duration}</span>
+        )}
       </div>
 
       <div className="card-footer">
@@ -69,7 +73,7 @@ const VideoCard = ({ data = {} }) => {
           <h3 className="video-title">{data.title}</h3>
           <p className="game-name">{data.gameName}</p>
           <div className="user-data">
-            <span className="user-handle">{data.userHandle}</span>
+            <span className="user-handle">{data.userHandle || "@usuario"}</span>
             <p className="separador">-</p>
             <p className="upload-date">{data.date}</p>
           </div>

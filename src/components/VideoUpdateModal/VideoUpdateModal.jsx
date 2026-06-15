@@ -72,7 +72,9 @@ const VideoUpdateModal = ({
                 />
 
                 <div className="video-meta-row">
-                  <span className="user-handle-modal">{video.userHandle}</span>
+                  <span className="user-handle-modal">
+                    {video.userHandle || "@usuario"}
+                  </span>
                   <span className="meta-separator">|</span>
                   <span className="video-date-modal">{video.date}</span>
                 </div>

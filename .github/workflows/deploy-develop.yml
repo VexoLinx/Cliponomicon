@@ -1,0 +1,15 @@
+name: Deploy Luigi Coolify
+
+on:
+  push:
+    branches:
+      - Develop
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Coolify webhook
+        run: |
+          curl -k -X POST "${{ secrets.COOLIFY_DEVELOP }}" \
+            -H "Authorization: Bearer ${{ secrets.COOLIFY_API_TOKEN }}"
