@@ -60,15 +60,20 @@ const GlobalVideoModal = () => {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            title: editTitle,
-            description: editDescription,
-            is_registered_only: editIsRegistered,
+            title: editTitle.trim(),
+            description: editDescription.trim() || null,
+            is_registered_only: Boolean(editIsRegistered),
+            category_ids: activeVideo.categories?.map((c) => c.id) || [],
+            tags: activeVideo.tags?.map((t) => t.name) || [],
           }),
         },
       );
 
       const data = await response.json();
-      if (!response.ok) throw new Error(data.detail || "Error al actualizar");
+      if (!response.ok) {
+        console.error("Detalles del error 422 del servidor:", data.detail);
+        throw new Error(data.detail?.[0]?.msg || "Error al actualizar");
+      }
 
       setEditStatus("success");
       window.dispatchEvent(new Event("videos-changed"));
@@ -153,7 +158,7 @@ const GlobalVideoModal = () => {
             <h2 className="video-title-modal">{activeVideo.title}</h2>
             <div className="video-meta-row">
               <span className="user-handle-modal">
-                {activeVideo.userHandle}
+                {activeVideo.userHandle || "@usuario"}
               </span>
               <span className="meta-separator">|</span>
               <span className="video-date-modal">{activeVideo.date}</span>

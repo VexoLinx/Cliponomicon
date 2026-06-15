@@ -28,7 +28,13 @@ const formatDuration = (seconds) => {
 };
 
 const mapApiVideoToCard = (video) => {
-  const shortId = video.owner_id ? `@${video.owner_id.substring(0, 8)}` : "@usuario";
+  let finalUserHandle = "@usuario";
+  
+  if (video.owner?.username) {
+    finalUserHandle = `@${video.owner.username}`;
+  } else if (video.owner_id) {
+    finalUserHandle = `@${video.owner_id.substring(0, 8)}`;
+  }
 
   return {
     id: video.id,
@@ -39,7 +45,7 @@ const mapApiVideoToCard = (video) => {
     date: formatVideoDate(video.created_at),
     duration: formatDuration(video.duration_seconds), 
     rating: String(video.favorite_count ?? 0),
-    userHandle: shortId, 
+    userHandle: finalUserHandle,
     linkText: "enlace",
     context: video.description || "",
     videoUrl: getVideoStreamUrl(video.id),
