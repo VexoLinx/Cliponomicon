@@ -96,7 +96,7 @@ const Sidebar = () => {
       </nav>
 
       <div className="sidebar-tools">
-        <input type="range" min="0" max="100" className="custom-slider" />
+        {/* <input type="range" min="0" max="100" className="custom-slider" /> */}
 
         {token && <VideoUploader />}
       </div>
