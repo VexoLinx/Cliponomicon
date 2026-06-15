@@ -15,21 +15,9 @@ RUN npm run build
 
 # ETAPA 2: Servidor de Producción (Nginx)
 FROM nginx:alpine AS final
-COPY --from=build /usr/src/app/dist /usr/share/nginx/html
+COPY --from=frontend-build /usr/src/app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 
-# --- ETAPA FINAL: BRIDGE (NODE.JS) ---
-FROM node:20-alpine AS bridge
-WORKDIR /app
-
-# Copiamos desde la carpeta Api_puente
-COPY Api_puente/package*.json ./
-RUN npm install --omit=dev
-
-COPY Api_puente/ .
-
-EXPOSE 3000
-CMD ["node", "src/index.js"]
