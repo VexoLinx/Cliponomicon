@@ -9,7 +9,6 @@ const VideoCard = ({ data = {} }) => {
   const { openVideo } = useVideoModal();
   const { token } = useAuth();
 
-  // Estado para la miniatura. Ponemos el placeholder por defecto mientras carga
   const [thumbnailSrc, setThumbnailSrc] = useState(
     "https://placehold.co/300x170",
   );
@@ -21,14 +20,18 @@ const VideoCard = ({ data = {} }) => {
       try {
         const response = await fetch(`${API_URL}/videos/${data.id}/thumbnail`, {
           headers: {
-            // Pasamos el token por si el endpoint de miniaturas es privado
             Authorization: `Bearer ${token}`,
           },
         });
 
+        if (response.status === 401) {
+          window.dispatchEvent(new Event("auth-expired"));
+          return;
+        }
+
         if (response.ok) {
           const blob = await response.blob();
-          const objectUrl = URL.createObjectURL(blob); // Convertimos el binario en URL usable
+          const objectUrl = URL.createObjectURL(blob);
           setThumbnailSrc(objectUrl);
 
           return () => URL.revokeObjectURL(objectUrl);
@@ -54,7 +57,6 @@ const VideoCard = ({ data = {} }) => {
           </svg>
         </div>
 
-        {/* Si la duración viene vacía porque la API no la da, el CSS no romperá */}
         {data.duration && (
           <span className="overlay-duration">{data.duration}</span>
         )}

@@ -69,6 +69,11 @@ const GlobalVideoModal = () => {
         },
       );
 
+      if (response.status === 401) {
+        window.dispatchEvent(new Event("auth-expired"));
+        throw new Error("Tu sesión ha expirado. Por favor, inicia sesión de nuevo.");
+      }
+
       const data = await response.json();
       if (!response.ok) {
         console.error("Detalles del error 422 del servidor:", data.detail);
@@ -109,6 +114,11 @@ const GlobalVideoModal = () => {
           },
         },
       );
+
+      if (response.status === 401) {
+        window.dispatchEvent(new Event("auth-expired"));
+        throw new Error("Tu sesión ha expirado. Por favor, inicia sesión de nuevo.");
+      }
 
       if (!response.ok) {
         const data = await response.json();

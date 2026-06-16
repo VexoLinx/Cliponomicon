@@ -23,6 +23,42 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
   };
 
+  // VALIDACIÓN DEL JWT AL INICIAR O RECARGAR LA APP
+  useEffect(() => {
+    if (token) {
+      try {
+        const payloadBase64 = token.split(".")[1];
+        if (payloadBase64) {
+          const decodedPayload = JSON.parse(window.atob(payloadBase64.replace(/-/g, "+").replace(/_/g, "/")));
+          
+          const isExpired = decodedPayload.exp * 1000 < Date.now();
+
+          if (isExpired) {
+            console.warn("Cliponomicon: El token ha expirado. Limpiando sesión...");
+            logout();
+          }
+        }
+      } catch (error) {
+        console.error("Error al verificar la expiración del token:", error);
+        logout();
+      }
+    }
+  }, [token]);
+
+  // ESCUCHADOR GLOBAL PARA EXPIRACIONES EN TIEMPO REAL
+  useEffect(() => {
+    const handleForceLogout = () => {
+      console.warn("Cliponomicon: Sesión invalidada por el servidor (401).");
+      logout();
+    };
+
+    window.addEventListener("auth-expired", handleForceLogout);
+    
+    return () => {
+      window.removeEventListener("auth-expired", handleForceLogout);
+    };
+  }, []);
+
   return (
     <AuthContext.Provider value={{ token, user, login, logout, isAuthenticated: !!token }}>
       {children}

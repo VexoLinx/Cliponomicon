@@ -58,6 +58,11 @@ const VideoUploader = () => {
         body: formData,
       });
 
+      if (response.status === 401) {
+        window.dispatchEvent(new Event("auth-expired"));
+        throw new Error("Sesión expirada. Por favor, vuelve a iniciar sesión para subir contenido.");
+      }
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(
