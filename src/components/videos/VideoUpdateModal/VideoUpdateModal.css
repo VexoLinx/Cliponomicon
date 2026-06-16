@@ -1,0 +1,31 @@
+.sidebar-footer-buttons-group {
+    display: flex;
+    gap: 10px;
+}
+
+.delete-btn {
+    background: rgba(239, 68, 68, 0.06);
+    border: 1px solid rgba(239, 68, 68, 0.4);
+    color: #ef4444;
+    height: 36px;
+    padding: 0 14px;
+    font-weight: 600;
+    font-size: 0.85rem;
+    border-radius: 4px;
+    transition: all 0.2s ease-in-out;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-btn:hover {
+    background: #ef4444;
+    border-color: #ef4444;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(239, 68, 68, 0.35);
+}
+
+.delete-btn:active {
+    transform: scale(0.98);
+}
