@@ -179,3 +179,46 @@
     background: #1e293b;
     color: #ffffff;
 }
+
+.favorite-btn {
+    background: #1e293b;
+    flex: 1; 
+    margin: 0 10px;
+    height: 36px;
+    border: none;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 12px;
+    color: #94a3b8;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.favorite-btn:hover {
+    background: #334155;
+    color: #ffffff;
+}
+
+.favorite-btn.is-favorite {
+    background: rgba(255, 215, 0, 0.1);
+    border: 1px solid rgba(255, 215, 0, 0.4);
+    color: #ffd700;
+}
+
+.favorite-btn.is-favorite:hover {
+    background: rgba(255, 215, 0, 0.2);
+    color: #ffe066;
+}
+
+.star-icon {
+    font-size: 1.2rem;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+}
+
+.favorite-btn:hover .star-icon {
+    transform: scale(1.1);
+}

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useVideoModal } from "../../../context/VideoContext";
 import { useAuth } from "../../../context/AuthContext";
@@ -10,11 +10,39 @@ export const useGlobalVideoModal = () => {
   const videoRef = useRef(null);
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editStatus, setEditStatus] = useState("editing"); 
+  const [editStatus, setEditStatus] = useState("editing");
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editIsRegistered, setEditIsRegistered] = useState(false);
   const [updateError, setUpdateError] = useState("");
+
+  const [isFavorite, setIsFavorite] = useState(false);
+
+  useEffect(() => {
+    if (!activeVideo || !token) {
+      setIsFavorite(false);
+      return;
+    }
+
+    const checkIfFavorite = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/users/me/video-favorites?limit=100`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        if (response.ok) {
+          const data = await response.json();
+          const isFav = data.items?.some((item) => item.id === activeVideo.id);
+          setIsFavorite(!!isFav);
+        }
+      } catch (err) {
+        console.error("Error al comprobar favoritos:", err);
+      }
+    };
+
+    checkIfFavorite();
+  }, [activeVideo, token]);
 
   if (!activeVideo) {
     return { activeVideo: null };
@@ -30,6 +58,40 @@ export const useGlobalVideoModal = () => {
     (user.role === "super_admin" ||
       (currentUser && videoOwner && currentUser === videoOwner) ||
       (currentUserId && videoOwner && currentUserId.startsWith(videoOwner)));
+
+  const toggleFavorite = async () => {
+    if (!token) {
+      alert("Debes iniciar sesión para guardar favoritos.");
+      return;
+    }
+
+    const method = isFavorite ? "DELETE" : "POST";
+    const url = `${import.meta.env.VITE_API_URL}/videos/${activeVideo.id}/favorite`;
+
+    try {
+      const response = await fetch(url, {
+        method: method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (response.status === 401) {
+        window.dispatchEvent(new Event("auth-expired"));
+        return;
+      }
+
+      if (response.status === 204) {
+        setIsFavorite(!isFavorite);
+        window.dispatchEvent(new Event("favorites-changed"));
+      } else {
+        const data = await response.json();
+        console.error("Error en la petición de favoritos:", data.detail);
+      }
+    } catch (err) {
+      console.error("Error de red al gestionar favoritos:", err);
+    }
+  };
 
   const handleOpenEdit = () => {
     if (videoRef.current) {
@@ -149,5 +211,7 @@ export const useGlobalVideoModal = () => {
     handleOpenEdit,
     handleSaveChanges,
     handleDeleteVideo,
+    isFavorite,
+    toggleFavorite
   };
 };

@@ -1,12 +1,14 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { IoClose } from "react-icons/io5";
+import { IoStar, IoStarOutline, IoClose } from "react-icons/io5";
+import {useAuth} from "../../../context/AuthContext";
 import { CiLink } from "react-icons/ci";
 import VideoUpdateModal from "../VideoUpdateModal/VideoUpdateModal";
 import { useGlobalVideoModal } from "./useGlobalVideoModal";
 import "./GlobalVideoModal.css";
 
 const GlobalVideoModal = () => {
+  const { token } = useAuth();
   const {
     activeVideo,
     closeVideo,
@@ -26,6 +28,8 @@ const GlobalVideoModal = () => {
     handleOpenEdit,
     handleSaveChanges,
     handleDeleteVideo,
+    isFavorite,
+    toggleFavorite,
   } = useGlobalVideoModal();
 
   if (!activeVideo) return null;
@@ -75,10 +79,27 @@ const GlobalVideoModal = () => {
           <div className="sidebar-footer-video">
             <button
               className="footer-btn copy-btn"
-              onClick={() => navigator.clipboard.writeText(window.location.href)}
+              onClick={() =>
+                navigator.clipboard.writeText(window.location.href)
+              }
+              title="Copiar enlace"
             >
               <CiLink />
             </button>
+
+            {token && (
+              <button
+                className={`footer-btn favorite-btn ${isFavorite ? "is-favorite" : ""}`}
+                onClick={toggleFavorite}
+              >
+                {isFavorite ? (
+                  <IoStar className="star-icon" />
+                ) : (
+                  <IoStarOutline className="star-icon" />
+                )}
+                <span>{isFavorite ? "Favorito" : "Añadir a favoritos"}</span>
+              </button>
+            )}
 
             {canEdit && (
               <button className="footer-btn edit-btn" onClick={handleOpenEdit}>
@@ -107,7 +128,7 @@ const GlobalVideoModal = () => {
         />
       )}
     </div>,
-    document.body
+    document.body,
   );
 };
 
