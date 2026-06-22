@@ -17,6 +17,7 @@ import GamesPage from "./pages/GamesPage";
 import FavoritesPage from "./pages/FavoritesPage";
 import SettingsPage from "./pages/SettingsPage";
 import LoginPage from "./pages/LoginPage";
+import GameDetailPage from "./pages/GameDetailPage/GameDetailPage";
 
 import "./App.css";
 
@@ -34,6 +35,7 @@ function App() {
           <Route element={<MainLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/games" element={<GamesPage />} />
+            <Route path="/games/:categoryId" element={<GameDetailPage />} />
 
             {/* Rutas con restricción de sesión activa */}
             <Route

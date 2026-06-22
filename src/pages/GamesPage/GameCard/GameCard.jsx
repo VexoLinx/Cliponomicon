@@ -1,12 +1,19 @@
+import { useNavigate } from 'react-router-dom';
 import React from 'react';
 import './GameCard.css';
 
 const GameCard = ({ game }) => {
+  const navigate = useNavigate();
+
   return (
-    <div className="game-card">
+    <div 
+      className="game-card" 
+      onClick={() => navigate(`/games/${game.id}`)}
+      style={{ cursor: 'pointer' }}
+    >
       <div className="game-card-image-container">
         <img 
-          src={game.image} 
+          src={game.image || game.thumbnail_horizontal_url} 
           alt={game.name} 
           className="game-card-image" 
         />

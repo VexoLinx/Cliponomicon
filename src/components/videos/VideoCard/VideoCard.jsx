@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { useVideoModal } from "../../../context/VideoContext";
 import { useVideoThumbnail } from "./useVideoThumbnail";
 import "./VideoCard.css";
@@ -6,10 +6,52 @@ import "./VideoCard.css";
 const VideoCard = ({ data = {} }) => {
   const { openVideo } = useVideoModal();
 
-  const videoCore = data?.video ? data.video : data;
-
+  const [videoCore, setVideoCore] = useState(data?.video ? data.video : data);
   const videoId = videoCore?.id || videoCore?._id || data?.id;
   const thumbnailSrc = useVideoThumbnail(videoId);
+
+  const currentCategory = videoCore?.category || videoCore?.categories?.[0];
+
+  const [categoryName, setCategoryName] = useState(
+    currentCategory?.name || videoCore?.gameName || data?.gameName || "General"
+  );
+  const [categoryIcon, setCategoryIcon] = useState(
+    currentCategory?.thumbnail_horizontal_url || videoCore?.gameIcon || data?.gameIcon || "https://via.placeholder.com/40"
+  );
+
+  useEffect(() => {
+    const freshCore = data?.video ? data.video : data;
+    setVideoCore(freshCore);
+  }, [data]);
+
+  useEffect(() => {
+    const cat = videoCore?.category || videoCore?.categories?.[0];
+    setCategoryName(cat?.name || videoCore?.gameName || data?.gameName || "General");
+    setCategoryIcon(cat?.thumbnail_horizontal_url || videoCore?.gameIcon || data?.gameIcon || "https://via.placeholder.com/40");
+  }, [videoCore]);
+
+  useEffect(() => {
+    const handleVideoRefresh = async () => {
+      if (!videoId) return;
+      try {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/videos/${videoId}`);
+        if (res.ok) {
+          const freshData = await res.json();
+          setVideoCore(freshData);
+        }
+      } catch (err) {
+        console.error("Error al sincronizar la tarjeta de vídeo editada:", err);
+      }
+    };
+
+    window.addEventListener("videos-changed", handleVideoRefresh);
+    window.addEventListener("categories_updated", handleVideoRefresh);
+
+    return () => {
+      window.removeEventListener("videos-changed", handleVideoRefresh);
+      window.removeEventListener("categories_updated", handleVideoRefresh);
+    };
+  }, [videoId]);
 
   const handlePlayVideo = (e) => {
     e.preventDefault();
@@ -27,6 +69,8 @@ const VideoCard = ({ data = {} }) => {
       title: videoCore?.title || data?.title || "Clip de Video",
       context: videoCore?.description || videoCore?.context || data?.description || "",
       isRegisteredOnly: videoCore?.is_registered_only ?? videoCore?.isRegisteredOnly ?? data?.is_registered_only ?? false,
+      gameName: categoryName,
+      gameIcon: categoryIcon,
       userHandle: videoCore?.owner?.username 
         ? `@${videoCore.owner.username}` 
         : (videoCore?.userHandle || data?.userHandle || "@usuario"),
@@ -51,12 +95,7 @@ const VideoCard = ({ data = {} }) => {
 
         <div className="overlay-rating">
           <span>{ratingToShow}</span>
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 24 24"
-            className="rating-star-icon"
-          >
+          <svg width="14" height="14" viewBox="0 0 24 24" className="rating-star-icon">
             <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
           </svg>
         </div>
@@ -68,16 +107,12 @@ const VideoCard = ({ data = {} }) => {
 
       <div className="card-footer">
         <div className="game-icon-container">
-          <img
-            src={videoCore?.gameIcon || data?.gameIcon || "https://via.placeholder.com/40"}
-            alt={videoCore?.gameName || data?.gameName || "Juego"}
-            className="game-icon"
-          />
+          <img src={categoryIcon} alt={categoryName} className="game-icon" />
         </div>
 
         <div className="card-details">
           <h3 className="video-title">{videoCore?.title || data?.title || "Sin título"}</h3>
-          <p className="game-name">{videoCore?.gameName || data?.gameName || "General"}</p>
+          <p className="game-name">{categoryName}</p>
           <div className="user-data">
             <span className="user-handle">{userHandleToShow}</span>
             <p className="separador">-</p>
