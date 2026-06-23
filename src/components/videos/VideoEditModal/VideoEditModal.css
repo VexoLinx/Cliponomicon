@@ -200,13 +200,6 @@
   background: #00e5ff;
 }
 
-.batch-preview-name {
-  text-overflow: ellipsis;
-  overflow: hidden;
-  white-space: nowrap;
-  max-width: 75%;
-}
-
 .batch-preview-size {
   color: #888888;
   font-variant-numeric: tabular-nums;
@@ -222,4 +215,23 @@
   margin-top: 10px;
   color: #cbd5e1;
   font-size: 0.9rem;
+}
+
+.batch-name-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.batch-file-icon {
+  flex-shrink: 0;
+  color: #8b5cf6;
+  font-size: 1.2rem;
+}
+
+.batch-file-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
