@@ -1,11 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { IoClose } from "react-icons/io5";
-import {
-  MdCloudUpload,
-  MdError,
-} from "react-icons/md";
+import { MdCloudUpload, MdError } from "react-icons/md";
 import "./VideoUpdateModal.css";
+import "../videos.css";
 
 const VideoUpdateModal = ({
   status,
@@ -16,6 +14,9 @@ const VideoUpdateModal = ({
   setDescription,
   isRegisteredOnly,
   setIsRegisteredOnly,
+  categoryId,
+  setCategoryId,
+  categoriesList = [],
   errorMessage,
   onClose,
   onSave,
@@ -23,11 +24,54 @@ const VideoUpdateModal = ({
   onRetry,
 }) => {
   const [aspectRatio, setAspectRatio] = useState("16 / 9");
+  const [localCategories, setLocalCategories] = useState(categoriesList);
 
   const handleVideoLoad = (e) => {
     const { videoWidth, videoHeight } = e.currentTarget;
     setAspectRatio(`${videoWidth} / ${videoHeight}`);
   };
+
+  useEffect(() => {
+    const fetchFreshCategories = async () => {
+      try {
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL || ""}/video-categories`,
+        );
+        if (res.ok) {
+          const data = await res.json();
+          setLocalCategories(data);
+        }
+      } catch (err) {
+        console.error(
+          "Error actualizando lista de categorías en el modal:",
+          err,
+        );
+      }
+    };
+
+    if (categoriesList.length === 0) {
+      fetchFreshCategories();
+    } else {
+      setLocalCategories(categoriesList);
+    }
+
+    window.addEventListener("categories_updated", fetchFreshCategories);
+    return () => {
+      window.removeEventListener("categories_updated", fetchFreshCategories);
+    };
+  }, [categoriesList]);
+
+  useEffect(() => {
+    if (!categoryId && video?.gameName && localCategories.length > 0) {
+      const match = localCategories.find(
+        (cat) => cat.name.toLowerCase() === video.gameName.toLowerCase(),
+      );
+
+      if (match) {
+        setCategoryId(String(match.id));
+      }
+    }
+  }, [video?.gameName, localCategories, categoryId, setCategoryId]);
 
   if (!video) return null;
 
@@ -77,6 +121,19 @@ const VideoUpdateModal = ({
                   <span className="meta-separator">|</span>
                   <span className="video-date-modal">{video.date}</span>
                 </div>
+
+                <select
+                  className="edit-select-category"
+                  value={categoryId || ""}
+                  onChange={(e) => setCategoryId(e.target.value)}
+                >
+                  <option value="">General</option>
+                  {localCategories.map((cat) => (
+                    <option key={cat.id} value={String(cat.id)}>
+                      {cat.name}
+                    </option>
+                  ))}
+                </select>
 
                 <label className="input-label">Descripción o Contexto</label>
                 <div className="video-context-box spec-edit">

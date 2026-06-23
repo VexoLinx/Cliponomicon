@@ -16,6 +16,8 @@ export const useGlobalVideoModal = () => {
   const [editIsRegistered, setEditIsRegistered] = useState(false);
   const [updateError, setUpdateError] = useState("");
 
+  const [editCategoryId, setEditCategoryId] = useState("");
+
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
@@ -94,14 +96,15 @@ export const useGlobalVideoModal = () => {
   };
 
   const handleOpenEdit = () => {
-    if (videoRef.current) {
-      videoRef.current.pause();
-    }
+    if (!activeVideo) return;
+
     setEditTitle(activeVideo.title || "");
-    setEditDescription(activeVideo.context || "");
-    setEditIsRegistered(activeVideo.isRegisteredOnly || false);
+    setEditDescription(activeVideo.description || "");
+    setEditIsRegistered(activeVideo.is_registered_only || false);
+
+    setEditCategoryId("");
+
     setEditStatus("editing");
-    setUpdateError("");
     setIsEditing(true);
   };
 
@@ -120,7 +123,7 @@ export const useGlobalVideoModal = () => {
             title: editTitle.trim(),
             description: editDescription.trim() || null,
             is_registered_only: Boolean(editIsRegistered),
-            category_ids: activeVideo.categories?.map((c) => c.id) || [],
+            category_ids: editCategoryId ? [editCategoryId] : [],
             tags: activeVideo.tags?.map((t) => t.name) || [],
           }),
         }
@@ -207,6 +210,8 @@ export const useGlobalVideoModal = () => {
     setEditDescription,
     editIsRegistered,
     setEditIsRegistered,
+    editCategoryId,
+    setEditCategoryId,
     updateError,
     handleOpenEdit,
     handleSaveChanges,

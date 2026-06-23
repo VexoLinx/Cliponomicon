@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import { IoStar, IoStarOutline, IoClose } from "react-icons/io5";
-import {useAuth} from "../../../context/AuthContext";
+import { useAuth } from "../../../context/AuthContext";
 import { CiLink } from "react-icons/ci";
 import VideoUpdateModal from "../VideoUpdateModal/VideoUpdateModal";
 import { useGlobalVideoModal } from "./useGlobalVideoModal";
@@ -24,6 +24,9 @@ const GlobalVideoModal = () => {
     setEditDescription,
     editIsRegistered,
     setEditIsRegistered,
+    editCategoryId,
+    setEditCategoryId,
+    categoriesList,
     updateError,
     handleOpenEdit,
     handleSaveChanges,
@@ -67,7 +70,11 @@ const GlobalVideoModal = () => {
               <span className="meta-separator">|</span>
               <span className="video-date-modal">{activeVideo.date}</span>
             </div>
-            <p className="game-name-modal">{activeVideo.gameName}</p>
+
+            <p className="game-name-modal">
+              {activeVideo.gameName || "General"}
+            </p>
+
             <div className="video-context-box">
               <p>
                 {activeVideo.context ||
@@ -120,6 +127,9 @@ const GlobalVideoModal = () => {
           setDescription={setEditDescription}
           isRegisteredOnly={editIsRegistered}
           setIsRegisteredOnly={setEditIsRegistered}
+          categoryId={editCategoryId}
+          setCategoryId={setEditCategoryId}
+          categoriesList={categoriesList || []}
           errorMessage={updateError}
           onClose={() => setIsEditing(false)}
           onSave={handleSaveChanges}

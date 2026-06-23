@@ -1,12 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import ReactDOM from "react-dom";
 import { IoClose } from "react-icons/io5";
+import { FcInfo } from "react-icons/fc";
+
+import VideoPreviewSection from "./components/VideoPreviewSection";
+import CategoryCombobox from "./components/CategoryCombobox";
+import UploadStatusSection from "./components/UploadStatusSection";
+
+import "./VideoEditModal.css";
 import "../videos.css";
-import { MdCloudUpload, MdCheckCircle, MdError } from "react-icons/md";
 
 const VideoEditModal = ({
   status,
-  file,
+  files = [],
+  currentUploadIndex = 0,
   videoPreview,
   title,
   setTitle,
@@ -14,20 +21,15 @@ const VideoEditModal = ({
   setDescription,
   isRegisteredOnly,
   setIsRegisteredOnly,
+  categoryId,
+  setCategoryId,
+  categories = [],
+  onRefreshCategories,
   errorMessage,
   onClose,
   onUpload,
   onRetry,
 }) => {
-  // Estado para guardar la relación de aspecto dinámica (por defecto 16/9)
-  const [aspectRatio, setAspectRatio] = useState("16 / 9");
-
-  const handleVideoLoad = (e) => {
-    const { videoWidth, videoHeight } = e.currentTarget;
-    // Calculamos y guardamos la relación exacta (Ej: 1920 / 1080)
-    setAspectRatio(`${videoWidth} / ${videoHeight}`);
-  };
-
   return ReactDOM.createPortal(
     <div
       className="modal-overlay"
@@ -36,60 +38,72 @@ const VideoEditModal = ({
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         {status === "editing" && (
           <>
-            {/* Pasamos la relación de aspecto dinámica mediante una variable CSS nativa */}
-            <div
-              className="modal-video-container"
-              style={{ "--video-aspect-ratio": aspectRatio }}
-            >
-              <video
-                controls
-                className="main-video"
-                src={videoPreview}
-                onLoadedMetadata={handleVideoLoad}
-              />
-            </div>
+            <VideoPreviewSection files={files} videoPreview={videoPreview} />
 
             <div className="modal-sidebar">
               <div className="sidebar-header-video">
-                <span className="now-playing">CONFIGURAR SUBIDA</span>
+                <span className="now-playing">
+                  {files.length > 1 ? "SUBIDA POR LOTES" : "CONFIGURAR SUBIDA"}
+                </span>
                 <button className="close-btn" onClick={onClose}>
                   <IoClose />
                 </button>
               </div>
 
               <div className="sidebar-info">
-                <label className="input-label">Título del vídeo *</label>
-                <input
-                  type="text"
-                  className="edit-input-title"
-                  maxLength={255}
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  placeholder="Escribe el título..."
+                {files.length === 1 ? (
+                  <>
+                    <label className="input-label">Título del vídeo *</label>
+                    <input
+                      type="text"
+                      className="edit-input-title"
+                      maxLength={255}
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      placeholder="Escribe el título..."
+                    />
+                  </>
+                ) : (
+                  <>
+                    <label className="input-label">
+                      Títulos de la Selección
+                    </label>
+                    <div className="selection-info-container">
+                      <FcInfo className="info-icon" />
+                      <div className="info-text-block">
+                        Los clips heredarán automáticamente el nombre de su
+                        archivo original como título provisional.
+                      </div>
+                    </div>
+                  </>
+                )}
+
+                <CategoryCombobox
+                  categoryId={categoryId}
+                  setCategoryId={setCategoryId}
+                  categories={categories}
+                  onRefreshCategories={onRefreshCategories}
                 />
 
-                <div className="video-meta-row">
-                  <span className="user-handle-modal">NUEVO CLIP</span>
-                  <span className="meta-separator">|</span>
-                  <span className="video-date-modal">Formato detectado</span>
-                </div>
-
-                <label className="input-label">Descripción o Contexto</label>
+                <label className="input-label">
+                  Descripción {files.length > 1 ? "común del lote" : ""}
+                </label>
                 <div className="video-context-box spec-edit">
                   <textarea
                     className="edit-textarea-context"
                     maxLength={5000}
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
-                    placeholder="Añade los detalles de tu jugada para la API..."
+                    placeholder={
+                      files.length > 1
+                        ? "Se aplicará este contexto a todos los clips..."
+                        : "Añade los detalles de tu jugada..."
+                    }
                   />
                 </div>
 
                 <div className="checkbox-wrapper">
-                  <label
-                    className="checkbox-label"
-                    title="El clip contiene edición activa como memes, música, recortes o efectos visuales."
-                  >
+                  <label className="checkbox-label">
                     <input
                       type="checkbox"
                       checked={isRegisteredOnly}
@@ -97,7 +111,9 @@ const VideoEditModal = ({
                       className="real-checkbox"
                     />
                     <span className="custom-checkbox-edit"></span>
-                    <span className="checkbox-text">Clip Editado</span>
+                    <span className="checkbox-text">
+                      {files.length > 1 ? "Clips Editados" : "Clip Editado"}
+                    </span>
                   </label>
                 </div>
 
@@ -111,7 +127,9 @@ const VideoEditModal = ({
                   Cancelar
                 </button>
                 <button className="footer-btn upload-btn" onClick={onUpload}>
-                  Publicar Vídeo
+                  {files.length > 1
+                    ? `Publicar ${files.length} Vídeos`
+                    : "Publicar Vídeo"}
                 </button>
               </div>
             </div>
@@ -119,36 +137,13 @@ const VideoEditModal = ({
         )}
 
         {status !== "editing" && (
-          <div className="modal-status-centered">
-            {status === "uploading" && (
-              <div className="upload-status uploading">
-                <MdCloudUpload className="icon-spin" />
-                <span className="file-name-scroll">{file?.name}</span>
-                <div className="progress-bar-container">
-                  <div className="progress-bar-fill"></div>
-                </div>
-                <p>Subiendo clip a la base de datos...</p>
-              </div>
-            )}
-
-            {status === "success" && (
-              <div className="upload-status success">
-                <MdCheckCircle />
-                <span>¡Vídeo enviado con éxito!</span>
-              </div>
-            )}
-
-            {status === "error" && (
-              <div className="upload-status error">
-                <MdError className="modal-error-icon" />
-                <span>Error al procesar la solicitud</span>
-                <p className="error-message">{errorMessage}</p>
-                <button onClick={onRetry} className="btn-retry">
-                  Corregir campos
-                </button>
-              </div>
-            )}
-          </div>
+          <UploadStatusSection
+            status={status}
+            files={files}
+            currentUploadIndex={currentUploadIndex}
+            errorMessage={errorMessage}
+            onRetry={onRetry}
+          />
         )}
       </div>
     </div>,

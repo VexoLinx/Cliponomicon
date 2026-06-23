@@ -23,13 +23,7 @@
 }
 
 .modal-video-container {
-    flex: 2.5;
-    background: #000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 0;
-    height: 100%;
+    flex-shrink: 0;
 }
 
 .main-video {
@@ -182,7 +176,7 @@
 
 .favorite-btn {
     background: #1e293b;
-    flex: 1; 
+    flex: 1;
     margin: 0 10px;
     height: 36px;
     border: none;
