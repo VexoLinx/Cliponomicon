@@ -3,7 +3,7 @@ const { mapUserDTO, mapSteamGameDTO, mapVideoDTO } = require('./mappers.service'
 const { PROXY_CONFIG, getAuthHeaders } = require('./proxy_config.service');
 
 const apiExterna = axios.create({
-    baseURL: PROXY_CONFIG.BASE_URL,
+    baseURL: PROXY_CONFIG.BASE_URL
 });
 
 // AUTH
@@ -18,12 +18,99 @@ async function login(username, password) {
 }
 
 async function getMe(token) {
-    const response = await apiExterna.get('/auth/me', {
-        headers: getAuthHeaders(token)
-    });
+    const response = await apiExterna.get('/auth/me', { headers: getAuthHeaders(token) });
     return mapUserDTO(response.data);
 }
 
+// ADMIN
+async function getAdminDashboard(token) {
+    const response = await apiExterna.get('/admin/dashboard', { headers: getAuthHeaders(token) });
+    return response.data;
+}
+
+// ADMIN-->VIDEOS
+async function getAdminVideos(params = {}, token) {
+    const response = await apiExterna.get('/admin/videos', { params, headers: getAuthHeaders(token) });
+    const data = response.data;
+    return {
+        id: data && data.id ? data.id.map(mapVideoDTO) : null,
+        tittle: data && data.title ? data.title.map(mapVideoDTO) : null,
+        ownerId: data && data.ownerId ? data.ownerId.map(mapVideoDTO) : null,
+        ownerUsername: data && data.ownerUsername ? data.ownerUsername.map(mapVideoDTO) : null,
+        visibility: data && data.visibility ? data.visibility : null,
+        duration: data && data.duration ? data.duration : null,
+        creartedAt: data && data.createdAt ? new Date(data.createdAt) : null,
+    };
+}
+
+async function getAdminVideo(videoId, token) {
+    const response = await apiExterna.get(`/admin/videos/${videoId}`, { headers: getAuthHeaders(token) });
+    return mapVideoDTO(response.data);
+}
+
+async function deleteAdminVideo(videoId, token) {
+    const response = await apiExterna.delete(`/admin/videos/${videoId}`, { headers: getAuthHeaders(token) });
+    return response.data;
+}
+
+async function AdminRetryVideoProcessing(videoId, token) {
+    const response = await apiExterna.post(`/admin/videos/${videoId}/processing/retry`, { headers: getAuthHeaders(token) });
+    return response.data;
+}
+
+//ADMIN-->WORKER
+
+async function getAdminWorkerEvents(params = {}, token) {
+    const response = await apiExterna.get('/admin/worker/events', params, {headers: getAuthHeaders(token) });
+    return response.data;
+}
+
+async function getAdminWorkerLogs(token) {
+    const response = await apiExterna.get('/admin/worker/logs', { headers: getAuthHeaders(token) });
+    return response.data;
+}
+
+// ADMIN-->JOBS
+async function getAdminJobs(token) {
+    const response = await apiExterna.get('/admin/queue/jobs', { headers: getAuthHeaders(token) });
+    return response.data;
+}
+
+async function getAdminJob(jobId, token) {
+    const response = await apiExterna.get(`/admin/queue/jobs/${jobId}/requeue`, { headers: getAuthHeaders(token) });
+    return response.data;
+}
+
+async function deleteAdminJob(jobId, token) {
+    const response = await apiExterna.delete(`/admin/queue/jobs/${jobId}`, { headers: getAuthHeaders(token) });
+    return response.data;
+}
+
+async function clearAdminFailedJobs(token) {
+    const response = await apiExterna.delete(`/admin/queue/failed-jobs`, { headers: getAuthHeaders(token) });
+    return response.data;
+}
+
+// ADMIN-->USERS
+
+async function getUsersAdmin(params = {}, token) {
+    const response = await apiExterna.get('/admin/users', params, {  headers: getAuthHeaders(token) });
+    return Array.isArray(response.data) ? response.data.map(mapUserDTO) : [];
+}
+async function getUserAdmin(userId, token) {
+    const response = await apiExterna.get(`/admin/users/${userId}`, { headers: getAuthHeaders(token) });
+    return mapUserDTO(response.data);
+}
+
+async function patchUserAdmin(userId, data = {}, token) {
+    const response = await apiExterna.patch(`/admin/users/${userId}`, data, { headers: getAuthHeaders(token) });
+    return mapUserDTO(response.data);
+}
+
+async function AdminAudit(token) {
+    const response = await apiExterna.get(`/admin/audit`, { headers: getAuthHeaders(token) });
+    return response.data;
+}
 // USERS
 async function listUsers(token) {
     const response = await apiExterna.get('/users', {
@@ -171,52 +258,69 @@ async function getVideoThumbnail(videoId, token) {
     return response.data;
 }
 
-// VIDEO FAVORITES
+
+// CATEGORY
+async function getCategories() {
+    const response = await apiExterna.get('/category');
+    return response.data;
+}
+
+async function CreateCategory(categoryData={}) {
+    const response = await apiExterna.post('/category', categoryData);
+    return response.data;
+}
+
+async function getSteamCategories(term) {
+    const response = await apiExterna.get(`/category/steam/search?term=${term}`);
+    return response.data;
+}
+
+async function importSteamCategory() {
+    const response = await apiExterna.post('/steam/category/steam/import');
+    return response.data;
+}
+
+
+
+//INTERACTIONS
 async function postFavoriteVideo(videoId, token) {
-    const response = await apiExterna.post(`/videos/${videoId}/favorite`, {}, {
-        headers: getAuthHeaders(token)
-    });
+    const response = await apiExterna.post(`/interactions/videos/${videoId}/favorite`, { headers: getAuthHeaders(token) });
     return response.data;
 }
 
 async function deleteFavoriteVideo(videoId, token) {
-    const response = await apiExterna.delete(`/videos/${videoId}/favorite`, {
-        headers: getAuthHeaders(token)
-    });
+    const response = await apiExterna.delete(`/interactions/videos/${videoId}/favorite`, { headers: getAuthHeaders(token) });
     return response.data;
 }
 
 async function getFavoriteVideosList(token) {
-    const response = await apiExterna.get(`/users/me/video-favorites`, {
-        headers: getAuthHeaders(token)
-    });
-    return Array.isArray(response.data) ? response.data.map(mapVideoDTO) : [];
+    const response = await apiExterna.get(`/interactions/me/video-favorites`, { headers: getAuthHeaders(token) });
+    const data = response.data;
+    if (data && data.items && Array.isArray(data.items)) {
+        return data.items.map(mapVideoDTO);
+    }
+    if (Array.isArray(data)) {
+        return data.map(mapVideoDTO);
+    }
+    return [];
 }
 
-// VIDEO REACTIONS
 async function getVideoReactions(videoId, token) {
-    const response = await apiExterna.get(`/videos/${videoId}/reactions`, {
-        headers: getAuthHeaders(token)
-    });
+    const response = await apiExterna.get(`/interactions/videos/${videoId}/reactions`, { headers: getAuthHeaders(token) });
     return response.data;
 }
 
-async function postVideoReaction(videoId, reactionType, token) {
-    const response = await apiExterna.post(`/videos/${videoId}/reactions`, {
-        reaction_type: reactionType
-    }, {
-        headers: getAuthHeaders(token)
-    });
+async function postVideoReaction(videoId, token) {
+    const response = await apiExterna.post(`/interactions/videos/${videoId}/reactions`, { 
+        reaction_type: "string"
+    }, { headers: getAuthHeaders(token) });
     return response.data;
 }
 
 async function deleteVideoReaction(videoId, token) {
-    const response = await apiExterna.delete(`/videos/${videoId}/reactions`, {
-        headers: getAuthHeaders(token)
-    });
+    const response = await apiExterna.delete(`/interactions/videos/${videoId}/reactions`, { headers: getAuthHeaders(token) });
     return response.data;
 }
-
 module.exports = {
     register,
     login,
@@ -243,5 +347,24 @@ module.exports = {
     getFavoriteVideosList,
     getVideoReactions,
     postVideoReaction,
-    deleteVideoReaction
+    deleteVideoReaction,
+    getCategories,
+    CreateCategory,
+    getSteamCategories,
+    importSteamCategory,
+    getAdminDashboard,
+    getAdminVideos,
+    getAdminVideo,
+    deleteAdminVideo,
+    AdminRetryVideoProcessing,
+    getAdminWorkerEvents,
+    getAdminWorkerLogs,
+    getAdminJobs,
+    getAdminJob,
+    deleteAdminJob,
+    clearAdminFailedJobs,
+    getUsersAdmin,
+    getUserAdmin,
+    patchUserAdmin,
+    AdminAudit,
 };
