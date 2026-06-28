@@ -27,7 +27,26 @@ const {
     getFavoriteVideosList,
     getVideoReactions,
     postVideoReaction,
-    deleteVideoReaction
+    deleteVideoReaction,
+    getCategories,
+    CreateCategory,
+    getSteamCategories,
+    importSteamCategory,
+    getAdminDashboard,
+    getAdminVideos,
+    getAdminVideo,
+    deleteAdminVideo,
+    AdminRetryVideoProcessing,
+    getAdminWorkerEvents,
+    getAdminWorkerLogs,
+    getAdminJobs,
+    getAdminJob,
+    deleteAdminJob,
+    clearAdminFailedJobs,
+    getUsersAdmin,
+    getUserAdmin,
+    patchUserAdmin,
+    AdminAudit
 } = require("../services/externa.service");
 
 // AUTH
@@ -54,6 +73,140 @@ router.post("/auth/login", async (req, res) => {
 router.get("/auth/me", async (req, res) => {
     try {
         const data = await getMe();
+        res.json({ ok: true, data });
+    } catch (error) {
+        res.status(error.response?.status || 500).json({ ok: false, message: error.message });
+    }
+});
+
+
+// ADMIN 
+router.get("/admin/dashboard", async (req, res) => {
+    try {
+        const data = await getAdminDashboard();
+        res.json({ ok: true, data });
+    } catch (error) {
+        res.status(error.response?.status || 500).json({ ok: false, message: error.message });
+    }
+});
+
+router.get("/admin/videos", async (req, res) => {
+    try {
+        const data = await getAdminVideos(req.query);
+        res.json({ ok: true, data });
+    } catch (error) {
+        res.status(error.response?.status || 500).json({ ok: false, message: error.message });
+    }
+});
+
+router.get("/admin/videos/:id", async (req, res) => {
+    try {
+        const data = await getAdminVideo(req.params.id);
+        res.json({ ok: true, data });
+    } catch (error) {
+        res.status(error.response?.status || 500).json({ ok: false, message: error.message });
+    }
+});
+router.delete("/admin/videos/:id", async (req, res) => {
+    try {
+        const data = await deleteAdminVideo(req.params.id);
+        res.json({ ok: true, data });
+    } catch (error) {
+        res.status(error.response?.status || 500).json({ ok: false, message: error.message });
+    }
+});
+
+router.post("/admin/videos/:id/retry-processing", async (req, res) => {
+    try {
+        const data = await AdminRetryVideoProcessing(req.params.id);
+        res.json({ ok: true, data });
+    } catch (error) {
+        res.status(error.response?.status || 500).json({ ok: false, message: error.message });
+    }
+});
+
+router.get("/admin/workers/events", async (req, res) => {
+    try {
+        const data = await getAdminWorkerEvents();
+        res.json({ ok: true, data });
+    } catch (error) {
+        res.status(error.response?.status || 500).json({ ok: false, message: error.message });
+    }
+});
+
+router.get("/admin/workers/logs", async (req, res) => {
+    try {
+        const data = await getAdminWorkerLogs();
+        res.json({ ok: true, data });
+    } catch (error) {
+        res.status(error.response?.status || 500).json({ ok: false, message: error.message });
+    }
+});
+router.get("/admin/jobs/", async (req, res) => {
+    try {
+        const data = await getAdminJobs();
+        res.json({ ok: true, data });
+    } catch (error) {
+        res.status(error.response?.status || 500).json({ ok: false, message: error.message });
+    }
+});
+
+router.get("/admin/jobs/:id", async (req, res) => {
+    try {
+        const data = await getAdminJob(req.params.id);
+        res.json({ ok: true, data });
+    }  catch (error) {
+        res.status(error.response?.status || 500).json({ ok: false, message: error.message });
+    }
+});
+
+router.delete("/admin/jobs/:id", async (req, res) => {
+    try {
+        const data = await deleteAdminJob(req.params.id);
+        res.json({ ok: true, data });
+    }catch (error) {
+        res.status(error.response?.status || 500).json({ ok: false, message: error.message });
+    }
+});
+router.delete("/admin/jobs/failed/clear", async (req, res) => {
+    try {
+        const data = await clearAdminFailedJobs();
+        res.json({ ok: true, data });
+    } catch (error) {
+        res.status(error.response?.status || 500).json({ ok: false, message: error.message });
+    }
+});
+
+router.get("/admin/users", async (req, res) => {
+    try {
+        const data = await getUsersAdmin();
+        res.json({ ok: true, data });
+    } catch (error) {
+        res.status(error.response?.status || 500).json({ ok: false, message: error.message });
+}
+});
+
+router.get("/admin/users/:id", async (req, res) => {
+    try {
+        const data = await getUserAdmin(req.params.id);
+        res.json({ ok: true, data });
+    } catch (error) {
+        res.status(error.response?.status || 500).json({ ok: false, message: error.message });
+    }
+});
+
+router.patch("/admin/users/:id", async (req, res) => {
+    try {
+        const data = await patchUserAdmin(req.params.id, req.body);
+        res.json({ ok: true, data });
+    } catch (error) {
+        res.status(error.response?.status || 500).json({ ok: false, message: error.message });
+    }
+});
+
+router.get("/admin/audit", async (req, res) => {
+    try {
+        const data = await AdminAudit();
         res.json({ ok: true, data });
     } catch (error) {
         res.status(error.response?.status || 500).json({ ok: false, message: error.message });
@@ -251,5 +404,7 @@ router.delete("/videos/:id/reactions", async (req, res) => {
         res.status(error.response?.status || 500).json({ ok: false, message: error.message });
     }
 });
+
+
 
 module.exports = router;
