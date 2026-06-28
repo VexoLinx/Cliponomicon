@@ -15,7 +15,7 @@ const FavoritesPage = () => {
     }
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/users/me/video-favorites`,
+        `${import.meta.env.VITE_API_URL}/interactions/me/video-favorites`,
         {
           headers: {
             Authorization: `Bearer ${token}`,

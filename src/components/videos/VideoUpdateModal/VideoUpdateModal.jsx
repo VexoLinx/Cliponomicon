@@ -35,7 +35,7 @@ const VideoUpdateModal = ({
     const fetchFreshCategories = async () => {
       try {
         const res = await fetch(
-          `${import.meta.env.VITE_API_URL || ""}/video-categories`,
+          `${import.meta.env.VITE_API_URL || ""}/category`,
         );
         if (res.ok) {
           const data = await res.json();

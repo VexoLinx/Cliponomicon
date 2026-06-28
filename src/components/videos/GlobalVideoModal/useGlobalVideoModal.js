@@ -15,7 +15,6 @@ export const useGlobalVideoModal = () => {
   const [editDescription, setEditDescription] = useState("");
   const [editIsRegistered, setEditIsRegistered] = useState(false);
   const [updateError, setUpdateError] = useState("");
-
   const [editCategoryId, setEditCategoryId] = useState("");
 
   const [isFavorite, setIsFavorite] = useState(false);
@@ -28,7 +27,7 @@ export const useGlobalVideoModal = () => {
 
     const checkIfFavorite = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/users/me/video-favorites?limit=100`, {
+        const response = await fetch(`${import.meta.env.VITE_API_URL}/interactions/me/video-favorites?limit=100`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
@@ -68,7 +67,7 @@ export const useGlobalVideoModal = () => {
     }
 
     const method = isFavorite ? "DELETE" : "POST";
-    const url = `${import.meta.env.VITE_API_URL}/videos/${activeVideo.id}/favorite`;
+    const url = `${import.meta.env.VITE_API_URL}/interactions/videos/${activeVideo.id}/favorite`;
 
     try {
       const response = await fetch(url, {
@@ -83,6 +82,7 @@ export const useGlobalVideoModal = () => {
         return;
       }
 
+      // Según tu docu, devuelve 204 (No Content) tanto en POST como en DELETE al tener éxito
       if (response.status === 204) {
         setIsFavorite(!isFavorite);
         window.dispatchEvent(new Event("favorites-changed"));
@@ -101,9 +101,7 @@ export const useGlobalVideoModal = () => {
     setEditTitle(activeVideo.title || "");
     setEditDescription(activeVideo.description || "");
     setEditIsRegistered(activeVideo.is_registered_only || false);
-
     setEditCategoryId("");
-
     setEditStatus("editing");
     setIsEditing(true);
   };

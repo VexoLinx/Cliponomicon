@@ -20,7 +20,7 @@ export const useSteamSearch = (onImportSuccess) => {
         setIsSearching(true);
         try {
             const res = await fetch(
-                `${API_URL}/video-categories/steam/search?term=${encodeURIComponent(query)}`,
+                `${API_URL}/category/steam/search?term=${encodeURIComponent(query)}`,
                 {
                     headers: {
                         Accept: "application/json",
@@ -46,13 +46,13 @@ export const useSteamSearch = (onImportSuccess) => {
 
         try {
             const bodyData = {
-                steam_appid: game.steam_appid || game.id || 1,
-                steamgriddb_game_id: game.steamgriddb_game_id || game.id || 1
+                steam_appid: game.steam_appid || null,
+                steamgriddb_game_id: game.id || game.steamgriddb_game_id,
             };
 
             console.log("Sending to API:", bodyData);
 
-            const res = await fetch(`${API_URL}/video-categories/steam/import`, {
+            const res = await fetch(`${API_URL}/category/steam/import`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

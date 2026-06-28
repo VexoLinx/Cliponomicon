@@ -34,12 +34,17 @@ const mapApiVideoToCard = (video) => {
         finalUserHandle = `@${video.owner_id.substring(0, 8)}`;
     }
 
+    const mainCategory = video.categories?.[0] || video.category;
+
     return {
         id: video.id,
         thumbnail: getVideoThumbnailUrl(video.id),
-        gameIcon: "https://placehold.co/40x40",
+        gameIcon: mainCategory?.thumbnail_horizontal_url || 
+                  mainCategory?.horizontal_thumbnail_url || 
+                  mainCategory?.thumbnail_url || 
+                  "https://via.placeholder.com/40",
         title: video.title,
-        gameName: video.categories?.[0]?.name || "Sin categoria",
+        gameName: mainCategory?.name || "Sin categoría",
         date: formatVideoDate(video.created_at),
         duration: formatDuration(video.duration_seconds),
         rating: String(video.favorite_count ?? 0),
