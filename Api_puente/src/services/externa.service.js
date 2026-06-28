@@ -237,23 +237,23 @@ async function getVideoThumbnail(videoId, token) {
 
 
 // CATEGORY
-async function getCategories() {
-    const response = await apiExterna.get('/category');
+async function getCategories(token) {
+    const response = await apiExterna.get('/category', { headers: getAuthHeaders(token) });
     return response.data;
 }
 
-async function CreateCategory(categoryData={}) {
-    const response = await apiExterna.post('/category', categoryData);
+async function CreateCategory(categoryData={}, token) {
+    const response = await apiExterna.post('/category', categoryData, { headers: getAuthHeaders(token) });
     return response.data;
 }
 
-async function getSteamCategories(term) {
-    const response = await apiExterna.get(`/category/steam/search?term=${term}`);
+async function getSteamCategories(term, token) {
+    const response = await apiExterna.get(`/category/steam/search?term=${term}`, { headers: getAuthHeaders(token) });
     return response.data;
 }
 
-async function importSteamCategory() {
-    const response = await apiExterna.post('/steam/category/steam/import');
+async function importSteamCategory(token) {
+    const response = await apiExterna.post('/steam/category/steam/import', {}, { headers: getAuthHeaders(token) });
     return response.data;
 }
 
