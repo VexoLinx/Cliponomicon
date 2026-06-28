@@ -1,67 +1,121 @@
-import { MdFileUpload, MdCheckCircle, MdCloudUpload } from "react-icons/md";
-import React, { useState, useRef } from "react";
+import { useAuth } from "../../context/AuthContext";
+import VideoUploadButton from "./VideoUploadButton";
+import React, { useState, useEffect } from "react";
+import VideoEditModal from "./../VideoEditModal";
 import "./VideoUploader.css";
 
+const API_URL = import.meta.env.VITE_API_URL || "";
+const VIDEOS_URL = `${API_URL}/videos`;
+
 const VideoUploader = () => {
-  const [status, setStatus] = useState("idle"); // idle, uploading, success
-  const [fileName, setFileName] = useState("");
-  const fileInputRef = useRef(null);
+  const [status, setStatus] = useState("idle");
+  const [file, setFile] = useState(null);
+  const [videoPreview, setVideoPreview] = useState("");
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [isRegisteredOnly, setIsRegisteredOnly] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const { token } = useAuth();
 
-  const startUpload = (file) => {
-    if (!file || !file.type.startsWith("video/")) return;
+  useEffect(() => {
+    return () => {
+      if (videoPreview) URL.revokeObjectURL(videoPreview);
+    };
+  }, [videoPreview]);
 
-    setFileName(file.name);
-    setStatus("uploading");
-
-    // --- Simulación de subida automática ---
-    setTimeout(() => {
-      setStatus("success");
-      
-      // Volver al estado inicial después de 3 segundos
-      setTimeout(() => {
-        setStatus("idle");
-        setFileName("");
-      }, 3000);
-    }, 2500);
+  const handleFileSelect = (selectedFile) => {
+    setFile(selectedFile);
+    setVideoPreview(URL.createObjectURL(selectedFile));
+    setTitle(selectedFile.name.replace(/\.[^/.]+$/, ""));
+    setStatus("editing");
   };
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    startUpload(file);
+  const handleUpload = async () => {
+    if (!title.trim()) {
+      setErrorMessage("El título es obligatorio.");
+      return;
+    }
+
+    setStatus("uploading");
+    setErrorMessage("");
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("title", title);
+    formData.append("description", description);
+    formData.append("is_registered_only", isRegisteredOnly);
+
+    try {
+      console.log("Upload API_URL:", API_URL);
+      console.log("Upload URL:", VIDEOS_URL);
+
+      const response = await fetch(VIDEOS_URL, {
+        method: "POST",
+        headers: {
+          Accept: "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: formData,
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(
+          errorData.detail?.[0]?.msg || "Error al subir el archivo",
+        );
+      }
+
+      await response.json();
+      setStatus("success");
+
+      window.dispatchEvent(new Event("videos-changed"));
+
+      setTimeout(() => {
+        resetUploader();
+      }, 3000);
+    } catch (error) {
+      console.error(error);
+      setErrorMessage(error.message);
+      setStatus("error");
+    }
+  };
+
+  const resetUploader = () => {
+    if (videoPreview) URL.revokeObjectURL(videoPreview);
+    setStatus("idle");
+    setFile(null);
+    setVideoPreview("");
+    setTitle("");
+    setDescription("");
+    setIsRegisteredOnly(false);
+    setErrorMessage("");
   };
 
   return (
-    <div className="video-upload-container">
+    <div className="video-uploader-wrapper">
       {status === "idle" && (
-        <div className="upload-dropzone" onClick={() => fileInputRef.current.click()}>
-          <MdFileUpload />
-          <span>Seleccionar Vídeo</span>
-          <input 
-            type="file" 
-            ref={fileInputRef} 
-            onChange={handleFileChange} 
-            accept="video/*" 
-            hidden 
-          />
-        </div>
+        <>
+          <div className="tool-title">Subir nuevo contenido</div>
+          <VideoUploadButton onFileSelect={handleFileSelect} />
+        </>
       )}
 
-      {status === "uploading" && (
-        <div className="upload-status uploading">
-          <MdCloudUpload className="icon-spin" />
-          <span className="file-name-scroll">{fileName}</span>
-          <div className="progress-bar-container">
-            <div className="progress-bar-fill"></div>
-          </div>
-          <p>Subiendo...</p>
-        </div>
-      )}
-
-      {status === "success" && (
-        <div className="upload-status success">
-          <MdCheckCircle />
-          <span>¡Vídeo enviado!</span>
-        </div>
+      {status !== "idle" && (
+        <VideoEditModal
+          status={status}
+          file={file}
+          videoPreview={videoPreview}
+          title={title}
+          setTitle={setTitle}
+          description={description}
+          setDescription={setDescription}
+          isRegisteredOnly={isRegisteredOnly}
+          setIsRegisteredOnly={setIsRegisteredOnly}
+          errorMessage={errorMessage}
+          onClose={resetUploader}
+          onUpload={handleUpload}
+          onRetry={() => setStatus("editing")}
+        />
       )}
     </div>
   );
