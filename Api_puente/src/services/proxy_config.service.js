@@ -10,26 +10,26 @@
 
 const PROXY_CONFIG = {
     // URL base centralizada
-    BASE_URL: process.env.API_EXTERNA_URL,
+    BASE_URL: process.env.VITE_API_URL || 'http://localhost:8000',
 
-    // Configuración predeterminada para peticiones CORS
-    FETCH_OPTIONS: {
-        mode: 'cors',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': `Bearer ${process.env.API_TOKEN || ''}`
-        }
+    // Configuración predeterminada para peticiones
+    DEFAULT_HEADERS: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
     }
 };
 
 /**
- * Helper para inyectar el token de autorización si está disponible.
+ * Helper para inyectar el token de autorización de forma dinámica.
  */
-// const getAuthHeaders = (token) => {
-//     return token ? { 'Authorization': `Bearer ${token}` } : {};
-// };
+const getAuthHeaders = (token) => {
+    return {
+        ...PROXY_CONFIG.DEFAULT_HEADERS,
+        ...(token ? { 'Authorization': `Bearer ${token}` } : {})
+    };
+};
 
 module.exports = {
     PROXY_CONFIG,
+    getAuthHeaders,
 };
