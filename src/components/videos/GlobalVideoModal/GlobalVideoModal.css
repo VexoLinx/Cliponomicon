@@ -12,16 +12,6 @@
     z-index: 1000;
 }
 
-.modal-content {
-    background: #040412;
-    /* max-width: 1000px; */
-    height: 550px;
-    display: flex;
-    border-radius: 8px;
-    overflow: hidden;
-    border: 1px solid #1e293b;
-}
-
 .modal-video-container {
     flex-shrink: 0;
 }

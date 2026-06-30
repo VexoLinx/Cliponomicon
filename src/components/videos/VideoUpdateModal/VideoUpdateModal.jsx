@@ -85,7 +85,6 @@ const VideoUpdateModal = ({
           <>
             <div
               className="modal-video-container"
-              style={{ "--video-aspect-ratio": aspectRatio }}
             >
               <video
                 controls
