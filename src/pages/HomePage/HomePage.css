@@ -1,15 +1,15 @@
 .content-area {
-    flex: 1;
-    padding: 24px;
-    overflow-y: auto;
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
 }
 
 .video-grid {
-    display: grid;
-    align-items: start;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 24px;
-    width: 100%;
+  display: grid;
+  align-items: start;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  width: 100%;
 }
 
 @media (max-width: 1440px) {

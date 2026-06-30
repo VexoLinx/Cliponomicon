@@ -3,15 +3,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-      target: frontend
+      target: final
       args:
-        - VITE_API_URL=${API_URL}
+        VITE_API_URL: ${API_URL:-http://localhost:3000/api}
     container_name: cliponomicon
     ports:
-      - "8500:80"
+      - "${APP_PORT:-8000}:80"
     restart: unless-stopped
     networks:
-      - proxy_network
+      proxy_network:
+        aliases:
+          - ${PROXY_NETWORK_ALIAS:-cliponomicon}
 
     env_file:
       - path: stack.env
@@ -19,7 +21,25 @@ services:
       - path: .env
         required: false
 
+  api-puente:
+    build:
+      context: ./Api_puente
+      dockerfile: Dockerfile
+    container_name: api-puente
+    restart: always
+    ports:
+      - "${API_PUENTE_PORT:-3000}:3000"
+    env_file:
+      - path: ./Api_puente/.env
+        required: false
+    environment:
+      NODE_ENV: production
+    networks:
+      proxy_network:
+        aliases:
+          - ${API_PUENTE_NETWORK_ALIAS:-api-puente}
+
 networks:
   proxy_network:
     external: true
-    name: ${PROXY_NETWORK_NAME}
+    name: ${PROXY_NETWORK_NAME:-caddy}

@@ -113,22 +113,30 @@ async function AdminAudit(token) {
 }
 // USERS
 async function listUsers(token) {
-    const response = await apiExterna.get('/users', { headers: getAuthHeaders(token) });
+    const response = await apiExterna.get('/users', {
+        headers: getAuthHeaders(token)
+    });
     return Array.isArray(response.data) ? response.data.map(mapUserDTO) : [];
 }
 
 async function getUser(userId, token) {
-    const response = await apiExterna.get(`/users/${userId}`, { headers: getAuthHeaders(token) });
+    const response = await apiExterna.get(`/users/${userId}`, {
+        headers: getAuthHeaders(token)
+    });
     return mapUserDTO(response.data);
 }
 
 async function patchUser(userId, data = {}, token) {
-    const response = await apiExterna.patch(`/users/${userId}`, data, { headers: getAuthHeaders(token) });
+    const response = await apiExterna.patch(`/users/${userId}`, data, {
+        headers: getAuthHeaders(token)
+    });
     return mapUserDTO(response.data);
 }
 
 async function deleteUser(userId, token) {
-    const response = await apiExterna.delete(`/users/${userId}`, { headers: getAuthHeaders(token) });
+    const response = await apiExterna.delete(`/users/${userId}`, {
+        headers: getAuthHeaders(token)
+    });
     return response.data;
 }
 
@@ -144,7 +152,9 @@ async function putAvatar(userId, formData, token) {
 }
 
 async function deleteAvatar(userId, token) {
-    const response = await apiExterna.delete(`/users/${userId}/avatar`, { headers: getAuthHeaders(token) });
+    const response = await apiExterna.delete(`/users/${userId}/avatar`, {
+        headers: getAuthHeaders(token)
+    });
     return mapUserDTO(response.data);
 }
 
@@ -160,13 +170,17 @@ async function getAvatar(userId, token) {
 async function changePassword(userId, newPassword, currentPassword = null, token) {
     const payload = { new_password: newPassword };
     if (currentPassword) payload.current_password = currentPassword;
-    const response = await apiExterna.patch(`/users/${userId}/password`, payload, { headers: getAuthHeaders(token) });
+    const response = await apiExterna.patch(`/users/${userId}/password`, payload, {
+        headers: getAuthHeaders(token)
+    });
     return response.data;
 }
 
 // STEAM
 async function getSteamGames(steamIdOrVanity, token) {
-    const response = await apiExterna.get(`/steam/users/${steamIdOrVanity}/games`, { headers: getAuthHeaders(token) });
+    const response = await apiExterna.get(`/steam/users/${steamIdOrVanity}/games`, {
+        headers: getAuthHeaders(token)
+    });
     if (response.data && response.data.games && Array.isArray(response.data.games)) {
         return response.data.games.map(mapSteamGameDTO);
     }
@@ -178,14 +192,17 @@ async function postVideo(formData, token) {
     const response = await apiExterna.post('/videos', formData, {
         headers: { 
             ...getAuthHeaders(token),
-            'Content-Type': 'multipart/form-data'
+            'Content-Type': 'multipart/form-data' 
         }
     });
     return mapVideoDTO(response.data);
 }
 
 async function getVideos(params = {}, token) {
-    const response = await apiExterna.get('/videos', { params, headers: getAuthHeaders(token) });
+    const response = await apiExterna.get('/videos', { 
+        params,
+        headers: getAuthHeaders(token)
+    });
     const data = response.data;
     return {
         items: data && data.items ? data.items.map(mapVideoDTO) : [],
@@ -196,17 +213,23 @@ async function getVideos(params = {}, token) {
 }
 
 async function getVideo(videoId, token) {
-    const response = await apiExterna.get(`/videos/${videoId}`, { headers: getAuthHeaders(token) });
+    const response = await apiExterna.get(`/videos/${videoId}`, {
+        headers: getAuthHeaders(token)
+    });
     return mapVideoDTO(response.data);
 }
 
 async function patchVideo(videoId, data = {}, token) {
-    const response = await apiExterna.patch(`/videos/${videoId}`, data, { headers: getAuthHeaders(token) });
+    const response = await apiExterna.patch(`/videos/${videoId}`, data, {
+        headers: getAuthHeaders(token)
+    });
     return mapVideoDTO(response.data);
 }
 
 async function deleteVideo(videoId, token) {
-    const response = await apiExterna.delete(`/videos/${videoId}`, { headers: getAuthHeaders(token) });
+    const response = await apiExterna.delete(`/videos/${videoId}`, {
+        headers: getAuthHeaders(token)
+    });
     return response.data;
 }
 

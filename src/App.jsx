@@ -1,34 +1,43 @@
-import GlobalVideoModal from "./components/GlobalVideoModal/GlobalVideoModal";
-import ProtectedRoute from "./components/ProtectedRoute/ProtectedRoute";
-import FavoritesPage from "./pages/FavoritesPage/FavoritesPage";
-import SettingsPage from "./pages/SettingsPage/SettingsPage";
-import { VideoProvider } from "./context/VideoContext";
-import MainLayout from "./components/layout/MainLayout";
-import GamesPage from "./pages/GamesPage/GamesPage";
-import { AuthProvider } from "./context/AuthContext";
+import React, { useState } from "react";
 import { Route, Routes } from "react-router-dom";
-import HomePage from "./pages/HomePage/HomePage";
+
+// Contextos globales
+import { AuthProvider } from "./context/AuthContext";
+import { VideoProvider } from "./context/VideoContext";
+
+// Componentes de infraestructura y layouts
+import MainLayout from "./components/layout/MainLayout";
+import ProtectedRoute from "./components/auth/ProtectedRoute";
+import GlobalVideoModal from "./components/videos/GlobalVideoModal";
 import ApiTester from "./components/ApiTester";
-import Login from "./pages/Login/Login";
-import { useState, React } from "react";
+
+// Páginas de la aplicación
+import HomePage from "./pages/HomePage";
+import GamesPage from "./pages/GamesPage";
+import FavoritesPage from "./pages/FavoritesPage";
+import SettingsPage from "./pages/SettingsPage";
+import LoginPage from "./pages/LoginPage";
+import GameDetailPage from "./pages/GameDetailPage/GameDetailPage";
+
 import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0);
   const [showApiTester, setShowApiTester] = useState(false);
 
   return (
     <AuthProvider>
-      {/*La función de mostrar el probador de API se ha movido a la pestaña de Opciones en la página de Settings*/}
+      {/* Controlado desde la pestaña Opciones en SettingsPage */}
       {showApiTester && <ApiTester />}
+
       <VideoProvider>
         <Routes>
-          {/*Rutas con Sidebar y TopBar*/}
+          {/* Rutas con estructura MainLayout (Sidebar + TopBar) */}
           <Route element={<MainLayout />}>
             <Route path="/" element={<HomePage />} />
             <Route path="/games" element={<GamesPage />} />
+            <Route path="/games/:categoryId" element={<GameDetailPage />} />
 
-            {/* Rutas protegidas */}
+            {/* Rutas con restricción de sesión activa */}
             <Route
               path="/favorites"
               element={
@@ -47,10 +56,11 @@ function App() {
             />
           </Route>
 
-          {/*Rutas sin Sidebar ni TopBar*/}
-          <Route path="/login" element={<Login />} />
+          {/* Rutas limpias independientes */}
+          <Route path="/login" element={<LoginPage />} />
         </Routes>
 
+        {/* Reproductor global inyectado dinámicamente */}
         <GlobalVideoModal />
       </VideoProvider>
     </AuthProvider>
