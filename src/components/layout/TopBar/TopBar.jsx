@@ -2,7 +2,6 @@ import { BsSearch } from "react-icons/bs";
 import React from 'react';
 import './TopBar.css';
 
-
 const TopBar = () => {
   return (
     <header className="topbar">
@@ -18,7 +17,7 @@ const TopBar = () => {
       <div className="filter-container">
         <select className="sort-select">
           <option value="newest">Nuevos</option>
-          <option value="popular">Mas visto</option>
+          <option value="popular">Más visto</option>
         </select>
       </div>
     </header>

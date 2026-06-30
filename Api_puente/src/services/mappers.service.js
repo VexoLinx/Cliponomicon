@@ -31,6 +31,7 @@ const mapVideoDTO = (data) => ({
     title: data.title,
     description: data.description,
     ownerId: data.owner_id,
+    ownerUsername: data.owner,
     isRegisteredOnly: data.is_registered_only,
     processingStatus: data.processing_status,
     favoriteCount: data.favorite_count || 0,

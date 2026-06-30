@@ -1,14 +1,12 @@
-import VideoUploader from "../../VideoUploader/VideoUploader";
+import React from "react";
+import VideoUploader from "../../videos/VideoUploader/VideoUploader";
+import { IoMdPricetags, IoMdSettings } from "react-icons/io";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../../context/AuthContext";
 import { GiConsoleController } from "react-icons/gi";
-import { IoMdPricetags } from "react-icons/io";
+import { GoStarFill, GoVideo } from "react-icons/go";
 import { CiLogin, CiLogout } from "react-icons/ci";
 import Enchiridion from "../../../assets/logo.png";
-import { IoMdSettings } from "react-icons/io";
-import { GoStarFill } from "react-icons/go";
-import { GoVideo } from "react-icons/go";
-import React from "react";
 import "./Sidebar.css";
 
 const Sidebar = () => {
@@ -95,11 +93,7 @@ const Sidebar = () => {
         </ul>
       </nav>
 
-      <div className="sidebar-tools">
-        {/* <input type="range" min="0" max="100" className="custom-slider" /> */}
-
-        {token && <VideoUploader />}
-      </div>
+      <div className="sidebar-tools">{token && <VideoUploader />}</div>
 
       <div className="sidebar-footer">
         {token && user && <div className="login-user">@{user.username}</div>}
