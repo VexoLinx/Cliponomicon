@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { useSearch } from "../../context/SearchContext";
 
 const API_URL = import.meta.env.VITE_API_URL || "";
 const VIDEOS_URL = `${API_URL}/videos`;
@@ -39,10 +40,10 @@ const mapApiVideoToCard = (video) => {
     return {
         id: video.id,
         thumbnail: getVideoThumbnailUrl(video.id),
-        gameIcon: mainCategory?.thumbnail_horizontal_url || 
-                  mainCategory?.horizontal_thumbnail_url || 
-                  mainCategory?.thumbnail_url || 
-                  "https://via.placeholder.com/40",
+        gameIcon: mainCategory?.thumbnail_horizontal_url ||
+            mainCategory?.horizontal_thumbnail_url ||
+            mainCategory?.thumbnail_url ||
+            "https://via.placeholder.com/40",
         title: video.title,
         gameName: mainCategory?.name || "Sin categoría",
         date: formatVideoDate(video.created_at),
@@ -59,9 +60,21 @@ export const useHomeVideos = () => {
     const [videos, setVideos] = useState([]);
     const [statusText, setStatusText] = useState("Cargando videos...");
 
+    const { filters } = useSearch();
+
     const loadVideos = async (signal = null) => {
         try {
-            const response = await fetch(VIDEOS_URL, {
+            const url = new URL(VIDEOS_URL);
+
+            if (filters.text) {
+                url.searchParams.append("title", filters.text);
+            }
+
+            if (filters.tag) {
+                url.searchParams.append("tags", filters.tag);
+            }
+
+            const response = await fetch(url.toString(), {
                 headers: {
                     Accept: "application/json",
                 },
@@ -76,7 +89,7 @@ export const useHomeVideos = () => {
 
             const items = Array.isArray(data.items) ? data.items : [];
             setVideos(items.map(mapApiVideoToCard));
-            setStatusText(items.length ? "" : "No hay videos.");
+            setStatusText(items.length ? "" : "No hay videos que coincidan con tu búsqueda.");
         } catch (error) {
             if (error.name === "AbortError") return;
             setStatusText(error.message);
@@ -86,19 +99,45 @@ export const useHomeVideos = () => {
     useEffect(() => {
         const controller = new AbortController();
 
-        loadVideos(controller.signal);
+        const loadVideos = async () => {
+            try {
+                const url = new URL(VIDEOS_URL);
 
-        const handleVideosRefresh = () => {
-            loadVideos();
+                if (filters.text) url.searchParams.append("title", filters.text);
+                if (filters.tag) url.searchParams.append("tags", filters.tag);
+
+                // 🚨 EL CHIVATO: Esto nos dirá qué está pidiendo el frontend exactamente
+                console.log("🔍 URL solicitada:", url.toString());
+
+                const response = await fetch(url.toString(), {
+                    headers: { Accept: "application/json" },
+                    signal: controller.signal,
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) throw new Error(data.detail || "Error al cargar videos");
+
+                const items = Array.isArray(data.items) ? data.items : [];
+                setVideos(items.map(mapApiVideoToCard));
+                setStatusText(items.length ? "" : "No hay videos que coincidan con tu búsqueda.");
+            } catch (error) {
+                if (error.name === "AbortError") return;
+                setStatusText(error.message);
+            }
         };
 
+        setStatusText("Cargando videos...");
+        loadVideos();
+
+        const handleVideosRefresh = () => loadVideos();
         window.addEventListener("videos-changed", handleVideosRefresh);
 
         return () => {
             controller.abort();
             window.removeEventListener("videos-changed", handleVideosRefresh);
         };
-    }, []);
+    }, [filters]); // Re-ejecuta todo cuando cambian los filtros
 
     return { videos, statusText };
 };

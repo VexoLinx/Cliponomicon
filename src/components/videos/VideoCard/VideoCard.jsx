@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useVideoModal } from "../../../context/VideoContext";
 import { useVideoThumbnail } from "./useVideoThumbnail";
 import "./VideoCard.css";
+import { CiLink } from "react-icons/ci";
 
 const VideoCard = ({ data = {} }) => {
   const { openVideo } = useVideoModal();
@@ -80,7 +81,6 @@ const VideoCard = ({ data = {} }) => {
     openVideo(videoDataNormalized);
   };
 
-  const linkTextToShow = videoCore?.is_registered_only ? "Privado" : (videoCore?.linkText || data?.linkText || "enlace");
   const ratingToShow = videoCore?.rating !== undefined ? videoCore.rating : (videoCore?.popularity_score || data?.rating || 0);
   const userHandleToShow = videoCore?.owner?.username 
     ? `@${videoCore.owner.username}` 
@@ -91,8 +91,18 @@ const VideoCard = ({ data = {} }) => {
     <div className="video-card" onClick={handlePlayVideo} style={{ cursor: "pointer" }}>
       <div className="card-header">
         <img src={thumbnailSrc} alt={videoCore?.title || "Video"} className="thumbnail" />
-        <span className="overlay-link">{linkTextToShow}</span>
-
+        <button 
+          className="overlay-link card-link-button"
+          onClick={(e) => {
+            e.stopPropagation();
+            
+            const linkToCopy = `${window.location.origin}/games/${videoCore?.id}`; 
+            navigator.clipboard.writeText(linkToCopy);
+          }}
+          title="Copiar enlace"
+        >
+          <CiLink />
+        </button>
         <div className="overlay-rating">
           <span>{ratingToShow}</span>
           <svg width="14" height="14" viewBox="0 0 24 24" className="rating-star-icon">

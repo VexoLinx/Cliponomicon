@@ -4,6 +4,7 @@ import { Route, Routes } from "react-router-dom";
 // Contextos globales
 import { AuthProvider } from "./context/AuthContext";
 import { VideoProvider } from "./context/VideoContext";
+import { SearchProvider } from "./context/SearchContext";
 
 // Componentes de infraestructura y layouts
 import MainLayout from "./components/layout/MainLayout";
@@ -29,40 +30,42 @@ function App() {
       {/* Controlado desde la pestaña Opciones en SettingsPage */}
       {showApiTester && <ApiTester />}
 
-      <VideoProvider>
-        <Routes>
-          {/* Rutas con estructura MainLayout (Sidebar + TopBar) */}
-          <Route element={<MainLayout />}>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/games" element={<GamesPage />} />
-            <Route path="/games/:categoryId" element={<GameDetailPage />} />
+      <SearchProvider>
+        <VideoProvider>
+          <Routes>
+            {/* Rutas con estructura MainLayout (Sidebar + TopBar) */}
+            <Route element={<MainLayout />}>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/games" element={<GamesPage />} />
+              <Route path="/games/:categoryId" element={<GameDetailPage />} />
 
-            {/* Rutas con restricción de sesión activa */}
-            <Route
-              path="/favorites"
-              element={
-                <ProtectedRoute>
-                  <FavoritesPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute>
-                  <SettingsPage setShowApiTester={setShowApiTester} />
-                </ProtectedRoute>
-              }
-            />
-          </Route>
+              {/* Rutas con restricción de sesión activa */}
+              <Route
+                path="/favorites"
+                element={
+                  <ProtectedRoute>
+                    <FavoritesPage />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute>
+                    <SettingsPage setShowApiTester={setShowApiTester} />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
 
-          {/* Rutas limpias independientes */}
-          <Route path="/login" element={<LoginPage />} />
-        </Routes>
+            {/* Rutas limpias independientes */}
+            <Route path="/login" element={<LoginPage />} />
+          </Routes>
 
-        {/* Reproductor global inyectado dinámicamente */}
-        <GlobalVideoModal />
-      </VideoProvider>
+          {/* Reproductor global inyectado dinámicamente */}
+          <GlobalVideoModal />
+        </VideoProvider>
+      </SearchProvider>
     </AuthProvider>
   );
 }

@@ -57,7 +57,6 @@ const FavoritesPage = () => {
 
   return (
     <div className="favorites-container">
-      <h1 className="favorites-title">Mis Videos Favoritos</h1>
       {favorites.length === 0 ? (
         <p className="no-favorites">
           Aún no has guardado ningún video en favoritos.

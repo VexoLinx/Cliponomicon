@@ -38,10 +38,6 @@ const GameDetailPage = () => {
 
   return (
     <div className="page-container">
-      <h2 style={{ color: "white", marginBottom: "20px", marginLeft: "20px" }}>
-        Clips de la categoría
-      </h2>
-
       {loading && <p className="grid-status-text">Cargando clips...</p>}
 
       {error && <p className="grid-status-text">{error}</p>}

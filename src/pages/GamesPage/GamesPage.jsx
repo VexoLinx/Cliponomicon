@@ -31,9 +31,6 @@ const GamesPage = () => {
 
   return (
     <div className="page-container">
-      <h2 style={{ color: 'white', marginBottom: '20px', marginLeft: '20px' }}>
-        Explorar Juegos
-      </h2>
 
       {loading && <p className="grid-status-text">Cargando categorías...</p>}
       

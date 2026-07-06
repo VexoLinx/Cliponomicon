@@ -18,11 +18,10 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background-color: #f9f6f0;
-  background-image:
+  /* background-image:
     linear-gradient(rgba(0, 0, 0, 0.6),
       rgba(0, 0, 0, 0.6)),
-    url(./assets/background2.png);
+    url(./assets/background2.png); */
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
