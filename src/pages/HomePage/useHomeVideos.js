@@ -47,7 +47,9 @@ const mapApiVideoToCard = (video) => {
         title: video.title,
         gameName: mainCategory?.name || "Sin categoría",
         date: formatVideoDate(video.created_at),
-        duration: formatDuration(video.duration_seconds),
+        
+        duration_seconds: video.duration_seconds, 
+        
         rating: String(video.favorite_count ?? 0),
         userHandle: finalUserHandle,
         linkText: "enlace",
