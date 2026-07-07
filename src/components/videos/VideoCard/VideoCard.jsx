@@ -4,6 +4,13 @@ import { useVideoThumbnail } from "./useVideoThumbnail";
 import "./VideoCard.css";
 import { CiLink } from "react-icons/ci";
 
+const formatDuration = (totalSeconds) => {
+  if (totalSeconds === undefined || totalSeconds === null || isNaN(totalSeconds)) return "0:00";
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = Math.floor(totalSeconds % 60);
+  return `${minutes}:${seconds.toString().padStart(2, "0")}`;
+};
+
 const VideoCard = ({ data = {} }) => {
   const { openVideo } = useVideoModal();
 
@@ -86,16 +93,17 @@ const VideoCard = ({ data = {} }) => {
     ? `@${videoCore.owner.username}` 
     : (videoCore?.userHandle || data?.userHandle || "@usuario");
   const dateToShow = videoCore?.date || (videoCore?.created_at ? videoCore.created_at.split("T")[0] : (data?.date || "Reciente"));
+  const durationSeconds = videoCore?.duration_seconds ?? data?.duration_seconds ?? 0;
 
   return (
     <div className="video-card" onClick={handlePlayVideo} style={{ cursor: "pointer" }}>
       <div className="card-header">
         <img src={thumbnailSrc} alt={videoCore?.title || "Video"} className="thumbnail" />
+        
         <button 
           className="overlay-link card-link-button"
           onClick={(e) => {
             e.stopPropagation();
-            
             const linkToCopy = `${window.location.origin}/games/${videoCore?.id}`; 
             navigator.clipboard.writeText(linkToCopy);
           }}
@@ -103,6 +111,7 @@ const VideoCard = ({ data = {} }) => {
         >
           <CiLink />
         </button>
+
         <div className="overlay-rating">
           <span>{ratingToShow}</span>
           <svg width="14" height="14" viewBox="0 0 24 24" className="rating-star-icon">
@@ -110,9 +119,9 @@ const VideoCard = ({ data = {} }) => {
           </svg>
         </div>
 
-        {(videoCore?.duration || data?.duration) && (
-          <span className="overlay-duration">{videoCore?.duration || data?.duration}</span>
-        )}
+        <div className="overlay-duration">
+          {formatDuration(durationSeconds)}
+        </div>
       </div>
 
       <div className="card-footer">
