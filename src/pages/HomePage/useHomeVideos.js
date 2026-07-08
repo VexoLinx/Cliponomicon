@@ -46,6 +46,7 @@ const mapApiVideoToCard = (video) => {
         linkText: "enlace",
         context: video.description || "",
         videoUrl: getVideoStreamUrl(video.id),
+        processing_status: video.processing_status, 
     };
 };
 
@@ -90,7 +91,7 @@ export const useHomeVideos = () => {
             }
 
             setHasMore(items.length === LIMIT);
-            setStatusText(!append && items.length === 0 ? "No hay videos que coincidan con tu búsqueda." : "");
+            setStatusText(!append && items.length === 0 ? "No hay videos disponibles." : "");
         } catch (error) {
             if (error.name === "AbortError") return;
             setStatusText(error.message);
@@ -117,6 +118,16 @@ export const useHomeVideos = () => {
         setOffset(nextOffset);
         loadVideos(nextOffset, true);
     }, [offset, isFetchingNextPage, hasMore]);
+
+    useEffect(() => {
+        const handleVideosRefresh = () => {
+            setOffset(0);
+            setHasMore(true);
+            loadVideos(0, false);
+        };
+        window.addEventListener("videos-changed", handleVideosRefresh);
+        return () => window.removeEventListener("videos-changed", handleVideosRefresh);
+    }, [filters]);
 
     return { videos, statusText, loadMoreVideos, hasMore, isFetchingNextPage };
 };

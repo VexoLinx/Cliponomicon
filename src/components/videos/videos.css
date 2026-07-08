@@ -247,8 +247,8 @@
 
 /* --- ESTADOS DE PANTALLA CENTRADA (Carga, Éxito, Error) --- */
 .modal-status-centered {
-    width: 600px;
-    height: 100%;
+    width: 100%;
+    height: 300px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -283,6 +283,34 @@
     background: rgba(239, 68, 68, 0.1);
     border: 1px solid #ef4444;
     color: #ffffff;
+}
+
+.upload-status.deleting {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid #ef4444;
+    color: #ef4444;
+}
+
+.upload-status.deleting .progress-bar-fill.fill-complete {
+    background-color: #ef4444;
+    width: 100%;
+}
+
+.status-title {
+    font-size: 1.2rem;
+    font-weight: 700;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.upload-status.success .status-title {
+    color: #10b981; 
+}
+
+.status-message {
+    color: #cbd5e1;
+    margin: 0;
+    font-size: 0.85rem;
 }
 
 .modal-error-icon {

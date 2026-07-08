@@ -46,7 +46,9 @@ export const useGameVideos = (categoryId) => {
 
       const data = await response.json();
       const items = data.items || [];
-      const mappedItems = items.map(mapApiVideoToCard);
+      
+      const readyItems = items.filter(video => video.processing_status !== "pending");
+      const mappedItems = readyItems.map(mapApiVideoToCard);
 
       if (append) {
         setVideos((prev) => [...prev, ...mappedItems]);
