@@ -26,3 +26,22 @@ body {
   background-position: center;
   background-repeat: no-repeat;
 }
+
+::-webkit-scrollbar {
+  width: 12px;
+  background: #0f0f12;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #2a2a35;
+  border-radius: 20px;
+  border: 2px solid #0f0f12;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #ff0055;
+}
