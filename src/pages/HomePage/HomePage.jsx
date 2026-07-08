@@ -1,23 +1,25 @@
 import React from "react";
-import VideoCard from "../../components/videos/VideoCard/VideoCard";
+import InfiniteVideoGrid from "../../components/videos/InfiniteVideoGrid/InfiniteVideoGrid";
 import { useHomeVideos } from "./useHomeVideos";
 import "./HomePage.css";
 
 function HomePage() {
-  const { videos, statusText } = useHomeVideos();
+  const { 
+    videos, 
+    statusText, 
+    hasMore, 
+    isFetchingNextPage, 
+    loadMoreVideos 
+  } = useHomeVideos();
 
   return (
-    <>
-      {statusText && <p className="grid-status-text">{statusText}</p>}
-
-      {videos.length > 0 && (
-        <div className="video-grid">
-          {videos.map((video) => (
-            <VideoCard key={video.id} data={video} />
-          ))}
-        </div>
-      )}
-    </>
+    <InfiniteVideoGrid 
+      videos={videos}
+      statusText={statusText}
+      hasMore={hasMore}
+      isFetchingNextPage={isFetchingNextPage}
+      loadMoreVideos={loadMoreVideos}
+    />
   );
 }
 
