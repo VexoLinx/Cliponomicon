@@ -11,7 +11,7 @@ export const useVideoData = (initialData) => {
   const isProcessing = activeStatuses.includes(videoCore?.processing_status?.toLowerCase());
 
   const hookThumbnailSrc = useVideoThumbnail(videoId);
-  const baseThumbnail = videoCore?.processing_status && !isProcessing
+  const baseThumbnail = !isProcessing && videoId
     ? `${import.meta.env.VITE_API_URL}/videos/${videoId}/thumbnail`
     : hookThumbnailSrc;
 
