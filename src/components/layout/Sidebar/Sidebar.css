@@ -5,8 +5,7 @@
   flex-direction: column;
   padding: 10px 10px;
   border-right: 1px solid #1f2937;
-  /* background-image: url(./../../../assets/borde.PNG);
-  background-size: cover; */
+  transition: width 0.25s ease, padding 0.25s ease;
 }
 
 .sidebar-header {
@@ -71,7 +70,6 @@ svg {
 }
 
 .sidebar-tools {
-  /* margin-top: 30px; */
   padding: 0 10px;
 }
 
@@ -122,51 +120,54 @@ svg {
   text-align: center;
 }
 
-@media (max-width: 1080px) {
-  .sidebar {
-    width: 75px;
-    padding: 20px 5px;
-    align-items: center;
-  }
-
-  .sidebar-header .title,
-  .nav-icon,
-  .sidebar-tools,
-  .login-user,
-  .version-info {
-    display: none;
-  }
-
-  .login-btn {
-    justify-content: center;
-    width: 45px;
-    height: 45px;
-    padding: 0;
-    border-radius: 50%;
-    font-size: 24px;
-  }
-
-  .login-btn {
-    color: transparent;
-  }
-
-  .login-btn svg {
-    color: white;
-  }
-
-  .sidebar-header {
-    justify-content: center;
-    margin-bottom: 30px;
-  }
-
-  .nav-item {
-    justify-content: center;
-    padding: 12px;
-  }
+.toggle-logo {
+  cursor: pointer;
+  transition: transform 0.2s ease;
 }
 
-@media (max-width: 480px) {
-  .sidebar {
+.toggle-logo:hover {
+  transform: scale(1.08);
+}
+
+.sidebar.collapsed {
+  width: 75px;
+  padding: 20px 5px;
+  align-items: center;
+}
+
+.sidebar.collapsed .sidebar-header .title,
+.sidebar.collapsed .nav-icon,
+.sidebar.collapsed .login-user,
+.sidebar.collapsed .version-info {
+  display: none;
+}
+
+.sidebar.collapsed .login-btn {
+  justify-content: center;
+  width: 45px;
+  height: 45px;
+  padding: 0;
+  border-radius: 50%;
+  font-size: 24px;
+  color: transparent;
+}
+
+.sidebar.collapsed .login-btn svg {
+  color: white;
+}
+
+.sidebar.collapsed .sidebar-header {
+  justify-content: center;
+  margin-bottom: 30px;
+}
+
+.sidebar.collapsed .nav-item {
+  justify-content: center;
+  padding: 12px;
+}
+
+@media (max-width: 575px) {
+  .sidebar, .sidebar.collapsed {
     position: fixed;
     bottom: 0;
     left: 0;
@@ -182,15 +183,16 @@ svg {
     box-sizing: border-box;
   }
 
-  .sidebar-header,
-  .sidebar-tools,
-  .login-user,
-  .version-info {
+  .sidebar .sidebar-header,
+  .sidebar .sidebar-tools,
+  .sidebar .login-user,
+  .sidebar .version-info,
+  .sidebar .nav-icon {
     display: none;
   }
 
   .sidebar-nav {
-    flex: 1; 
+    flex: 1;
     width: auto;
   }
 
@@ -201,10 +203,6 @@ svg {
     gap: 0;
   }
 
-  .nav-icon {
-    display: none;
-  }
-
   .nav-item {
     padding: 10px;
     display: flex;
@@ -213,12 +211,12 @@ svg {
   }
 
   .sidebar-footer {
-    margin-top: 0; 
+    margin-top: 0;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0; 
+    flex-shrink: 0;
     padding-left: 10px;
   }
 
@@ -230,14 +228,14 @@ svg {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 50%; 
-    color: transparent; 
+    border-radius: 50%;
+    color: transparent;
     overflow: hidden;
   }
 
   .login-btn svg {
     color: white;
-    font-size: 24px; 
+    font-size: 24px;
     display: block;
   }
 

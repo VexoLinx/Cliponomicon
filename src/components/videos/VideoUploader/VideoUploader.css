@@ -45,3 +45,68 @@
     text-overflow: ellipsis;
     width: 100%;
 }
+
+@media (min-width: 576px) {
+  .sidebar.collapsed {
+    width: 75px;
+    padding: 20px 5px;
+    align-items: center;
+  }
+
+  .sidebar.collapsed .sidebar-header .title,
+  .sidebar.collapsed .nav-icon,
+  .sidebar.collapsed .login-user,
+  .sidebar.collapsed .version-info,
+  .sidebar.collapsed .tool-title,
+  .sidebar.collapsed .upload-dropzone span,
+  .sidebar.collapsed .file-name-scroll {
+    display: none;
+  }
+
+  .sidebar.collapsed .login-btn {
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 24px;
+    color: transparent;
+  }
+
+  .sidebar.collapsed .login-btn svg {
+    color: white;
+  }
+
+  .sidebar.collapsed .sidebar-header {
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+
+  .sidebar.collapsed .nav-item {
+    justify-content: center;
+    padding: 12px;
+  }
+
+  /* Estilos del uploader plegado */
+  .sidebar.collapsed .video-uploader-wrapper {
+    align-items: center;
+  }
+
+  .sidebar.collapsed .upload-dropzone {
+    padding: 10px;
+    width: 45px;
+    height: 45px;
+    border-radius: 8px;
+    border: 2px dashed #4b5563;
+    justify-content: center;
+    margin: 0 auto;
+  }
+
+  .sidebar.collapsed .upload-dropzone:hover {
+    border-color: #f43f5e;
+  }
+
+  .sidebar.collapsed .upload-dropzone svg {
+    font-size: 24px;
+  }
+}

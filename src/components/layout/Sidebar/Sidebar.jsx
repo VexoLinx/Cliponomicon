@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import VideoUploader from "../../videos/VideoUploader/VideoUploader";
 import { IoMdPricetags, IoMdSettings } from "react-icons/io";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -13,15 +13,34 @@ const Sidebar = () => {
   const navigate = useNavigate();
   const { token, user, logout } = useAuth();
 
+  const [isCollapsed, setIsCollapsed] = useState(false);
+
   const handleLogout = () => {
     logout();
     navigate("/");
   };
 
+  const toggleSidebar = () => {
+    console.log("¡Clic en el Enchiridion detectado!");
+    setIsCollapsed(!isCollapsed);
+  };
+
   return (
-    <aside className="sidebar">
+    <aside className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
       <div className="sidebar-header">
-        <img src={Enchiridion} alt="Logo" />
+        <img
+          src={Enchiridion}
+          alt="Logo Cliponomicon"
+          onClick={toggleSidebar}
+          className="toggle-logo"
+          title="Plegar/Desplegar menú"
+          style={{
+            cursor: "pointer",
+            pointerEvents: "auto",
+            position: "relative",
+            zIndex: 9999,
+          }}
+        />
         <span className="title">Cliponomicon</span>
       </div>
 
@@ -113,7 +132,7 @@ const Sidebar = () => {
         )}
 
         <div className="version-info">
-          <span>Cliponomicon v0.5</span>
+          <span>Cliponomicon v0.8</span>
         </div>
       </div>
     </aside>
