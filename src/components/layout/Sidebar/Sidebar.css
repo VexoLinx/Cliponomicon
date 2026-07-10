@@ -11,13 +11,18 @@
 .sidebar-header {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: center;
+  width: 100%;
+  gap: 12px;
   margin-bottom: 20px;
+  cursor: pointer;
+  user-select: none;
 }
 
 .sidebar-header img {
   width: 40px;
   height: 40px;
+  transition: transform 0.2s ease;
 }
 
 .sidebar-header .title {
@@ -121,7 +126,6 @@ svg {
 }
 
 .toggle-logo {
-  cursor: pointer;
   transition: transform 0.2s ease;
 }
 
@@ -135,10 +139,13 @@ svg {
   align-items: center;
 }
 
-.sidebar.collapsed .sidebar-header .title,
+.sidebar.collapsed .title-wrapper,
 .sidebar.collapsed .nav-icon,
 .sidebar.collapsed .login-user,
-.sidebar.collapsed .version-info {
+.sidebar.collapsed .version-info,
+.sidebar.collapsed .tool-title,
+.sidebar.collapsed .upload-dropzone span,
+.sidebar.collapsed .file-name-scroll {
   display: none;
 }
 
@@ -166,8 +173,45 @@ svg {
   padding: 12px;
 }
 
+.toggle-logo {
+  cursor: pointer;
+  pointer-events: auto;
+  position: relative;
+  z-index: 9999;
+  transition: transform 0.2s ease;
+}
+
+.title-wrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 15px;
+}
+
+.title-wrapper .title {
+  margin: 0;
+  font-size: 23px;
+  font-weight: 700;
+}
+
+.collapse-arrow {
+  font-size: 25px;
+  color: #9ca3af;
+  transition: transform 0.2s ease, color 0.2s ease;
+}
+
+.sidebar-header:hover img {
+  transform: scale(1.08);
+}
+
+.sidebar-header:hover .collapse-arrow {
+  transform: translateX(-4px);
+  color: #ffffff;
+}
+
 @media (max-width: 575px) {
-  .sidebar, .sidebar.collapsed {
+
+  .sidebar,
+  .sidebar.collapsed {
     position: fixed;
     bottom: 0;
     left: 0;

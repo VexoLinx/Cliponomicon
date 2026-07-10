@@ -6,6 +6,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { GiConsoleController } from "react-icons/gi";
 import { GoStarFill, GoVideo } from "react-icons/go";
 import { CiLogin, CiLogout } from "react-icons/ci";
+import { MdArrowBackIos } from "react-icons/md";
 import Enchiridion from "../../../assets/logo.png";
 import "./Sidebar.css";
 
@@ -21,27 +22,26 @@ const Sidebar = () => {
   };
 
   const toggleSidebar = () => {
-    console.log("¡Clic en el Enchiridion detectado!");
     setIsCollapsed(!isCollapsed);
   };
 
   return (
     <aside className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
-      <div className="sidebar-header">
+      <div
+        className="sidebar-header"
+        onClick={toggleSidebar}
+        title="Plegar/Desplegar menú"
+      >
         <img
           src={Enchiridion}
           alt="Logo Cliponomicon"
-          onClick={toggleSidebar}
           className="toggle-logo"
-          title="Plegar/Desplegar menú"
-          style={{
-            cursor: "pointer",
-            pointerEvents: "auto",
-            position: "relative",
-            zIndex: 9999,
-          }}
         />
-        <span className="title">Cliponomicon</span>
+
+        <div className="title-wrapper">
+          <span className="title">Cliponomicon</span>
+          <MdArrowBackIos className="collapse-arrow" />
+        </div>
       </div>
 
       <nav className="sidebar-nav">
