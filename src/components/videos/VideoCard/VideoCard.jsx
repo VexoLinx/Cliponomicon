@@ -81,11 +81,23 @@ const VideoCard = ({ data = {} }) => {
     finalThumbnailSrc, categoryName, categoryIcon 
   } = useVideoData(data);
 
+  const getFormattedDate = (isoString) => {
+    if (!isoString) return "";
+    const dateObj = new Date(isoString);
+    return dateObj.toLocaleDateString("es-ES", { 
+      day: "numeric", 
+      month: "short", 
+      year: "numeric" 
+    }).replace(".", "");
+  };
+
   const handlePlayVideo = (e) => {
     e.preventDefault();
     e.stopPropagation();
 
     if (!videoId || isProcessing) return;
+
+    const rawDate = videoCore?.source_created_at || videoCore?.created_at;
 
     const videoDataNormalized = {
       ...videoCore,
@@ -97,7 +109,7 @@ const VideoCard = ({ data = {} }) => {
       gameName: categoryName,
       gameIcon: categoryIcon,
       userHandle: videoCore?.owner?.username ? `@${videoCore.owner.username}` : (videoCore?.userHandle || data?.userHandle || "@usuario"),
-      date: videoCore?.date || (videoCore?.created_at ? videoCore.created_at.split("T")[0] : ""),
+      date: videoCore?.date || rawDate?.split("T")[0] || "",
     };
 
     openVideo(videoDataNormalized);
@@ -105,9 +117,11 @@ const VideoCard = ({ data = {} }) => {
 
   const ratingToShow = videoCore?.rating !== undefined ? videoCore.rating : (videoCore?.popularity_score || data?.rating || 0);
   const userHandleToShow = videoCore?.owner?.username ? `@${videoCore.owner.username}` : (videoCore?.userHandle || data?.userHandle || "@usuario");
-  const dateToShow = videoCore?.date || (videoCore?.created_at ? videoCore.created_at.split("T")[0] : (data?.date || "Reciente"));
   const durationSeconds = videoCore?.duration_seconds ?? data?.duration_seconds ?? 0;
   const titleToShow = videoCore?.title || data?.title || "Sin título";
+
+  const rawDateToShow = videoCore?.source_created_at || videoCore?.created_at || data?.source_created_at || data?.created_at;
+  const dateToShow = videoCore?.date || (rawDateToShow ? getFormattedDate(rawDateToShow) : (data?.date || "Reciente"));
 
   return (
     <div

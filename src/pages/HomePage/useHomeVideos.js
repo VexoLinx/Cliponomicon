@@ -39,7 +39,11 @@ const mapApiVideoToCard = (video) => {
             "https://via.placeholder.com/40",
         title: video.title,
         gameName: mainCategory?.name || "Sin categoría",
-        date: formatVideoDate(video.created_at),
+        date: formatVideoDate(video.source_created_at),
+        
+        source_created_at: video.source_created_at,
+        created_at: video.created_at,
+
         duration_seconds: video.duration_seconds,
         rating: String(video.favorite_count ?? 0),
         userHandle: finalUserHandle,

@@ -60,7 +60,7 @@ export const useVideoUpload = () => {
 
                 if (currentFile.lastModified) {
                     const originalDate = new Date(currentFile.lastModified).toISOString();
-                    formData.append("created_at", originalDate);
+                    formData.append("source_created_at", originalDate);
                 }
 
                 if (categoryId) {
