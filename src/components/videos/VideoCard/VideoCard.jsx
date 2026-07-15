@@ -17,9 +17,14 @@ const copyToClipboard = (e, videoId) => {
   navigator.clipboard.writeText(linkToCopy);
 };
 
-
-const CardHeader = ({ isProcessing, thumbBuster, finalThumbnailSrc, videoCore, durationSeconds, ratingToShow }) => (
+const CardHeader = ({ isProcessing, thumbBuster, finalThumbnailSrc, videoCore, durationSeconds, ratingToShow, isEdited }) => (
   <div className="card-header">
+    {isEdited && !isProcessing && (
+      <div className="edited-bookmark" title="Este clip está editado">
+        <span className="bookmark-text">EDIT</span>
+      </div>
+    )}
+
     <img
       key={thumbBuster || "static-thumb"}
       src={finalThumbnailSrc}
@@ -115,6 +120,8 @@ const VideoCard = ({ data = {} }) => {
     openVideo(videoDataNormalized);
   };
 
+  const isEdited = videoCore?.edited ?? data?.edited ?? false;
+
   const ratingToShow = videoCore?.rating !== undefined ? videoCore.rating : (videoCore?.popularity_score || data?.rating || 0);
   const userHandleToShow = videoCore?.owner?.username ? `@${videoCore.owner.username}` : (videoCore?.userHandle || data?.userHandle || "@usuario");
   const durationSeconds = videoCore?.duration_seconds ?? data?.duration_seconds ?? 0;
@@ -136,6 +143,7 @@ const VideoCard = ({ data = {} }) => {
         videoCore={videoCore}
         durationSeconds={durationSeconds}
         ratingToShow={ratingToShow}
+        isEdited={isEdited}
       />
       <CardFooter 
         categoryIcon={categoryIcon}

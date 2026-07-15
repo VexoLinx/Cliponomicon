@@ -208,3 +208,48 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* Asegura que el header permita que el bookmark sobresalga ligeramente hacia arriba */
+.card-header {
+  position: relative;
+  /* IMPORTANTE: Si tienes 'overflow: hidden' en .card-header, quítalo o cámbialo a visible */
+  /* para que el bookmark pueda "flotar" 5px por encima del borde superior */
+  overflow: visible !important; 
+}
+
+/* El Punto de Libro (Bookmark) */
+.edited-bookmark {
+  position: absolute;
+  top: -5px; /* Hace que "abrace" el borde superior flotando hacia arriba */
+  left: 12px;
+  z-index: 5;
+  
+  /* Degradado con el verde neón de tu paleta */
+  background: linear-gradient(135deg, #00ffcc 0%, #00b388 100%);
+  color: #0c1017; /* Texto ultra oscuro para que contraste a la perfección */
+  
+  padding: 5px 8px 10px 8px;
+  font-weight: 900;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+  
+  /* Sombra suave para darle profundidad 3D */
+  box-shadow: 0 4px 10px rgba(0, 255, 204, 0.4);
+  
+  /* El truco mágico: Recorta el div en forma de listón de libro */
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 50% 85%, 0% 100%);
+  
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.bookmark-text {
+  display: block;
+  font-family: sans-serif;
+  text-shadow: 0px 1px 1px rgba(255, 255, 255, 0.2);
+}
+
+/* Efecto hover interactivo: Cuando pases el ratón por la card, el listón reacciona */
+.video-card:hover .edited-bookmark {
+  transform: translateY(2px); /* Se estira ligeramente hacia abajo */
+  filter: brightness(1.1);
+}
