@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react"; // 🔥 Importamos useState
 import { useVideoModal } from "../../../context/VideoContext";
 import { useVideoData } from "./useVideoData";
 import "./VideoCard.css";
@@ -11,13 +11,7 @@ const formatDuration = (totalSeconds) => {
   return `${minutes}:${seconds.toString().padStart(2, "0")}`;
 };
 
-const copyToClipboard = (e, videoId) => {
-  e.stopPropagation();
-  const linkToCopy = `${window.location.origin}/games/${videoId}`;
-  navigator.clipboard.writeText(linkToCopy);
-};
-
-const CardHeader = ({ isProcessing, thumbBuster, finalThumbnailSrc, videoCore, durationSeconds, ratingToShow, isEdited }) => (
+  const CardHeader = ({ isProcessing, thumbBuster, finalThumbnailSrc, videoCore, durationSeconds, ratingToShow, isEdited, onCopyLink }) => (
   <div className="card-header">
     {isEdited && !isProcessing && (
       <div className="edited-bookmark" title="Este clip está editado">
@@ -41,7 +35,7 @@ const CardHeader = ({ isProcessing, thumbBuster, finalThumbnailSrc, videoCore, d
       <>
         <button
           className="overlay-link card-link-button"
-          onClick={(e) => copyToClipboard(e, videoCore?.id)}
+          onClick={(e) => onCopyLink(e, videoCore?.id)}
           title="Copiar enlace"
         >
           <CiLink />
@@ -77,9 +71,9 @@ const CardFooter = ({ categoryIcon, categoryName, title, userHandle, date }) => 
   </div>
 );
 
-
 const VideoCard = ({ data = {} }) => {
   const { openVideo } = useVideoModal();
+  const [showToast, setShowToast] = useState(false);
   
   const { 
     videoCore, videoId, isProcessing, thumbBuster, 
@@ -120,6 +114,25 @@ const VideoCard = ({ data = {} }) => {
     openVideo(videoDataNormalized);
   };
 
+  const handleCopyLink = (e, targetVideoId) => {
+    e.stopPropagation();
+    
+    const clipUrl = `${import.meta.env.VITE_API_URL}/clip/${targetVideoId}`;
+    
+    navigator.clipboard.writeText(clipUrl)
+      .then(() => {
+        setShowToast(true);
+        setTimeout(() => {
+          setShowToast(false);
+        }, 2000);
+      })
+      .catch((error) => {
+        console.error("Fallo al copiar:", error);
+        const fallbackLink = `${window.location.origin}/games/${targetVideoId}`;
+        navigator.clipboard.writeText(fallbackLink).catch(err => console.error("Fallo el fallback", err));
+      });
+  };
+
   const isEdited = videoCore?.edited ?? data?.edited ?? false;
 
   const ratingToShow = videoCore?.rating !== undefined ? videoCore.rating : (videoCore?.popularity_score || data?.rating || 0);
@@ -144,6 +157,7 @@ const VideoCard = ({ data = {} }) => {
         durationSeconds={durationSeconds}
         ratingToShow={ratingToShow}
         isEdited={isEdited}
+        onCopyLink={handleCopyLink}
       />
       <CardFooter 
         categoryIcon={categoryIcon}
@@ -152,6 +166,12 @@ const VideoCard = ({ data = {} }) => {
         userHandle={userHandleToShow}
         date={dateToShow}
       />
+      
+      {showToast && (
+        <div className="copy-toast">
+          Enlace copiado
+        </div>
+      )}
     </div>
   );
 };

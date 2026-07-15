@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react"; // 🔥 Añadido useState
 import ReactDOM from "react-dom";
 import { IoStar, IoStarOutline, IoClose } from "react-icons/io5";
 import { useAuth } from "../../../context/AuthContext";
@@ -9,6 +9,10 @@ import "./GlobalVideoModal.css";
 
 const GlobalVideoModal = () => {
   const { token } = useAuth();
+  
+  // 🔥 Nuevo estado para controlar el alert temporal
+  const [showToast, setShowToast] = useState(false);
+
   const {
     activeVideo,
     closeVideo,
@@ -36,6 +40,25 @@ const GlobalVideoModal = () => {
   } = useGlobalVideoModal();
 
   if (!activeVideo) return null;
+
+  const handleCopyLink = (e) => {
+    e.stopPropagation();
+    const clipUrl = `${import.meta.env.VITE_API_URL}/clip/${activeVideo.id}`;
+
+    navigator.clipboard.writeText(clipUrl)
+      .then(() => {
+        setShowToast(true);
+        setTimeout(() => {
+          setShowToast(false);
+        }, 2000);
+      })
+      .catch((error) => {
+        console.error("Fallo al copiar el enlace del endpoint:", error);
+        navigator.clipboard.writeText(window.location.href).catch(err => 
+          console.error("También falló el fallback:", err)
+        );
+      });
+  };
 
   return ReactDOM.createPortal(
     <div className="modal-overlay" onClick={closeVideo}>
@@ -86,9 +109,7 @@ const GlobalVideoModal = () => {
           <div className="sidebar-footer-video">
             <button
               className="footer-btn copy-btn"
-              onClick={() =>
-                navigator.clipboard.writeText(window.location.href)
-              }
+              onClick={handleCopyLink}
               title="Copiar enlace"
             >
               <CiLink />
@@ -137,6 +158,13 @@ const GlobalVideoModal = () => {
           onRetry={() => setEditStatus("editing")}
         />
       )}
+
+      {showToast && (
+        <div className="copy-toast">
+          Enlace copiado
+        </div>
+      )}
+
     </div>,
     document.body,
   );
