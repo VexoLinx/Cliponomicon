@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // 🔥 Añadido useState
+import React, { useState } from "react";
 import ReactDOM from "react-dom";
 import { IoStar, IoStarOutline, IoClose } from "react-icons/io5";
 import { useAuth } from "../../../context/AuthContext";
@@ -10,7 +10,6 @@ import "./GlobalVideoModal.css";
 const GlobalVideoModal = () => {
   const { token } = useAuth();
   
-  // 🔥 Nuevo estado para controlar el alert temporal
   const [showToast, setShowToast] = useState(false);
 
   const {

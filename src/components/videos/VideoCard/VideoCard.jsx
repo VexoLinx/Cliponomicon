@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // 🔥 Importamos useState
+import React, { useState } from "react";
 import { useVideoModal } from "../../../context/VideoContext";
 import { useVideoData } from "./useVideoData";
 import "./VideoCard.css";

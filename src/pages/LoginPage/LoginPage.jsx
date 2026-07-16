@@ -11,8 +11,25 @@ const LoginPage = () => {
     setPassword,
     error,
     isLoading,
+    isSSOProcessing,
     handleSubmit,
+    handleSSOLogin,
   } = useLogin();
+
+  if (isSSOProcessing) {
+    return (
+      <div className="login-container">
+        <div className="login-box processing-box">
+          <div className="logo-wrapper">
+            <img src={Enchiridion} alt="Logo" />
+          </div>
+          <h2>Autenticando...</h2>
+          <div className="spinner-sso">⚙️</div>
+          <p>Conectando de forma segura.</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="login-container">
@@ -38,6 +55,7 @@ const LoginPage = () => {
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Nombre de usuario"
             required
+            disabled={isLoading}
           />
         </div>
 
@@ -50,6 +68,7 @@ const LoginPage = () => {
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
             required
+            disabled={isLoading}
           />
         </div>
 
@@ -59,6 +78,19 @@ const LoginPage = () => {
           disabled={isLoading}
         >
           {isLoading ? 'Verificando...' : 'Entrar'}
+        </button>
+
+        <div className="sso-divider">
+          <span>o</span>
+        </div>
+
+        <button 
+          type="button" 
+          className="sso-button" 
+          onClick={handleSSOLogin}
+          disabled={isLoading}
+        >
+          {isLoading ? 'Cargando...' : 'Iniciar sesión con SSO (Keycloak)'}
         </button>
       </form>
     </div>
