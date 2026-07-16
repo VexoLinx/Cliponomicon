@@ -71,23 +71,18 @@ export const useLogin = () => {
         
         try {
             const targetUrl = `${OIDC_AUTHORIZE_URL}?redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+            
             const response = await fetch(targetUrl, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json'
-                },
-                redirect: 'manual'
+                }
             });
-
-            if (response.type === 'opaqueredirect' || response.status === 0) {
-                window.location.href = targetUrl;
-                return;
-            }
 
             const data = await response.json();
 
             if (!response.ok) {
-                let errorMsg = 'Error al conectar con el proveedor SSO';
+                let errorMsg = 'Error al generar la ruta de autorización';
                 if (data.detail) {
                     errorMsg = Array.isArray(data.detail) ? data.detail[0].msg : data.detail;
                 }
@@ -97,12 +92,11 @@ export const useLogin = () => {
             if (data.authorization_url) {
                 window.location.href = data.authorization_url;
             } else {
-                throw new Error("No se recibió la URL de autorización.");
+                throw new Error("El JSON no contenía la authorization_url");
             }
 
         } catch (err) {
             setError(err.message);
-        } finally {
             setIsLoading(false);
         }
     };
