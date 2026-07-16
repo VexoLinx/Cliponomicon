@@ -2,10 +2,13 @@ import React from "react";
 import RegisterForm from "../../components/auth/RegisterForm/RegisterForm";
 import ApiTester from "../../components/ApiTester";
 import { useSettingsProfile } from "./useSettingsProfile";
+import { useAuth } from "../../context/AuthContext";
 import "./SettingsPage.css";
 
 const SettingsPage = ({ setShowApiTester }) => {
   const { activeTab, setActiveTab, profileJson } = useSettingsProfile();
+  const { token, user } = useAuth();
+  const canRegisterUsers = token && user && user.role !== "user";
 
   return (
     <div className="settings-container">
@@ -18,12 +21,16 @@ const SettingsPage = ({ setShowApiTester }) => {
           >
             Mi Perfil
           </button>
-          <button
-            className={activeTab === "register" ? "active" : ""}
-            onClick={() => setActiveTab("register")}
-          >
-            Registrar Usuario
-          </button>
+
+          {canRegisterUsers && (
+            <button
+              className={activeTab === "register" ? "active" : ""}
+              onClick={() => setActiveTab("register")}
+            >
+              Registrar Usuario
+            </button>
+          )}
+
           <button
             className={activeTab === "options" ? "active" : ""}
             onClick={() => setActiveTab("options")}
@@ -41,7 +48,7 @@ const SettingsPage = ({ setShowApiTester }) => {
             </section>
           )}
 
-          {activeTab === "register" && (
+          {activeTab === "register" && canRegisterUsers && (
             <section>
               <RegisterForm />
             </section>

@@ -25,6 +25,8 @@ const Sidebar = () => {
     setIsCollapsed(!isCollapsed);
   };
 
+  const canUploadVideo = token && user && user.role !== "user";
+
   return (
     <aside className={`sidebar ${isCollapsed ? "collapsed" : ""}`}>
       <div
@@ -112,7 +114,9 @@ const Sidebar = () => {
         </ul>
       </nav>
 
-      <div className="sidebar-tools">{token && <VideoUploader />}</div>
+      <div className="sidebar-tools">
+        {canUploadVideo && <VideoUploader />}
+      </div>
 
       <div className="sidebar-footer">
         {token && user && <div className="login-user">@{user.username}</div>}
