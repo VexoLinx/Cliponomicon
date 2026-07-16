@@ -70,12 +70,19 @@ export const useLogin = () => {
         setError(null);
         
         try {
-            const response = await fetch(`${OIDC_AUTHORIZE_URL}?redirect_uri=${encodeURIComponent(REDIRECT_URI)}`, {
+            const targetUrl = `${OIDC_AUTHORIZE_URL}?redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+            const response = await fetch(targetUrl, {
                 method: 'GET',
                 headers: {
                     'Accept': 'application/json'
-                }
+                },
+                redirect: 'manual'
             });
+
+            if (response.type === 'opaqueredirect' || response.status === 0) {
+                window.location.href = targetUrl;
+                return;
+            }
 
             const data = await response.json();
 
@@ -95,6 +102,7 @@ export const useLogin = () => {
 
         } catch (err) {
             setError(err.message);
+        } finally {
             setIsLoading(false);
         }
     };
