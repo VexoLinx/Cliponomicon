@@ -6,13 +6,14 @@ const VIDEOS_URL = `${API_URL}/videos`;
 
 export const useVideoUpload = () => {
     const [status, setStatus] = useState("idle");
-    const [files, setFiles] = useState([]); 
+    const [files, setFiles] = useState([]);
     const [videoPreview, setVideoPreview] = useState("");
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [isRegisteredOnly, setIsRegisteredOnly] = useState(false);
     const [errorMessage, setErrorMessage] = useState("");
     const [currentUploadIndex, setCurrentUploadIndex] = useState(0);
+    const [isEdited, setIsEdited] = useState(false);
     const { token } = useAuth();
 
     useEffect(() => {
@@ -57,6 +58,7 @@ export const useVideoUpload = () => {
 
                 formData.append("description", description);
                 formData.append("is_registered_only", isRegisteredOnly);
+                formData.append("edited", isEdited);
 
                 if (currentFile.lastModified) {
                     const originalDate = new Date(currentFile.lastModified).toISOString();
@@ -129,6 +131,8 @@ export const useVideoUpload = () => {
         setDescription,
         isRegisteredOnly,
         setIsRegisteredOnly,
+        isEdited,
+        setIsEdited,
         errorMessage,
         handleFileSelect,
         handleUpload,

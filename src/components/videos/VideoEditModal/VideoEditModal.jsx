@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { IoClose } from "react-icons/io5";
+import { IoClose, IoCut } from "react-icons/io5";
 import { FcInfo } from "react-icons/fc";
 
 import VideoPreviewSection from "./components/VideoPreviewSection";
@@ -21,6 +21,8 @@ const VideoEditModal = ({
   setDescription,
   isRegisteredOnly,
   setIsRegisteredOnly,
+  isEdited,
+  setIsEdited,
   categoryId,
   setCategoryId,
   categories = [],
@@ -77,14 +79,12 @@ const VideoEditModal = ({
                     </div>
                   </>
                 )}
-
                 <CategoryCombobox
                   categoryId={categoryId}
                   setCategoryId={setCategoryId}
                   categories={categories}
                   onRefreshCategories={onRefreshCategories}
                 />
-
                 <label className="input-label">
                   Descripción {files.length > 1 ? "común del lote" : ""}
                 </label>
@@ -102,21 +102,24 @@ const VideoEditModal = ({
                   />
                 </div>
 
-                <div className="checkbox-wrapper">
-                  <label className="checkbox-label">
-                    <input
-                      type="checkbox"
-                      checked={isRegisteredOnly}
-                      onChange={(e) => setIsRegisteredOnly(e.target.checked)}
-                      className="real-checkbox"
-                    />
-                    <span className="custom-checkbox-edit"></span>
-                    <span className="checkbox-text">
-                      {files.length > 1 ? "Clips Editados" : "Clip Editado"}
+                <button
+                  type="button"
+                  className={`edit-feature-btn ${isEdited ? "active" : ""}`}
+                  onClick={() => setIsEdited(!isEdited)}
+                >
+                  <div className="icon-wrapper">
+                    <IoCut />
+                  </div>
+                  <div className="text-content">
+                    <span className="btn-title">Contenido con Edición</span>
+                    <span className="btn-subtitle">
+                      Memes, efectos y sonido
                     </span>
-                  </label>
-                </div>
-
+                  </div>
+                  <div className="status-indicator">
+                    {isEdited ? "Activado" : "Desactivado"}
+                  </div>
+                </button>
                 {errorMessage && (
                   <p className="error-text-sidebar">{errorMessage}</p>
                 )}

@@ -29,6 +29,8 @@ const GlobalVideoModal = () => {
     setEditIsRegistered,
     editCategoryId,
     setEditCategoryId,
+    editIsEdited,
+    setEditIsEdited,
     categoriesList,
     updateError,
     handleOpenEdit,
@@ -147,6 +149,8 @@ const GlobalVideoModal = () => {
           setDescription={setEditDescription}
           isRegisteredOnly={editIsRegistered}
           setIsRegisteredOnly={setEditIsRegistered}
+          isEdited={editIsEdited}
+          setIsEdited={setEditIsEdited}
           categoryId={editCategoryId}
           setCategoryId={setEditCategoryId}
           categoriesList={categoriesList || []}

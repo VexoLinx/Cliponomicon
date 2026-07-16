@@ -74,3 +74,74 @@
     background: #0f172a;
     margin-top: 2px;
 }
+
+.edit-feature-btn {
+    margin-top: 15px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: #0f172a;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    color: #94a3b8;
+    text-align: left;
+}
+
+.edit-feature-btn:hover {
+    border-color: #334155;
+    background: #131b2e;
+}
+
+.edit-feature-btn.active {
+    border-color: #8b5cf6;
+    background: rgba(139, 92, 246, 0.08);
+    color: #e2e8f0;
+}
+
+.icon-wrapper {
+    font-size: 1.2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #64748b;
+    transition: color 0.2s;
+}
+
+.edit-feature-btn.active .icon-wrapper {
+    color: #8b5cf6;
+}
+
+.text-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.btn-title {
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.btn-subtitle {
+    font-size: 0.75rem;
+    opacity: 0.7;
+}
+
+.status-indicator {
+    font-size: 0.7rem;
+    padding: 4px 8px;
+    border-radius: 4px;
+    background: #1e293b;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-weight: 700;
+}
+
+.edit-feature-btn.active .status-indicator {
+    background: #8b5cf6;
+    color: white;
+}

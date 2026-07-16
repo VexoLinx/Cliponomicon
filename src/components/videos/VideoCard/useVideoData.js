@@ -10,9 +10,12 @@ export const useVideoData = (initialData) => {
   const videoId = videoCore?.id || videoCore?._id || initialData?.id;
   const isProcessing = activeStatuses.includes(videoCore?.processing_status?.toLowerCase());
 
+  const isEdited = videoCore?.edited === true || initialData?.edited === true;
+
   const hookThumbnailSrc = useVideoThumbnail(videoId);
+  
   const baseThumbnail = !isProcessing && videoId
-    ? `${import.meta.env.VITE_API_URL}/videos/${videoId}/thumbnail`
+    ? `${import.meta.env.VITE_API_URL}/videos/${videoId}/thumbnail${isEdited ? "?variant_type=edited" : ""}`
     : hookThumbnailSrc;
 
   const finalThumbnailSrc = thumbBuster 

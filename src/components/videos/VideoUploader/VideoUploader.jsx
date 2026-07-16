@@ -18,6 +18,8 @@ const VideoUploader = () => {
     setDescription,
     isRegisteredOnly,
     setIsRegisteredOnly,
+    isEdited,
+    setIsEdited,
     errorMessage,
     handleFileSelect,
     handleUpload,
@@ -29,9 +31,7 @@ const VideoUploader = () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_API_URL}/category`,
-      );
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/category`);
       if (res.ok) {
         const data = await res.json();
         setCategories(data);
@@ -69,6 +69,8 @@ const VideoUploader = () => {
           description={description}
           setDescription={setDescription}
           isRegisteredOnly={isRegisteredOnly}
+          isEdited={isEdited}
+          setIsEdited={setIsEdited}
           setIsRegisteredOnly={setIsRegisteredOnly}
           categoryId={selectedCategory}
           setCategoryId={setSelectedCategory}

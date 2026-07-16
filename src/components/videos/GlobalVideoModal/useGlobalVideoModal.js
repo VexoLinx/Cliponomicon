@@ -14,6 +14,7 @@ export const useGlobalVideoModal = () => {
   const [editTitle, setEditTitle] = useState("");
   const [editDescription, setEditDescription] = useState("");
   const [editIsRegistered, setEditIsRegistered] = useState(false);
+  const [editIsEdited, setEditIsEdited] = useState(false);
   const [updateError, setUpdateError] = useState("");
   const [editCategoryId, setEditCategoryId] = useState("");
 
@@ -101,6 +102,7 @@ export const useGlobalVideoModal = () => {
     setEditTitle(activeVideo.title || "");
     setEditDescription(activeVideo.description || "");
     setEditIsRegistered(activeVideo.is_registered_only || false);
+    setEditIsEdited(activeVideo.edited || false);
     setEditCategoryId("");
     setEditStatus("editing");
     setIsEditing(true);
@@ -121,6 +123,7 @@ export const useGlobalVideoModal = () => {
             title: editTitle.trim(),
             description: editDescription.trim() || null,
             is_registered_only: Boolean(editIsRegistered),
+            edited: Boolean(editIsEdited),
             category_ids: editCategoryId ? [editCategoryId] : [],
             tags: activeVideo.tags?.map((t) => t.name) || [],
           }),
@@ -139,7 +142,14 @@ export const useGlobalVideoModal = () => {
       }
 
       setEditStatus("success");
-      window.dispatchEvent(new Event("videos-changed"));
+      window.dispatchEvent(new CustomEvent("video-updated", {
+        detail: {
+          id: activeVideo.id,
+          edited: Boolean(editIsEdited),
+          title: editTitle.trim(),
+          context: editDescription.trim() || ""
+        }
+      }));
 
       setTimeout(() => {
         setIsEditing(false);
@@ -180,7 +190,9 @@ export const useGlobalVideoModal = () => {
       }
 
       setEditStatus("success");
-      window.dispatchEvent(new Event("videos-changed"));
+      window.dispatchEvent(new CustomEvent("video-deleted", {
+        detail: { id: activeVideo.id }
+      }));
 
       setTimeout(() => {
         setIsEditing(false);
@@ -208,6 +220,8 @@ export const useGlobalVideoModal = () => {
     setEditDescription,
     editIsRegistered,
     setEditIsRegistered,
+    editIsEdited,
+    setEditIsEdited,
     editCategoryId,
     setEditCategoryId,
     updateError,
