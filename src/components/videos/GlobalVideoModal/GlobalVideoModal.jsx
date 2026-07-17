@@ -9,7 +9,7 @@ import "./GlobalVideoModal.css";
 
 const GlobalVideoModal = () => {
   const { token } = useAuth();
-  
+
   const [showToast, setShowToast] = useState(false);
 
   const {
@@ -46,7 +46,8 @@ const GlobalVideoModal = () => {
     e.stopPropagation();
     const clipUrl = `${import.meta.env.VITE_API_URL}/clip/${activeVideo.id}`;
 
-    navigator.clipboard.writeText(clipUrl)
+    navigator.clipboard
+      .writeText(clipUrl)
       .then(() => {
         setShowToast(true);
         setTimeout(() => {
@@ -55,9 +56,9 @@ const GlobalVideoModal = () => {
       })
       .catch((error) => {
         console.error("Fallo al copiar el enlace del endpoint:", error);
-        navigator.clipboard.writeText(window.location.href).catch(err => 
-          console.error("También falló el fallback:", err)
-        );
+        navigator.clipboard
+          .writeText(window.location.href)
+          .catch((err) => console.error("También falló el fallback:", err));
       });
   };
 
@@ -65,6 +66,15 @@ const GlobalVideoModal = () => {
     <div className="modal-overlay" onClick={closeVideo}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         <div className="modal-video-container">
+          {activeVideo.edited && (
+            <div
+              className="edited-bookmark modal-bookmark"
+              title="Este clip está editado"
+            >
+              <span className="bookmark-text">EDIT</span>
+            </div>
+          )}
+
           <video
             ref={videoRef}
             key={activeVideo.videoUrl}
@@ -162,12 +172,7 @@ const GlobalVideoModal = () => {
         />
       )}
 
-      {showToast && (
-        <div className="copy-toast">
-          Enlace copiado
-        </div>
-      )}
-
+      {showToast && <div className="copy-toast">Enlace copiado</div>}
     </div>,
     document.body,
   );
