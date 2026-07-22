@@ -10,7 +10,7 @@ import "./CustomVideoPlayer.css";
 const CustomVideoPlayer = ({ video }) => {
   const { refs, states, actions } = useVideoPlayer(video);
 
-  const { videoRef, playerContainerRef } = refs;
+  const { videoRef, playerContainerRef, settingsRef } = refs;
   const {
     isPlaying, progress, currentTime, duration, volume,
     isMuted, isFullscreen, activeMenu, videoVariant,
@@ -83,7 +83,7 @@ const CustomVideoPlayer = ({ video }) => {
           <div className="controls-right">
             
             {/* MENÚ DE AJUSTES AVANZADOS */}
-            <div className="settings-container-btn">
+            <div className="settings-container-btn" ref={settingsRef}>
               <button 
                 className={`control-btn ${activeMenu ? 'active' : ''}`} 
                 onClick={() => setActiveMenu(activeMenu ? null : 'main')}

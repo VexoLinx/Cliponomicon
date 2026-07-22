@@ -3,6 +3,7 @@ import { useState, useRef, useEffect } from "react";
 export const useVideoPlayer = (video) => {
   const videoRef = useRef(null);
   const playerContainerRef = useRef(null);
+  const settingsRef = useRef(null);
 
   const getInitialVariant = () => {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
@@ -21,10 +22,25 @@ export const useVideoPlayer = (video) => {
   const [activeMenu, setActiveMenu] = useState(null);
   const [videoVariant, setVideoVariant] = useState(getInitialVariant);
   const [playbackRate, setPlaybackRate] = useState(1);
-  
   const [isDownloading, setIsDownloading] = useState(false);
 
   const currentStreamUrl = `${import.meta.env.VITE_API_URL}/videos/${video?.id}/stream?variant_type=${videoVariant}`;
+
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (settingsRef.current && !settingsRef.current.contains(event.target)) {
+        setActiveMenu(null);
+      }
+    };
+
+    if (activeMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [activeMenu]);
 
   const formatTime = (timeInSeconds) => {
     if (isNaN(timeInSeconds)) return "0:00";
@@ -162,7 +178,7 @@ export const useVideoPlayer = (video) => {
   };
 
   return {
-    refs: { videoRef, playerContainerRef },
+    refs: { videoRef, playerContainerRef, settingsRef },
     states: {
       isPlaying, progress, currentTime, duration, volume,
       isMuted, isFullscreen, activeMenu, videoVariant,
