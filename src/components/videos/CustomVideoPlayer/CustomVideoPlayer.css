@@ -34,8 +34,9 @@
   z-index: 20;
 }
 
-.custom-player-wrapper:not(:hover) .custom-controls-bar {
+.custom-player-wrapper:not(:hover):not(.menu-open) .custom-controls-bar {
   opacity: 0;
+  pointer-events: none;
 }
 
 /* --- Barra de Progreso --- */
@@ -170,7 +171,7 @@
   top: 0;
   left: 0;
   width: 100vw;
-  height: 100vw;
+  height: 100vh;
   z-index: 99;
   cursor: default;
 }

@@ -26,7 +26,7 @@ const CustomVideoPlayer = ({ video }) => {
   const currentVolume = isMuted ? 0 : volume;
 
   return (
-    <div className="custom-player-wrapper" ref={playerContainerRef}>
+    <div className={`custom-player-wrapper ${activeMenu ? "menu-open" : ""}`} ref={playerContainerRef}>
       {video?.edited && (
         <div className="edited-bookmark modal-bookmark" title="Este clip está editado">
           <span className="bookmark-text">EDIT</span>
