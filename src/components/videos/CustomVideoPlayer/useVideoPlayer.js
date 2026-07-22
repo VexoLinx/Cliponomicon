@@ -26,22 +26,6 @@ export const useVideoPlayer = (video) => {
 
   const currentStreamUrl = `${import.meta.env.VITE_API_URL}/videos/${video?.id}/stream?variant_type=${videoVariant}`;
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (settingsRef.current && !settingsRef.current.contains(event.target)) {
-        setActiveMenu(null);
-      }
-    };
-
-    if (activeMenu) {
-      document.addEventListener("mousedown", handleClickOutside);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
-    };
-  }, [activeMenu]);
-
   const formatTime = (timeInSeconds) => {
     if (isNaN(timeInSeconds)) return "0:00";
     const minutes = Math.floor(timeInSeconds / 60);

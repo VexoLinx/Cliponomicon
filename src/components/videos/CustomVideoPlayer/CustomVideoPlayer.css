@@ -7,7 +7,7 @@
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  border-radius: 8px; /* Quítalo si no quieres esquinas redondeadas en el reproductor */
+  border-radius: 8px;
 }
 
 .custom-video-element {
@@ -17,12 +17,10 @@
   cursor: pointer;
 }
 
-/* Ocultar barra de controles nativa en iOS/Safari por si acaso */
 .custom-video-element::-webkit-media-controls {
   display: none !important;
 }
 
-/* La barra inferior oscura */
 .custom-controls-bar {
   position: absolute;
   bottom: 0;
@@ -36,7 +34,6 @@
   z-index: 20;
 }
 
-/* Ocultar controles si el ratón no está encima (opcional, da un toque pro) */
 .custom-player-wrapper:not(:hover) .custom-controls-bar {
   opacity: 0;
 }
@@ -51,8 +48,9 @@
   outline: none;
   cursor: pointer;
   margin-bottom: 12px;
-  background-image: linear-gradient(#ff0055, #ff0055); /* Color corporativo de tu app */
+  background-image: linear-gradient(#ff0055, #ff0055);
   background-repeat: no-repeat;
+  background-size: var(--progress, 0%) 100%;
   transition: height 0.1s;
 }
 
@@ -126,6 +124,7 @@
   background: rgba(255, 255, 255, 0.3);
   background-image: linear-gradient(#fff, #fff);
   background-repeat: no-repeat;
+  background-size: var(--volume, 0%) 100%;
   border-radius: 2px;
   outline: none;
   cursor: pointer;
@@ -155,7 +154,7 @@
   bottom: 45px;
   right: -10px;
   background: rgba(17, 20, 36, 0.95);
-  backdrop-filter: blur(8px); /* Efecto cristal */
+  backdrop-filter: blur(8px);
   border: 1px solid #2a2d42;
   border-radius: 8px;
   overflow: hidden;
@@ -164,6 +163,16 @@
   display: flex;
   flex-direction: column;
   z-index: 100;
+}
+
+.settings-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vw;
+  z-index: 99;
+  cursor: default;
 }
 
 .settings-header {

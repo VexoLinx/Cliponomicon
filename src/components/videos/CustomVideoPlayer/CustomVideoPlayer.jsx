@@ -23,6 +23,8 @@ const CustomVideoPlayer = ({ video }) => {
     changeQuality, changeSpeed, togglePiP, handleDownload
   } = actions;
 
+  const currentVolume = isMuted ? 0 : volume;
+
   return (
     <div className="custom-player-wrapper" ref={playerContainerRef}>
       {video?.edited && (
@@ -52,7 +54,7 @@ const CustomVideoPlayer = ({ video }) => {
           max="100" 
           value={progress} 
           onChange={handleSeek}
-          style={{ backgroundSize: `${progress}% 100%` }}
+          style={{ "--progress": `${progress}%` }}
         />
 
         <div className="controls-row">
@@ -71,9 +73,9 @@ const CustomVideoPlayer = ({ video }) => {
                 min="0" 
                 max="1" 
                 step="0.05" 
-                value={isMuted ? 0 : volume} 
+                value={currentVolume} 
                 onChange={handleVolumeChange} 
-                style={{ backgroundSize: `${(isMuted ? 0 : volume) * 100}% 100%` }}
+                style={{ "--volume": `${currentVolume * 100}%` }}
               />
             </div>
 
@@ -92,76 +94,86 @@ const CustomVideoPlayer = ({ video }) => {
               </button>
 
               {activeMenu && (
-                <div className="settings-dropdown">
+                <>
+                  <div 
+                    className="settings-overlay" 
+                    onClick={(e) => {
+                      e.stopPropagation(); 
+                      setActiveMenu(null); 
+                    }}
+                  />
                   
-                  {/* MENÚ PRINCIPAL */}
-                  {activeMenu === 'main' && (
-                    <>
-                      <div className="settings-item" onClick={() => setActiveMenu('quality')}>
-                        <span>Calidad</span>
-                        <div className="settings-item-right">
-                          <span>{videoVariant === 'low_h264' ? 'Baja' : 'Original'}</span>
-                          <IoChevronForward />
+                  <div 
+                    className="settings-dropdown"
+                    onClick={(e) => e.stopPropagation()} 
+                    onPointerDown={(e) => e.stopPropagation()}
+                  >
+                    {activeMenu === 'main' && (
+                      <>
+                        <div className="settings-item" onClick={() => setActiveMenu('quality')}>
+                          <span>Calidad</span>
+                          <div className="settings-item-right">
+                            <span>{videoVariant === 'low_h264' ? 'Baja' : 'Original'}</span>
+                            <IoChevronForward />
+                          </div>
                         </div>
-                      </div>
-                      <div className="settings-item" onClick={() => setActiveMenu('speed')}>
-                        <span>Velocidad</span>
-                        <div className="settings-item-right">
-                          <span>{playbackRate === 1 ? 'Normal' : `${playbackRate}x`}</span>
-                          <IoChevronForward />
+                        <div className="settings-item" onClick={() => setActiveMenu('speed')}>
+                          <span>Velocidad</span>
+                          <div className="settings-item-right">
+                            <span>{playbackRate === 1 ? 'Normal' : `${playbackRate}x`}</span>
+                            <IoChevronForward />
+                          </div>
                         </div>
-                      </div>
-                      <div className="settings-item" onClick={togglePiP}>
-                        <span>Imagen en imagen</span>
-                        <IoCopyOutline />
-                      </div>
-                      <div className="settings-item" onClick={handleDownload} style={{ opacity: isDownloading ? 0.5 : 1 }}>
-                        <span>{isDownloading ? 'Descargando...' : 'Descargar'}</span>
-                        <IoDownloadOutline />
-                      </div>
-                    </>
-                  )}
+                        <div className="settings-item" onClick={togglePiP}>
+                          <span>Imagen en imagen</span>
+                          <IoCopyOutline />
+                        </div>
+                        <div className="settings-item" onClick={handleDownload} style={{ opacity: isDownloading ? 0.5 : 1 }}>
+                          <span>{isDownloading ? 'Descargando...' : 'Descargar'}</span>
+                          <IoDownloadOutline />
+                        </div>
+                      </>
+                    )}
 
-                  {/* SUBMENÚ: CALIDAD */}
-                  {activeMenu === 'quality' && (
-                    <>
-                      <div className="settings-header" onClick={() => setActiveMenu('main')}>
-                        <IoChevronBack /> <span>Calidad</span>
-                      </div>
-                      <div 
-                        className={`settings-item ${videoVariant === "original" || videoVariant === "edited" ? "active" : ""}`}
-                        onClick={() => changeQuality(video?.edited ? "edited" : "original")}
-                      >
-                        Original
-                      </div>
-                      <div 
-                        className={`settings-item ${videoVariant === "low_h264" ? "active" : ""}`}
-                        onClick={() => changeQuality("low_h264")}
-                      >
-                        Baja (low_h264)
-                      </div>
-                    </>
-                  )}
-
-                  {/* SUBMENÚ: VELOCIDAD */}
-                  {activeMenu === 'speed' && (
-                    <>
-                      <div className="settings-header" onClick={() => setActiveMenu('main')}>
-                        <IoChevronBack /> <span>Velocidad</span>
-                      </div>
-                      {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 2].map(rate => (
+                    {activeMenu === 'quality' && (
+                      <>
+                        <div className="settings-header" onClick={() => setActiveMenu('main')}>
+                          <IoChevronBack /> <span>Calidad</span>
+                        </div>
                         <div 
-                          key={rate}
-                          className={`settings-item ${playbackRate === rate ? "active" : ""}`}
-                          onClick={() => changeSpeed(rate)}
+                          className={`settings-item ${videoVariant === "original" || videoVariant === "edited" ? "active" : ""}`}
+                          onClick={() => changeQuality(video?.edited ? "edited" : "original")}
                         >
-                          {rate === 1 ? 'Normal' : `${rate}x`}
+                          Original
                         </div>
-                      ))}
-                    </>
-                  )}
+                        <div 
+                          className={`settings-item ${videoVariant === "low_h264" ? "active" : ""}`}
+                          onClick={() => changeQuality("low_h264")}
+                        >
+                          Baja (low_h264)
+                        </div>
+                      </>
+                    )}
 
-                </div>
+                    {activeMenu === 'speed' && (
+                      <>
+                        <div className="settings-header" onClick={() => setActiveMenu('main')}>
+                          <IoChevronBack /> <span>Velocidad</span>
+                        </div>
+                        {[0.25, 0.5, 0.75, 1, 1.25, 1.5, 2].map(rate => (
+                          <div 
+                            key={rate}
+                            className={`settings-item ${playbackRate === rate ? "active" : ""}`}
+                            onClick={() => changeSpeed(rate)}
+                          >
+                            {rate === 1 ? 'Normal' : `${rate}x`}
+                          </div>
+                        ))}
+                      </>
+                    )}
+
+                  </div>
+                </>
               )}
             </div>
 
