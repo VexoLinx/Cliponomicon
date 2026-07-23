@@ -89,8 +89,13 @@ export const useLogin = () => {
             }
 
             if (data.authorization_url) {
-                const cleanUrl = data.authorization_url.replace(/^"|"$/g, '').trim();
-                window.location.href = cleanUrl;
+                const urlMatch = data.authorization_url.match(/(https?:\/\/[^\s"']+)/);
+
+                if (urlMatch && urlMatch[0]) {
+                    window.location.href = urlMatch[0];
+                } else {
+                    throw new Error("La URL de autorización recibida no tiene un formato válido.");
+                }
             } else {
                 throw new Error("El JSON no contenía la authorization_url");
             }
