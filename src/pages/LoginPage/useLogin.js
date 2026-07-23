@@ -68,7 +68,8 @@ export const useLogin = () => {
         setError(null);
 
         try {
-            const targetUrl = `${OIDC_AUTHORIZE_URL}?return_to=/login`;
+            const homeUrl = window.location.origin;
+            const targetUrl = `${OIDC_AUTHORIZE_URL}?return_to=${encodeURIComponent(homeUrl)}`;
 
             const response = await fetch(targetUrl, {
                 method: 'GET',
