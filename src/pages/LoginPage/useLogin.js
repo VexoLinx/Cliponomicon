@@ -18,8 +18,6 @@ export const useLogin = () => {
     const location = useLocation();
     const { login } = useAuth();
 
-    const REDIRECT_URI = `${window.location.origin}/login`; 
-
     useEffect(() => {
         const params = new URLSearchParams(location.search);
         const code = params.get('code');
@@ -41,7 +39,7 @@ export const useLogin = () => {
                     'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify({ code, state, redirect_uri: REDIRECT_URI }),
+                body: JSON.stringify({ code, state }),
             });
 
             const data = await response.json();
@@ -70,7 +68,7 @@ export const useLogin = () => {
         setError(null);
         
         try {
-            const targetUrl = `${OIDC_AUTHORIZE_URL}?redirect_uri=${encodeURIComponent(REDIRECT_URI)}`;
+            const targetUrl = `${OIDC_AUTHORIZE_URL}?return_to=/`; 
             
             const response = await fetch(targetUrl, {
                 method: 'GET',
@@ -143,8 +141,8 @@ export const useLogin = () => {
         setPassword,
         error,
         isLoading,
-        isSSOProcessing, // Exponemos el nuevo estado
+        isSSOProcessing, 
         handleSubmit,
-        handleSSOLogin,  // Exponemos la nueva función
+        handleSSOLogin,  
     };
 };
