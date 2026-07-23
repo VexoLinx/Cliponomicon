@@ -89,7 +89,8 @@ export const useLogin = () => {
             }
 
             if (data.authorization_url) {
-                window.location.href = data.authorization_url;
+                const cleanUrl = data.authorization_url.replace(/^"|"$/g, '').trim();
+                window.location.href = cleanUrl;
             } else {
                 throw new Error("El JSON no contenía la authorization_url");
             }
