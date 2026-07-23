@@ -1,9 +1,11 @@
-.settings-container{
-    width: 100%;
-    height: 100%;
-    margin: -20px;
-    padding: 20px;
-    background-color: #251668;
+/* --- Estilos base del contenedor --- */
+.settings-container {
+width: 100%;
+  min-height: 100%; 
+  background-color: #251668;
+  color: white;
+  box-sizing: border-box; 
+  padding: 20px;
 }
 
 .settings-layout {
@@ -12,11 +14,12 @@
   min-height: 400px;
 }
 
+/* --- Sidebar --- */
 .settings-sidebar {
   display: flex;
   flex-direction: column;
   width: 200px;
-  border-right: 1px solid #ddd;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .settings-sidebar button {
@@ -27,24 +30,251 @@
   cursor: pointer;
   font-size: 1rem;
   border-radius: 4px 0 0 4px;
-  color: white;
+  color: #b18cff;
+  transition: all 0.2s ease;
+}
+
+.settings-sidebar button:hover {
+  background-color: rgba(255, 255, 255, 0.05);
 }
 
 .settings-sidebar button.active {
-  background-color: #f0f0f0;
-  color: black;
+  background-color: #1b114d;
+  color: white;
   font-weight: bold;
-  border-right: 3px solid #007bff;
+  border-right: 3px solid #8f44fd;
 }
 
 .settings-content {
   flex: 1;
-  max-width: 500px;
+  max-width: 600px;
 }
 
-.title-options {
-  margin-bottom: 15px;
+/* --- Cabeceras de sección --- */
+.section-header {
+  margin-bottom: 24px;
+}
+
+.section-header h2 {
+  font-size: 1.8rem;
+  margin-bottom: 4px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding-bottom: 10px;
+}
+
+.subtitle {
+  color: #a89bbd;
+  font-size: 0.95rem;
+}
+
+.profile-forms-container {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.settings-card {
+  background: rgba(27, 17, 77, 0.6);
+  border: 1px solid rgba(143, 68, 253, 0.2);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+.bg-subtle {
+  background: rgba(0, 0, 0, 0.2);
+  border-color: transparent;
+}
+
+.security-card {
+  border-left: 4px solid #ff4d4f;
+}
+
+.card-title {
+  font-size: 1.2rem;
+  margin-bottom: 20px;
+  color: #fff;
+  font-weight: 600;
+}
+
+/* --- Formulario e Inputs --- */
+.form-row {
+  display: flex;
+  gap: 20px;
+}
+
+.form-row .form-group {
+  flex: 1;
+}
+
+.form-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.form-group label {
+  font-size: 0.9rem;
+  color: #d1c4e9;
+  font-weight: 500;
+}
+
+.form-group small {
+  color: #8b7ca6;
+  font-size: 0.8rem;
+  margin-top: 4px;
+}
+
+.input-readonly {
+  padding: 12px 16px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  color: #888;
+  cursor: not-allowed;
+  font-family: monospace;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.input-editable {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
   color: white;
+  transition: all 0.2s ease;
+  box-sizing: border-box;
+  font-family: inherit;
+}
+
+.input-editable:focus {
+  outline: none;
+  border-color: #8f44fd;
+  background-color: rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 0 3px rgba(143, 68, 253, 0.2);
+}
+
+.textarea-editable {
+  resize: vertical;
+  min-height: 80px;
+}
+
+/* --- Sección Avatar --- */
+.avatar-card {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+}
+
+.avatar-preview img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #8f44fd;
+  background-color: #251668;
+}
+
+.avatar-actions h3 {
+  margin: 0 0 4px 0;
+  font-size: 1.1rem;
+}
+
+.avatar-actions p {
+  color: #a89bbd;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}
+
+.btn-group {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* --- Botones --- */
+.form-actions {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.btn-primary {
+  padding: 10px 20px;
+  background: #8f44fd;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background 0.2s;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: #7a36de;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-outline-danger {
+  padding: 10px 20px;
+  background: transparent;
+  color: #ff4d4f;
+  border: 1px solid #ff4d4f;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.btn-outline-danger:hover {
+  background: rgba(255, 77, 79, 0.1);
+}
+
+.btn-text-danger {
+  background: none;
+  border: none;
+  color: #ff4d4f;
+  cursor: pointer;
+  font-weight: 500;
+  padding: 0;
+}
+
+.btn-text-danger:hover {
+  text-decoration: underline;
+}
+
+/* --- Mensajes de Estado --- */
+.status-msg {
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.status-msg.success { color: #4caf50; }
+.status-msg.error { color: #ff4d4f; }
+.status-msg.loading { color: #b18cff; }
+
+/* --- Utilidades --- */
+.ux-skeleton-loader {
+  color: #a89bbd;
+  font-style: italic;
+  padding: 20px 0;
+}
+
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .custom-checkbox {

@@ -1,8 +1,13 @@
 .content-area {
   flex: 1;
-  padding: 24px;
+  padding: 20px;
+  height: 100%;
   overflow-y: auto;
   min-width: 0; 
+}
+
+.content-area:has(.settings-container) {
+  padding: 0;
 }
 
 .video-grid {
