@@ -12,7 +12,7 @@ export const useLogin = () => {
     const [password, setPassword] = useState('');
     const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
-    const [isSSOProcessing, setIsSSOProcessing] = useState(false); 
+    const [isSSOProcessing, setIsSSOProcessing] = useState(false);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -53,7 +53,7 @@ export const useLogin = () => {
             }
 
             login(data.access_token, data.user);
-            navigate('/'); 
+            navigate('/');
 
         } catch (err) {
             setError(err.message);
@@ -66,10 +66,10 @@ export const useLogin = () => {
     const handleSSOLogin = async () => {
         setIsLoading(true);
         setError(null);
-        
+
         try {
-            const targetUrl = `${OIDC_AUTHORIZE_URL}?return_to=/`; 
-            
+            const targetUrl = `${OIDC_AUTHORIZE_URL}?return_to=/login`;
+
             const response = await fetch(targetUrl, {
                 method: 'GET',
                 headers: {
@@ -141,8 +141,8 @@ export const useLogin = () => {
         setPassword,
         error,
         isLoading,
-        isSSOProcessing, 
+        isSSOProcessing,
         handleSubmit,
-        handleSSOLogin,  
+        handleSSOLogin,
     };
 };
