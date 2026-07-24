@@ -15,16 +15,31 @@ export const useVideoPlayer = (video) => {
   const [progress, setProgress] = useState(0);
   const [currentTime, setCurrentTime] = useState("0:00");
   const [duration, setDuration] = useState("0:00");
-  const [volume, setVolume] = useState(1);
-  const [isMuted, setIsMuted] = useState(false);
+
+  const [volume, setVolume] = useState(() => {
+    const savedVolume = localStorage.getItem("cliponomicon_volume");
+    return savedVolume !== null ? parseFloat(savedVolume) : 1;
+  });
+
+  const [isMuted, setIsMuted] = useState(() => {
+    const savedMute = localStorage.getItem("cliponomicon_muted");
+    return savedMute !== null ? JSON.parse(savedMute) : false;
+  });
+
   const [isFullscreen, setIsFullscreen] = useState(false);
-  
   const [activeMenu, setActiveMenu] = useState(null);
   const [videoVariant, setVideoVariant] = useState(getInitialVariant);
   const [playbackRate, setPlaybackRate] = useState(1);
   const [isDownloading, setIsDownloading] = useState(false);
 
   const currentStreamUrl = `${import.meta.env.VITE_API_URL}/videos/${video?.id}/stream?variant_type=${videoVariant}`;
+
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.volume = volume;
+      videoRef.current.muted = isMuted;
+    }
+  }, [currentStreamUrl, volume, isMuted]);
 
   const formatTime = (timeInSeconds) => {
     if (isNaN(timeInSeconds)) return "0:00";
@@ -54,6 +69,8 @@ export const useVideoPlayer = (video) => {
     setDuration(formatTime(videoRef.current.duration));
     if (videoRef.current) {
       videoRef.current.playbackRate = playbackRate;
+      videoRef.current.volume = volume;
+      videoRef.current.muted = isMuted;
     }
   };
 
@@ -69,21 +86,44 @@ export const useVideoPlayer = (video) => {
   };
 
   const toggleMute = () => {
-    videoRef.current.muted = !isMuted;
-    setIsMuted(!isMuted);
-    if (isMuted && volume === 0) setVolume(0.5);
+    const nextMuted = !isMuted;
+    let nextVolume = volume;
+
+    if (isMuted && volume === 0) {
+      nextVolume = 0.5;
+      setVolume(0.5);
+    }
+
+    setIsMuted(nextMuted);
+
+    if (videoRef.current) {
+      videoRef.current.muted = nextMuted;
+      videoRef.current.volume = nextVolume;
+    }
+
+    localStorage.setItem("cliponomicon_muted", JSON.stringify(nextMuted));
+    localStorage.setItem("cliponomicon_volume", nextVolume.toString());
   };
 
   const handleVolumeChange = (e) => {
     const newVolume = parseFloat(e.target.value);
-    videoRef.current.volume = newVolume;
+    const newMuted = newVolume === 0;
+
+    if (videoRef.current) {
+      videoRef.current.volume = newVolume;
+      videoRef.current.muted = newMuted;
+    }
+
     setVolume(newVolume);
-    setIsMuted(newVolume === 0);
+    setIsMuted(newMuted);
+
+    localStorage.setItem("cliponomicon_volume", newVolume.toString());
+    localStorage.setItem("cliponomicon_muted", JSON.stringify(newMuted));
   };
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
-      playerContainerRef.current.requestFullscreen().catch(err => console.error(err));
+      playerContainerRef.current.requestFullscreen().catch((err) => console.error(err));
     } else {
       document.exitFullscreen();
     }
@@ -139,19 +179,19 @@ export const useVideoPlayer = (video) => {
   const handleDownload = async () => {
     if (isDownloading) return;
     setIsDownloading(true);
-    
+
     try {
       const response = await fetch(currentStreamUrl);
       const blob = await response.blob();
       const blobUrl = window.URL.createObjectURL(blob);
-      
+
       const a = document.createElement("a");
       a.href = blobUrl;
-      a.download = video?.title ? `${video.title.replace(/[^a-z0-9]/gi, '_').toLowerCase()}.mp4` : "clip.mp4";
+      a.download = video?.title ? `${video.title.replace(/[^a-z0-9]/gi, "_").toLowerCase()}.mp4` : "clip.mp4";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
-      
+
       window.URL.revokeObjectURL(blobUrl);
     } catch (error) {
       console.error("Error al forzar la descarga:", error);
