@@ -1,8 +1,9 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import RegisterForm from "../../components/auth/RegisterForm/RegisterForm";
 import ApiTester from "../../components/ApiTester";
 import { useSettingsProfile } from "./useSettingsProfile";
 import { useAuth } from "../../context/AuthContext";
+import { IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
 import "./SettingsPage.css";
 
 const SettingsPage = ({ setShowApiTester }) => {
@@ -19,8 +20,11 @@ const SettingsPage = ({ setShowApiTester }) => {
   const canRegisterUsers = token && user && user.role !== "user";
   const fileInputRef = useRef(null);
 
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+
   const avatarUrl = profileData?.has_avatar 
-    ? `${API_URL}/users/${profileData.id}/avatar?t=${new Date().getTime()}` // Evita caché
+    ? `${API_URL}/users/${profileData.id}/avatar?t=${new Date().getTime()}`
     : `https://ui-avatars.com/api/?name=${encodeURIComponent(profileData?.display_name || profileData?.username || "U")}&background=8f44fd&color=fff&size=150`;
 
   return (
@@ -53,6 +57,7 @@ const SettingsPage = ({ setShowApiTester }) => {
               ) : profileData ? (
                 <div className="profile-forms-container">
                   
+                  {/* ... (Tarjeta de Avatar - se mantiene igual) ... */}
                   <div className="settings-card avatar-card">
                     <div className="avatar-preview">
                       <img src={avatarUrl} alt="Tu Avatar" />
@@ -83,7 +88,6 @@ const SettingsPage = ({ setShowApiTester }) => {
 
                   <form onSubmit={handleUpdateProfile} className="settings-card">
                     <h3 className="card-title">Información Pública</h3>
-                    
                     <div className="form-group">
                       <label htmlFor="displayName">Nombre a mostrar</label>
                       <input 
@@ -96,7 +100,6 @@ const SettingsPage = ({ setShowApiTester }) => {
                       />
                       <small>Este nombre aparecerá en tus clips y comentarios.</small>
                     </div>
-
                     <div className="form-group">
                       <label htmlFor="bio">Biografía</label>
                       <textarea 
@@ -108,7 +111,6 @@ const SettingsPage = ({ setShowApiTester }) => {
                         rows="3"
                       />
                     </div>
-
                     <div className="form-actions">
                       <button type="submit" className="btn-primary" disabled={updateStatus.type === "loading"}>
                         {updateStatus.type === "loading" ? "Guardando..." : "Guardar Cambios"}
@@ -137,28 +139,50 @@ const SettingsPage = ({ setShowApiTester }) => {
                       
                       <div className="form-group">
                         <label htmlFor="currentPassword">Contraseña Actual</label>
-                        <input 
-                          id="currentPassword"
-                          type="password" 
-                          autoComplete="current-password"
-                          value={currentPassword} 
-                          onChange={(e) => setCurrentPassword(e.target.value)}
-                          required
-                          className="input-editable"
-                        />
+                        <div className="password-wrapper">
+                          <input 
+                            id="currentPassword"
+                            type={showCurrentPassword ? "text" : "password"} 
+                            autoComplete="current-password"
+                            value={currentPassword} 
+                            onChange={(e) => setCurrentPassword(e.target.value)}
+                            required
+                            className="input-editable"
+                          />
+                          <button
+                            type="button"
+                            className="toggle-password-btn"
+                            onClick={() => setShowCurrentPassword(!showCurrentPassword)}
+                            tabIndex="-1"
+                            title={showCurrentPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                          >
+                            {showCurrentPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
+                          </button>
+                        </div>
                       </div>
 
                       <div className="form-group">
                         <label htmlFor="newPassword">Nueva Contraseña</label>
-                        <input 
-                          id="newPassword"
-                          type="password" 
-                          autoComplete="new-password"
-                          value={newPassword} 
-                          onChange={(e) => setNewPassword(e.target.value)}
-                          required
-                          className="input-editable"
-                        />
+                        <div className="password-wrapper">
+                          <input 
+                            id="newPassword"
+                            type={showNewPassword ? "text" : "password"} 
+                            autoComplete="new-password"
+                            value={newPassword} 
+                            onChange={(e) => setNewPassword(e.target.value)}
+                            required
+                            className="input-editable"
+                          />
+                          <button
+                            type="button"
+                            className="toggle-password-btn"
+                            onClick={() => setShowNewPassword(!showNewPassword)}
+                            tabIndex="-1"
+                            title={showNewPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+                          >
+                            {showNewPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
+                          </button>
+                        </div>
                       </div>
 
                       <div className="form-actions">

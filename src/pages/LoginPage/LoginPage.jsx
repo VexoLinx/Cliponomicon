@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Enchiridion from "../../assets/logo.png";
 import { useLogin } from "./useLogin";
+import { IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';
 import './LoginPage.css';
 
 const LoginPage = () => {
@@ -15,6 +16,8 @@ const LoginPage = () => {
     handleSubmit,
     handleSSOLogin,
   } = useLogin();
+
+  const [showPassword, setShowPassword] = useState(false);
 
   if (isSSOProcessing) {
     return (
@@ -61,15 +64,27 @@ const LoginPage = () => {
 
         <div className="input-group">
           <label htmlFor="password">Contraseña</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            required
-            disabled={isLoading}
-          />
+          <div className="password-wrapper">
+            <input
+              type={showPassword ? "text" : "password"}
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+              disabled={isLoading}
+            />
+            <button
+              type="button"
+              className="toggle-password-btn"
+              onClick={() => setShowPassword(!showPassword)}
+              disabled={isLoading}
+              tabIndex="-1"
+              title={showPassword ? "Ocultar contraseña" : "Mostrar contraseña"}
+            >
+              {showPassword ? <IoEyeOffOutline /> : <IoEyeOutline />}
+            </button>
+          </div>
         </div>
 
         <button 

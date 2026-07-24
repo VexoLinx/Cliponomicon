@@ -12,7 +12,7 @@
 .game-card:hover {
     transform: translateY(-5px);
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4),
-        0 0 15px rgba(217, 70, 239, 0.2);
+                0 0 15px rgba(217, 70, 239, 0.2);
 }
 
 .game-card-image-container {
@@ -47,4 +47,27 @@
     font-weight: 600;
     font-size: 0.9rem;
     text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
+}
+
+@media (max-width: 768px) {
+    .game-card {
+        border-radius: 10px; 
+    }
+}
+
+@media (max-width: 575px) {
+    .game-card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+
+    .game-card-overlay {
+        opacity: 1;
+        background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, transparent 60%);
+        padding: 12px;
+    }
+
+    .game-title-hover {
+        font-size: 1rem;
+    }
 }
