@@ -1,8 +1,11 @@
 import { apiRequest } from "./http";
 import { mapTag, mapTags } from "../mappers/tag.mapper";
 
-export const listTags = async ({ mapResponse = true } = {}) => {
-  const data = await apiRequest("/tags");
+export const listTags = async ({ id, name, signal, mapResponse = true } = {}) => {
+  const data = await apiRequest("/tags", {
+    signal,
+    params: { id, name },
+  });
   return mapResponse ? mapTags(data) : data;
 };
 

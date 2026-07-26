@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { BsSearch } from "react-icons/bs";
 import { useSearch } from "../../../context/SearchContext";
+import { listTags } from "../../../services/api/tags.api";
 import "./TopBar.css";
 
 const parseSearchQuery = (query) => {
@@ -28,12 +29,44 @@ const TopBar = () => {
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const delayDebounceFn = setTimeout(() => {
-      const parsed = parseSearchQuery(searchTerm);
-      setFilters((prev) => ({ ...prev, ...parsed }));
+      const applyFilters = async () => {
+        const parsed = parseSearchQuery(searchTerm);
+
+        if (!parsed.tag) {
+          setFilters((prev) => ({ ...prev, ...parsed, tagId: null }));
+          return;
+        }
+
+        try {
+          const tags = await listTags({ name: parsed.tag, signal: controller.signal });
+          const exactMatch = tags.find(
+            (tag) => tag.name.toLowerCase() === parsed.tag.toLowerCase(),
+          );
+          setFilters((prev) => ({
+            ...prev,
+            ...parsed,
+            tagId: exactMatch?.id || null,
+          }));
+        } catch (error) {
+          if (error.name === "AbortError") {
+            return;
+          }
+
+          console.error("Error resolviendo tag de busqueda:", error);
+          setFilters((prev) => ({ ...prev, ...parsed, tagId: null }));
+        }
+      };
+
+      applyFilters();
     }, 300);
 
-    return () => clearTimeout(delayDebounceFn);
+    return () => {
+      controller.abort();
+      clearTimeout(delayDebounceFn);
+    };
   }, [searchTerm, setFilters]);
 
   return (

@@ -72,6 +72,18 @@ const Sidebar = () => {
             </NavLink>
           </li>
 
+          <li>
+            <NavLink
+              to="/tags"
+              className={({ isActive }) =>
+                isActive ? "nav-item active" : "nav-item"
+              }
+            >
+              <IoMdPricetags />
+              <span className="nav-icon">Tags</span>
+            </NavLink>
+          </li>
+
           {token && (
             <>
               <li>
@@ -83,18 +95,6 @@ const Sidebar = () => {
                 >
                   <GoStarFill />
                   <span className="nav-icon">Favoritos</span>
-                </NavLink>
-              </li>
-
-              <li>
-                <NavLink
-                  to="/tags"
-                  className={({ isActive }) =>
-                    isActive ? "nav-item active" : "nav-item"
-                  }
-                >
-                  <IoMdPricetags />
-                  <span className="nav-icon">Tags</span>
                 </NavLink>
               </li>
 
