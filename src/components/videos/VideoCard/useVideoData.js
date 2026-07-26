@@ -3,6 +3,7 @@ import { useVideoThumbnail } from "./useVideoThumbnail";
 import { getVideoThumbnailUrl } from "../../../services/api/videoMedia.api";
 import { getVideo } from "../../../services/api/videos.api";
 import { VIDEO_PROCESSING_STATUSES } from "../../../services/mappers/video.mapper";
+import { APP_EVENTS, emitAppEvent } from "../../../events/appEvents";
 
 const activeStatuses = VIDEO_PROCESSING_STATUSES;
 
@@ -53,7 +54,7 @@ export const useVideoData = (initialData) => {
         if (!stillWorking) {
           setVideoCore(freshData);
           setThumbBuster(Date.now());
-          window.dispatchEvent(new Event("videos-changed"));
+          emitAppEvent(APP_EVENTS.VIDEOS_CHANGED);
         }
       } catch (err) {
         console.error("Error en el autochequeo:", err);

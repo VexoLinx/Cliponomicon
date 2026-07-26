@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { listFavoriteVideos } from "../../services/api/interactions.api";
+import { APP_EVENTS, onAppEvent } from "../../events/appEvents";
 
 const LIMIT = 20;
 
@@ -54,10 +55,7 @@ export const useFavoritesVideos = () => {
       fetchFavorites(0, false);
     };
 
-    window.addEventListener("favorites-changed", handleFavoritesRefresh);
-    return () => {
-      window.removeEventListener("favorites-changed", handleFavoritesRefresh);
-    };
+    return onAppEvent(APP_EVENTS.FAVORITES_CHANGED, handleFavoritesRefresh);
   }, [fetchFavorites, user?.id]);
 
   const loadMoreFavorites = useCallback(() => {

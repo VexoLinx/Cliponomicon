@@ -74,14 +74,15 @@ Leyenda:
     - Beneficio: menos duplicacion de headers, errores, paginacion y eventos.
     - Estado: hecho con `src/services/api/auth.api.js`, `videos.api.js`, `videoMedia.api.js`, `categories.api.js`, `interactions.api.js`, `users.api.js`, `tags.api.js`, `steam.api.js` y `health.api.js`.
 
-11. [ ] **Sustituir eventos globales por un bus tipado o estado compartido claro**
-    - Se usan eventos de `window`: `videos-changed`, `video-updated`, `video-deleted`, `favorites-changed`, `categories_updated`, `auth-expired`.
-    - Son dificiles de rastrear, no tienen tipado, mezclan `snake_case` y kebab-case y acoplan componentes lejanos.
-    - Accion: centralizar nombres en `src/events/appEvents.js` como minimo; idealmente usar context/reducer o una libreria de cache/query.
+11. [x] ~~**Sustituir eventos globales por un bus tipado o estado compartido claro**~~
+    - Antes se usaban eventos de `window`: `videos-changed`, `video-updated`, `video-deleted`, `favorites-changed`, `categories_updated`, `auth-expired`.
+    - Eran dificiles de rastrear, no tenian nombres centralizados, mezclaban `snake_case` y kebab-case y acoplaban componentes lejanos.
+    - Estado: hecho. Los nombres viven en `src/events/appEvents.js` y el acceso a `window` queda encapsulado en `emitAppEvent` / `onAppEvent`.
 
-12. [ ] **Dividir componentes grandes**
+12. [~] **Dividir componentes grandes**
     - `SettingsPage.jsx`, `VideoUpdateModal.jsx`, `GlobalVideoModal/useGlobalVideoModal.js`, `VideoCard.jsx` y `CustomVideoPlayer` mezclan presentacion, datos, permisos, efectos y acciones.
     - Accion: dividir por responsabilidad: secciones visuales, formularios, hooks de datos, servicios API y componentes puros.
+    - Estado: parcial. `SettingsPage.jsx` se redujo a contenedor y sus tarjetas/formularios viven en `src/pages/SettingsPage/components`. Quedan por cortar `VideoUpdateModal`, `VideoCard`, `GlobalVideoModal/useGlobalVideoModal.js` y `CustomVideoPlayer`.
 
 13. [x] ~~**Eliminar la carpeta `back` obsoleta**~~
     - Estado: hecho. La capa activa vive en `src/services/api` y los mappers en `src/services/mappers`.
@@ -167,9 +168,9 @@ Leyenda:
     - Accion: mover a `src/devtools`, cargar solo en desarrollo o proteger por `import.meta.env.DEV`.
     - Estado: parcialmente hecho. Ya usa `src/services/api`, pero sigue disponible desde Settings.
 
-31. [ ] **Unificar nombres de eventos**
-    - Hay mezcla de `categories_updated` con `videos-changed`.
-    - Accion: elegir kebab-case o snake_case y documentarlo.
+31. [x] ~~**Unificar nombres de eventos**~~
+    - Antes habia mezcla de `categories_updated` con `videos-changed`.
+    - Estado: hecho. Se normalizaron los nombres en kebab-case dentro de `src/events/appEvents.js`.
 
 32. [x] ~~**Unificar nombres de campos**~~
     - Se mezclan `is_registered_only`, `isRegisteredOnly`, `processing_status`, `processingStatus`, `gameIcon`, `thumbnail_horizontal_url`.

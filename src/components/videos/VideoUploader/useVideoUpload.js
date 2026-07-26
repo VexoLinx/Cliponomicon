@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../context/AuthContext";
 import { uploadVideo } from "../../../services/api/videos.api";
+import { APP_EVENTS, emitAppEvent } from "../../../events/appEvents";
 
 export const useVideoUpload = () => {
   const [status, setStatus] = useState("idle");
@@ -71,7 +72,7 @@ export const useVideoUpload = () => {
       }
 
       setStatus("success");
-      window.dispatchEvent(new Event("videos-changed"));
+      emitAppEvent(APP_EVENTS.VIDEOS_CHANGED);
 
       setTimeout(() => {
         resetUploader();

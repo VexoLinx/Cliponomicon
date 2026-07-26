@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import { IoClose, IoCut } from "react-icons/io5";
 import { MdCloudUpload, MdError } from "react-icons/md";
 import { listCategories } from "../../../services/api/categories.api";
+import { APP_EVENTS, onAppEvent } from "../../../events/appEvents";
 import "./VideoUpdateModal.css";
 import "../videos.css";
 
@@ -50,10 +51,7 @@ const VideoUpdateModal = ({
       setLocalCategories(categoriesList);
     }
 
-    window.addEventListener("categories_updated", fetchFreshCategories);
-    return () => {
-      window.removeEventListener("categories_updated", fetchFreshCategories);
-    };
+    return onAppEvent(APP_EVENTS.CATEGORIES_UPDATED, fetchFreshCategories);
   }, [categoriesList]);
 
   useEffect(() => {

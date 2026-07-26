@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { importSteamCategory, searchSteamCategories } from "../../services/api/categories.api";
+import { APP_EVENTS, emitAppEvent } from "../../events/appEvents";
 
 export const useSteamSearch = (onImportSuccess) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -44,7 +45,7 @@ export const useSteamSearch = (onImportSuccess) => {
 
       setSearchTerm("");
       setSearchResults([]);
-      window.dispatchEvent(new Event("categories_updated"));
+      emitAppEvent(APP_EVENTS.CATEGORIES_UPDATED);
 
       if (onImportSuccess) {
         onImportSuccess(newCategory.id, newCategory.name);

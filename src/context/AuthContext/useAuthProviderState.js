@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { APP_EVENTS, onAppEvent } from "../../events/appEvents";
 
 export const useAuthProviderState = () => {
     const [token, setToken] = useState(localStorage.getItem("token"));
@@ -52,11 +53,7 @@ export const useAuthProviderState = () => {
             logout();
         };
 
-        window.addEventListener("auth-expired", handleForceLogout);
-
-        return () => {
-            window.removeEventListener("auth-expired", handleForceLogout);
-        };
+        return onAppEvent(APP_EVENTS.AUTH_EXPIRED, handleForceLogout);
     }, []);
 
     return {

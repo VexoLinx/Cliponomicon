@@ -1,3 +1,5 @@
+import { APP_EVENTS, emitAppEvent } from "../../events/appEvents";
+
 export const API_URL = import.meta.env.VITE_API_URL || "";
 
 export const getStoredToken = () => localStorage.getItem("token") || null;
@@ -80,7 +82,7 @@ export const apiRequest = async (path, options = {}) => {
   });
 
   if (response.status === 401) {
-    window.dispatchEvent(new Event("auth-expired"));
+    emitAppEvent(APP_EVENTS.AUTH_EXPIRED);
   }
 
   if (!response.ok) {

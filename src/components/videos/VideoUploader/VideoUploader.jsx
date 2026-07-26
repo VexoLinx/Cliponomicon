@@ -3,6 +3,7 @@ import VideoUploadButton from "./VideoUploadButton";
 import VideoEditModal from "../VideoEditModal";
 import { useVideoUpload } from "./useVideoUpload";
 import { listCategories } from "../../../services/api/categories.api";
+import { APP_EVENTS, onAppEvent } from "../../../events/appEvents";
 import "./VideoUploader.css";
 import "../videos.css";
 
@@ -42,10 +43,7 @@ const VideoUploader = () => {
   useEffect(() => {
     fetchCategories();
 
-    window.addEventListener("categories_updated", fetchCategories);
-    return () => {
-      window.removeEventListener("categories_updated", fetchCategories);
-    };
+    return onAppEvent(APP_EVENTS.CATEGORIES_UPDATED, fetchCategories);
   }, [status]);
 
   return (

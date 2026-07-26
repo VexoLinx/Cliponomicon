@@ -3,6 +3,7 @@ import { useSearch } from "../../context/SearchContext";
 import { useAuth } from "../../context/AuthContext";
 import { listVideos } from "../../services/api/videos.api";
 import { mapVideoToCard } from "../../services/mappers/video.mapper";
+import { APP_EVENTS, onAppEvent } from "../../events/appEvents";
 
 const LIMIT = 20;
 
@@ -68,8 +69,7 @@ export const useHomeVideos = () => {
       setHasMore(true);
       loadVideos(0, false);
     };
-    window.addEventListener("videos-changed", handleVideosRefresh);
-    return () => window.removeEventListener("videos-changed", handleVideosRefresh);
+    return onAppEvent(APP_EVENTS.VIDEOS_CHANGED, handleVideosRefresh);
   }, [loadVideos]);
 
   useEffect(() => {
@@ -87,12 +87,12 @@ export const useHomeVideos = () => {
       setVideos((prevVideos) => prevVideos.filter((video) => video.id !== deletedId));
     };
 
-    window.addEventListener("video-updated", handleVideoUpdated);
-    window.addEventListener("video-deleted", handleVideoDeleted);
+    const unsubscribeUpdated = onAppEvent(APP_EVENTS.VIDEO_UPDATED, handleVideoUpdated);
+    const unsubscribeDeleted = onAppEvent(APP_EVENTS.VIDEO_DELETED, handleVideoDeleted);
 
     return () => {
-      window.removeEventListener("video-updated", handleVideoUpdated);
-      window.removeEventListener("video-deleted", handleVideoDeleted);
+      unsubscribeUpdated();
+      unsubscribeDeleted();
     };
   }, []);
 

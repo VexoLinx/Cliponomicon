@@ -4,6 +4,7 @@ import { useVideoModal } from "../../../context/VideoContext";
 import { useAuth } from "../../../context/AuthContext";
 import { favoriteVideo, unfavoriteVideo } from "../../../services/api/interactions.api";
 import { deleteVideo, updateVideo } from "../../../services/api/videos.api";
+import { APP_EVENTS, emitAppEvent } from "../../../events/appEvents";
 
 export const useGlobalVideoModal = () => {
   const { activeVideo, closeVideo } = useVideoModal();
@@ -48,7 +49,7 @@ export const useGlobalVideoModal = () => {
       }
 
       setIsFavorite(!isFavorite);
-      window.dispatchEvent(new Event("favorites-changed"));
+      emitAppEvent(APP_EVENTS.FAVORITES_CHANGED);
     } catch (err) {
       console.error("Error de red al gestionar favoritos:", err);
     }
@@ -87,7 +88,7 @@ export const useGlobalVideoModal = () => {
       const data = await updateVideo(activeVideo.id, payload, { token });
 
       setEditStatus("success");
-      window.dispatchEvent(new CustomEvent("video-updated", { detail: data }));
+      emitAppEvent(APP_EVENTS.VIDEO_UPDATED, data);
 
       setTimeout(() => {
         setIsEditing(false);
@@ -115,9 +116,7 @@ export const useGlobalVideoModal = () => {
       });
 
       setEditStatus("success");
-      window.dispatchEvent(new CustomEvent("video-deleted", {
-        detail: { id: activeVideo.id },
-      }));
+      emitAppEvent(APP_EVENTS.VIDEO_DELETED, { id: activeVideo.id });
 
       setTimeout(() => {
         setIsEditing(false);
