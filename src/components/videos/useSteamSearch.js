@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { apiRequest } from "../../services/api/http";
+import { importSteamCategory, searchSteamCategories } from "../../services/api/categories.api";
 
 export const useSteamSearch = (onImportSuccess) => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -18,10 +18,7 @@ export const useSteamSearch = (onImportSuccess) => {
 
     setIsSearching(true);
     try {
-      const data = await apiRequest("/category/steam/search", {
-        token,
-        params: { term: query },
-      });
+      const data = await searchSteamCategories(query, { token });
       setSearchResults(data);
     } catch (err) {
       console.error("Error buscando en Steam:", err);
@@ -41,11 +38,8 @@ export const useSteamSearch = (onImportSuccess) => {
         thumbnail_horizontal_url: game.thumbnail_horizontal_url || null,
       };
 
-      const newCategory = await apiRequest("/category/steam/import", {
-        method: "POST",
+      const newCategory = await importSteamCategory(bodyData, {
         token,
-        body: JSON.stringify(bodyData),
-        fallbackError: "Error al importar de Steam.",
       });
 
       setSearchTerm("");

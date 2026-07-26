@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../../../context/AuthContext";
-import { apiRequest } from "../../../services/api/http";
+import { uploadVideo } from "../../../services/api/videos.api";
 
 export const useVideoUpload = () => {
   const [status, setStatus] = useState("idle");
@@ -64,10 +64,8 @@ export const useVideoUpload = () => {
           formData.append("category_ids", categoryId);
         }
 
-        await apiRequest("/videos", {
-          method: "POST",
+        await uploadVideo(formData, {
           token,
-          body: formData,
           fallbackError: `Error al subir el archivo: ${currentFile.name}`,
         });
       }

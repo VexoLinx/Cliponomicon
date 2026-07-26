@@ -1,9 +1,6 @@
 import { useState, useRef, useEffect } from "react";
-import {
-  getVideoStreamUrl,
-  getVideoVariantTypes,
-  pickVideoVariant,
-} from "../../../services/api/videoMapper";
+import { downloadVideoVariantBlob, getVideoStreamUrl } from "../../../services/api/videoMedia.api";
+import { getVideoVariantTypes, pickVideoVariant } from "../../../services/mappers/video.mapper";
 
 export const useVideoPlayer = (video) => {
   const videoRef = useRef(null);
@@ -186,8 +183,7 @@ export const useVideoPlayer = (video) => {
     setIsDownloading(true);
 
     try {
-      const response = await fetch(currentStreamUrl);
-      const blob = await response.blob();
+      const blob = await downloadVideoVariantBlob(video?.id, videoVariant);
       const blobUrl = window.URL.createObjectURL(blob);
 
       const a = document.createElement("a");

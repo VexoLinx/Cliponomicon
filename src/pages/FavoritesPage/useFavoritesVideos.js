@@ -1,7 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { apiRequest } from "../../services/api/http";
-import { mapVideoToCard } from "../../services/api/videoMapper";
+import { listFavoriteVideos } from "../../services/api/interactions.api";
 
 const LIMIT = 20;
 
@@ -23,13 +22,13 @@ export const useFavoritesVideos = () => {
     try {
       if (append) setIsFetchingNextPage(true);
 
-      const data = await apiRequest("/interactions/me/video-favorites", {
+      const data = await listFavoriteVideos({
         token,
-        params: { limit: LIMIT, offset: currentOffset },
+        limit: LIMIT,
+        offset: currentOffset,
       });
 
-      const items = data.items || [];
-      const mappedItems = items.map(mapVideoToCard);
+      const mappedItems = data.items || [];
 
       if (append) {
         setFavorites((prev) => [...prev, ...mappedItems]);
@@ -37,7 +36,7 @@ export const useFavoritesVideos = () => {
         setFavorites(mappedItems);
       }
 
-      setHasMore(currentOffset + items.length < (data.total ?? currentOffset + items.length));
+      setHasMore(currentOffset + mappedItems.length < (data.total ?? currentOffset + mappedItems.length));
     } catch (error) {
       console.error("Error cargando favoritos:", error);
     } finally {

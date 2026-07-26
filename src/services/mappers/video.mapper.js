@@ -1,4 +1,7 @@
-import { buildApiUrl, resolveApiUrl } from "./http";
+import { getVideoStreamUrl, getVideoThumbnailUrl } from "../api/videoMedia.api";
+import { mapCategories, mapCategory } from "./category.mapper";
+import { mapReactionCounts } from "./interaction.mapper";
+import { mapTags } from "./tag.mapper";
 
 export const VIDEO_PROCESSING_STATUSES = ["pending", "processing"];
 
@@ -19,17 +22,6 @@ export const pickVideoVariant = (video, { mobile = false } = {}) => {
   return preferences.find((variant) => available.includes(variant)) || available[0] || "low_h264";
 };
 
-export const getVideoStreamUrl = (videoId, variantType = "low_h264") =>
-  buildApiUrl(`/videos/${videoId}/stream`, { variant_type: variantType });
-
-export const getVideoThumbnailUrl = (video) => {
-  if (!video?.id) return "https://placehold.co/300x170";
-  if (video?.thumbnail_url) return resolveApiUrl(video.thumbnail_url);
-  return buildApiUrl(`/videos/${video?.id}/thumbnail`);
-};
-
-export const getClipUrl = (videoId) => buildApiUrl(`/clip/${videoId}`);
-
 export const formatVideoDate = (date) => {
   if (!date) return "";
   return new Date(date).toLocaleDateString("es-ES", {
@@ -40,13 +32,19 @@ export const formatVideoDate = (date) => {
 };
 
 export const mapVideoToCard = (video) => {
-  const mainCategory = video.categories?.[0] || video.category;
+  const categories = mapCategories(video.categories);
+  const category = mapCategory(video.category);
+  const mainCategory = categories?.[0] || category;
   const variantType = pickVideoVariant(video);
   const sourceDate = video.source_created_at || video.created_at;
 
   return {
     ...video,
     id: video.id,
+    categories,
+    category,
+    tags: mapTags(video.tags),
+    reactions: mapReactionCounts(video.reactions),
     thumbnail: getVideoThumbnailUrl(video),
     videoUrl: getVideoStreamUrl(video.id, variantType),
     gameIcon:
@@ -61,3 +59,8 @@ export const mapVideoToCard = (video) => {
     isProcessing: VIDEO_PROCESSING_STATUSES.includes(video.processing_status),
   };
 };
+
+export const mapVideoListToCards = (data) => ({
+  ...data,
+  items: Array.isArray(data?.items) ? data.items.map(mapVideoToCard) : [],
+});

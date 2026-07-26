@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../../../context/AuthContext";
-import { apiRequest } from "../../../services/api/http";
+import { registerUser } from "../../../services/api/auth.api";
 
 export const useRegisterForm = () => {
   const { token } = useAuth();
@@ -24,11 +24,8 @@ export const useRegisterForm = () => {
     setStatus({ type: "", message: "" });
 
     try {
-      await apiRequest("/auth/register", {
-        method: "POST",
+      await registerUser(formData, {
         token,
-        body: JSON.stringify(formData),
-        fallbackError: "Error al registrar usuario",
       });
 
       setStatus({ type: "success", message: "Usuario registrado con exito." });

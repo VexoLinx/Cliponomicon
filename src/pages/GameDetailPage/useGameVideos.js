@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
-import { apiRequest } from "../../services/api/http";
-import { mapVideoToCard, VIDEO_PROCESSING_STATUSES } from "../../services/api/videoMapper";
+import { listVideos } from "../../services/api/videos.api";
+import { mapVideoToCard, VIDEO_PROCESSING_STATUSES } from "../../services/mappers/video.mapper";
 
 const LIMIT = 20;
 
@@ -16,12 +16,11 @@ export const useGameVideos = (categoryId) => {
     try {
       if (append) setIsFetchingNextPage(true);
 
-      const data = await apiRequest("/videos", {
-        params: {
-          category_ids: [categoryId],
-          limit: LIMIT,
-          offset: currentOffset,
-        },
+      const data = await listVideos({
+        categoryIds: [categoryId],
+        limit: LIMIT,
+        offset: currentOffset,
+        mapToCards: false,
       });
 
       const items = data.items || [];

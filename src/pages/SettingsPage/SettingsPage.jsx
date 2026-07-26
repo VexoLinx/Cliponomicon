@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react";
 import RegisterForm from "../../components/auth/RegisterForm/RegisterForm";
-import ApiTester from "../../components/ApiTester";
 import { useSettingsProfile } from "./useSettingsProfile";
 import { useAuth } from "../../context/AuthContext";
 import { IoEyeOutline, IoEyeOffOutline } from 'react-icons/io5';

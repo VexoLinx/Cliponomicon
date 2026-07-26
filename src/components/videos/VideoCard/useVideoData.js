@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useVideoThumbnail } from "./useVideoThumbnail";
-import { getVideoThumbnailUrl, VIDEO_PROCESSING_STATUSES } from "../../../services/api/videoMapper";
-import { apiRequest } from "../../../services/api/http";
+import { getVideoThumbnailUrl } from "../../../services/api/videoMedia.api";
+import { getVideo } from "../../../services/api/videos.api";
+import { VIDEO_PROCESSING_STATUSES } from "../../../services/mappers/video.mapper";
 
 const activeStatuses = VIDEO_PROCESSING_STATUSES;
 
@@ -46,7 +47,7 @@ export const useVideoData = (initialData) => {
 
     const checkStatus = async () => {
       try {
-        const freshData = await apiRequest(`/videos/${videoId}`);
+        const freshData = await getVideo(videoId);
         const stillWorking = activeStatuses.includes(freshData.processing_status?.toLowerCase());
 
         if (!stillWorking) {

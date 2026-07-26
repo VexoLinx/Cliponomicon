@@ -1,155 +1,98 @@
-import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import { useAuth } from '../../context/AuthContext';
-
-const API_URL = import.meta.env.VITE_API_URL;
-const LOGIN_URL = `${API_URL}/auth/login`;
-const OIDC_AUTHORIZE_URL = `${API_URL}/auth/oidc/authorize`;
-const OIDC_CALLBACK_URL = `${API_URL}/auth/oidc/callback`;
+import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { useAuth } from "../../context/AuthContext";
+import {
+  completeOidcCallback,
+  getOidcAuthorization,
+  loginUser,
+} from "../../services/api/auth.api";
 
 export const useLogin = () => {
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
-    const [error, setError] = useState(null);
-    const [isLoading, setIsLoading] = useState(false);
-    const [isSSOProcessing, setIsSSOProcessing] = useState(false);
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSSOProcessing, setIsSSOProcessing] = useState(false);
 
-    const navigate = useNavigate();
-    const location = useLocation();
-    const { login } = useAuth();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { login } = useAuth();
 
-    useEffect(() => {
-        const params = new URLSearchParams(location.search);
-        const code = params.get('code');
-        const state = params.get('state');
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const code = params.get("code");
+    const state = params.get("state");
 
-        if (code && state) {
-            handleSSOCallback(code, state);
+    if (code && state) {
+      handleSSOCallback(code, state);
+    }
+  }, [location.search]);
+
+  const handleSSOCallback = async (code, state) => {
+    setIsSSOProcessing(true);
+    setError(null);
+
+    try {
+      const data = await completeOidcCallback({ code, state });
+      login(data.access_token, data.user);
+      navigate("/");
+    } catch (err) {
+      setError(err.message);
+      navigate("/login", { replace: true });
+    } finally {
+      setIsSSOProcessing(false);
+    }
+  };
+
+  const handleSSOLogin = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const data = await getOidcAuthorization(window.location.origin);
+
+      if (data.authorization_url) {
+        const urlMatch = data.authorization_url.match(/(https?:\/\/[^\s"']+)/);
+
+        if (urlMatch && urlMatch[0]) {
+          window.location.href = urlMatch[0];
+        } else {
+          throw new Error("La URL de autorizacion recibida no tiene un formato valido.");
         }
-    }, [location.search]);
+      } else {
+        throw new Error("El JSON no contenia la authorization_url");
+      }
+    } catch (err) {
+      setError(err.message);
+      setIsLoading(false);
+    }
+  };
 
-    const handleSSOCallback = async (code, state) => {
-        setIsSSOProcessing(true);
-        setError(null);
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    setError(null);
+    setIsLoading(true);
 
-        try {
-            const response = await fetch(OIDC_CALLBACK_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ code, state }),
-            });
+    try {
+      const data = await loginUser({ username, password });
+      login(data.access_token, data.user);
+      navigate("/");
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
-            const data = await response.json();
-
-            if (!response.ok) {
-                let errorMsg = 'Error en la autenticación SSO';
-                if (data.detail) {
-                    errorMsg = Array.isArray(data.detail) ? data.detail[0].msg : data.detail;
-                }
-                throw new Error(errorMsg);
-            }
-
-            login(data.access_token, data.user);
-            navigate('/');
-
-        } catch (err) {
-            setError(err.message);
-            navigate('/login', { replace: true });
-        } finally {
-            setIsSSOProcessing(false);
-        }
-    };
-
-    const handleSSOLogin = async () => {
-        setIsLoading(true);
-        setError(null);
-
-        try {
-            const homeUrl = window.location.origin;
-            const targetUrl = `${OIDC_AUTHORIZE_URL}?return_to=${encodeURIComponent(homeUrl)}`;
-
-            const response = await fetch(targetUrl, {
-                method: 'GET',
-                headers: {
-                    'Accept': 'application/json'
-                }
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                let errorMsg = 'Error al generar la ruta de autorización';
-                if (data.detail) {
-                    errorMsg = Array.isArray(data.detail) ? data.detail[0].msg : data.detail;
-                }
-                throw new Error(errorMsg);
-            }
-
-            if (data.authorization_url) {
-                const urlMatch = data.authorization_url.match(/(https?:\/\/[^\s"']+)/);
-
-                if (urlMatch && urlMatch[0]) {
-                    window.location.href = urlMatch[0];
-                } else {
-                    throw new Error("La URL de autorización recibida no tiene un formato válido.");
-                }
-            } else {
-                throw new Error("El JSON no contenía la authorization_url");
-            }
-
-        } catch (err) {
-            setError(err.message);
-            setIsLoading(false);
-        }
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError(null);
-        setIsLoading(true);
-
-        try {
-            const response = await fetch(LOGIN_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Accept': 'application/json'
-                },
-                body: JSON.stringify({ username, password }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                let errorMsg = 'Error en las credenciales';
-                if (data.detail) {
-                    errorMsg = Array.isArray(data.detail) ? data.detail[0].msg : data.detail;
-                }
-                throw new Error(errorMsg);
-            }
-
-            login(data.access_token, data.user);
-            navigate('/');
-
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setIsLoading(false);
-        }
-    };
-
-    return {
-        username,
-        setUsername,
-        password,
-        setPassword,
-        error,
-        isLoading,
-        isSSOProcessing,
-        handleSubmit,
-        handleSSOLogin,
-    };
+  return {
+    username,
+    setUsername,
+    password,
+    setPassword,
+    error,
+    isLoading,
+    isSSOProcessing,
+    handleSubmit,
+    handleSSOLogin,
+  };
 };

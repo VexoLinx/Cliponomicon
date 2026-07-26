@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearch } from "../../context/SearchContext";
 import { useAuth } from "../../context/AuthContext";
-import { apiRequest } from "../../services/api/http";
-import { mapVideoToCard } from "../../services/api/videoMapper";
+import { listVideos } from "../../services/api/videos.api";
+import { mapVideoToCard } from "../../services/mappers/video.mapper";
 
 const LIMIT = 20;
 
@@ -20,20 +20,17 @@ export const useHomeVideos = () => {
     try {
       if (append) setIsFetchingNextPage(true);
 
-      const data = await apiRequest("/videos", {
+      const data = await listVideos({
         token,
         signal,
-        params: {
-          title: filters.text,
-          owner_id: filters.ownerId,
-          tag_ids: filters.tagId ? [filters.tagId] : undefined,
-          limit: LIMIT,
-          offset: currentOffset,
-        },
+        title: filters.text,
+        ownerId: filters.ownerId,
+        tagIds: filters.tagId ? [filters.tagId] : undefined,
+        limit: LIMIT,
+        offset: currentOffset,
       });
 
-      const items = Array.isArray(data.items) ? data.items : [];
-      const mappedItems = items.map(mapVideoToCard);
+      const mappedItems = Array.isArray(data.items) ? data.items : [];
 
       if (append) {
         setVideos((prev) => [...prev, ...mappedItems]);
@@ -41,8 +38,8 @@ export const useHomeVideos = () => {
         setVideos(mappedItems);
       }
 
-      setHasMore(currentOffset + items.length < (data.total ?? currentOffset + items.length));
-      setStatusText(!append && items.length === 0 ? "No hay videos disponibles." : "");
+      setHasMore(currentOffset + mappedItems.length < (data.total ?? currentOffset + mappedItems.length));
+      setStatusText(!append && mappedItems.length === 0 ? "No hay videos disponibles." : "");
     } catch (error) {
       if (error.name === "AbortError") return;
       setStatusText(error.message);

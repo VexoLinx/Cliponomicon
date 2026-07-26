@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useVideoModal } from "../../../context/VideoContext";
 import { useVideoData } from "./useVideoData";
-import { getClipUrl, getVideoStreamUrl, pickVideoVariant } from "../../../services/api/videoMapper";
+import { getClipUrl, getVideoStreamUrl } from "../../../services/api/videoMedia.api";
+import { pickVideoVariant } from "../../../services/mappers/video.mapper";
 import "./VideoCard.css";
 import { CiLink } from "react-icons/ci";
 

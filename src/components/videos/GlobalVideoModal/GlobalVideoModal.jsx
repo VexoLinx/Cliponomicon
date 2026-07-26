@@ -6,7 +6,7 @@ import { CiLink } from "react-icons/ci";
 import VideoUpdateModal from "../VideoUpdateModal/VideoUpdateModal";
 import { useGlobalVideoModal } from "./useGlobalVideoModal";
 import CustomVideoPlayer from "../CustomVideoPlayer/CustomVideoPlayer";
-import { getClipUrl } from "../../../services/api/videoMapper";
+import { getClipUrl } from "../../../services/api/videoMedia.api";
 import "./GlobalVideoModal.css";
 
 const GlobalVideoModal = () => {

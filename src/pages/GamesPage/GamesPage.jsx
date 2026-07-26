@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import GameCard from "./GameCard/GameCard";
-import { apiRequest } from "../../services/api/http";
+import { listCategories } from "../../services/api/categories.api";
 import "./GamesPage.css";
 
 const GamesPage = () => {
@@ -11,9 +11,7 @@ const GamesPage = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const data = await apiRequest("/category", {
-          fallbackError: "Error al cargar las categorias",
-        });
+        const data = await listCategories();
         setCategories(data);
       } catch (err) {
         console.error("Error fetching categories:", err);

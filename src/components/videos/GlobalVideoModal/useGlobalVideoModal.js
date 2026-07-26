@@ -2,7 +2,8 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useVideoModal } from "../../../context/VideoContext";
 import { useAuth } from "../../../context/AuthContext";
-import { apiRequest } from "../../../services/api/http";
+import { favoriteVideo, unfavoriteVideo } from "../../../services/api/interactions.api";
+import { deleteVideo, updateVideo } from "../../../services/api/videos.api";
 
 export const useGlobalVideoModal = () => {
   const { activeVideo, closeVideo } = useVideoModal();
@@ -40,10 +41,11 @@ export const useGlobalVideoModal = () => {
     const method = isFavorite ? "DELETE" : "POST";
 
     try {
-      await apiRequest(`/interactions/videos/${activeVideo.id}/favorite`, {
-        token,
-        method,
-      });
+      if (method === "DELETE") {
+        await unfavoriteVideo(activeVideo.id, { token });
+      } else {
+        await favoriteVideo(activeVideo.id, { token });
+      }
 
       setIsFavorite(!isFavorite);
       window.dispatchEvent(new Event("favorites-changed"));
@@ -82,11 +84,7 @@ export const useGlobalVideoModal = () => {
         payload.category_ids = [editCategoryId];
       }
 
-      const data = await apiRequest(`/videos/${activeVideo.id}`, {
-        token,
-        method: "PATCH",
-        body: JSON.stringify(payload),
-      });
+      const data = await updateVideo(activeVideo.id, payload, { token });
 
       setEditStatus("success");
       window.dispatchEvent(new CustomEvent("video-updated", { detail: data }));
@@ -111,9 +109,8 @@ export const useGlobalVideoModal = () => {
     setUpdateError("");
 
     try {
-      await apiRequest(`/videos/${activeVideo.id}`, {
+      await deleteVideo(activeVideo.id, {
         token,
-        method: "DELETE",
         fallbackError: "Error al eliminar el archivo",
       });
 
