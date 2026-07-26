@@ -2,10 +2,11 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useVideoModal } from "../../../context/VideoContext";
 import { useAuth } from "../../../context/AuthContext";
+import { apiRequest } from "../../../services/api/http";
 
 export const useGlobalVideoModal = () => {
   const { activeVideo, closeVideo } = useVideoModal();
-  const { token, user } = useAuth();
+  const { token } = useAuth();
   const navigate = useNavigate();
   const videoRef = useRef(null);
 
@@ -17,80 +18,35 @@ export const useGlobalVideoModal = () => {
   const [editIsEdited, setEditIsEdited] = useState(false);
   const [updateError, setUpdateError] = useState("");
   const [editCategoryId, setEditCategoryId] = useState("");
-
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
-    if (!activeVideo || !token) {
-      setIsFavorite(false);
-      return;
-    }
-
-    const checkIfFavorite = async () => {
-      try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/interactions/me/video-favorites?limit=100`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-        if (response.ok) {
-          const data = await response.json();
-          const isFav = data.items?.some((item) => item.id === activeVideo.id);
-          setIsFavorite(!!isFav);
-        }
-      } catch (err) {
-        console.error("Error al comprobar favoritos:", err);
-      }
-    };
-
-    checkIfFavorite();
-  }, [activeVideo, token]);
+    setIsFavorite(Boolean(activeVideo?.is_favorite ?? activeVideo?.isFavorite));
+  }, [activeVideo]);
 
   if (!activeVideo) {
     return { activeVideo: null };
   }
 
-  const videoOwner = activeVideo.userHandle?.replace("@", "").toLowerCase().trim();
-  const currentUser = user?.username?.replace("@", "").toLowerCase().trim();
-  const currentUserId = user?.id?.toLowerCase().trim();
-
-  const canEdit =
-    token &&
-    user &&
-    (user.role === "super_admin" ||
-      (currentUser && videoOwner && currentUser === videoOwner) ||
-      (currentUserId && videoOwner && currentUserId.startsWith(videoOwner)));
+  const canEdit = token && Boolean(activeVideo.can_edit ?? activeVideo.canEdit ?? activeVideo.is_owner);
+  const canDelete = token && Boolean(activeVideo.can_delete ?? activeVideo.canDelete ?? activeVideo.is_owner);
 
   const toggleFavorite = async () => {
     if (!token) {
-      alert("Debes iniciar sesión para guardar favoritos.");
+      alert("Debes iniciar sesion para guardar favoritos.");
       return;
     }
 
     const method = isFavorite ? "DELETE" : "POST";
-    const url = `${import.meta.env.VITE_API_URL}/interactions/videos/${activeVideo.id}/favorite`;
 
     try {
-      const response = await fetch(url, {
-        method: method,
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+      await apiRequest(`/interactions/videos/${activeVideo.id}/favorite`, {
+        token,
+        method,
       });
 
-      if (response.status === 401) {
-        window.dispatchEvent(new Event("auth-expired"));
-        return;
-      }
-
-      // Según tu docu, devuelve 204 (No Content) tanto en POST como en DELETE al tener éxito
-      if (response.status === 204) {
-        setIsFavorite(!isFavorite);
-        window.dispatchEvent(new Event("favorites-changed"));
-      } else {
-        const data = await response.json();
-        console.error("Error en la petición de favoritos:", data.detail);
-      }
+      setIsFavorite(!isFavorite);
+      window.dispatchEvent(new Event("favorites-changed"));
     } catch (err) {
       console.error("Error de red al gestionar favoritos:", err);
     }
@@ -100,56 +56,40 @@ export const useGlobalVideoModal = () => {
     if (!activeVideo) return;
 
     setEditTitle(activeVideo.title || "");
-    setEditDescription(activeVideo.description || "");
-    setEditIsRegistered(activeVideo.is_registered_only || false);
+    setEditDescription(activeVideo.description || activeVideo.context || "");
+    setEditIsRegistered(activeVideo.is_registered_only || activeVideo.isRegisteredOnly || false);
     setEditIsEdited(activeVideo.edited || false);
-    setEditCategoryId("");
+    setEditCategoryId(activeVideo.categories?.[0]?.id || activeVideo.category?.id || "");
     setEditStatus("editing");
+    setUpdateError("");
     setIsEditing(true);
   };
 
   const handleSaveChanges = async () => {
     setEditStatus("updating");
+    setUpdateError("");
+
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/videos/${activeVideo.id}`,
-        {
-          method: "PATCH",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify({
-            title: editTitle.trim(),
-            description: editDescription.trim() || null,
-            is_registered_only: Boolean(editIsRegistered),
-            edited: Boolean(editIsEdited),
-            category_ids: editCategoryId ? [editCategoryId] : [],
-            tags: activeVideo.tags?.map((t) => t.name) || [],
-          }),
-        }
-      );
+      const payload = {
+        title: editTitle.trim(),
+        description: editDescription.trim() || null,
+        is_registered_only: Boolean(editIsRegistered),
+        edited: Boolean(editIsEdited),
+        tag_ids: activeVideo.tags?.map((tag) => tag.id).filter(Boolean) || [],
+      };
 
-      if (response.status === 401) {
-        window.dispatchEvent(new Event("auth-expired"));
-        throw new Error("Tu sesión ha expirado. Por favor, inicia sesión de nuevo.");
+      if (editCategoryId) {
+        payload.category_ids = [editCategoryId];
       }
 
-      const data = await response.json();
-      if (!response.ok) {
-        console.error("Detalles del error 422 del servidor:", data.detail);
-        throw new Error(data.detail?.[0]?.msg || "Error al actualizar");
-      }
+      const data = await apiRequest(`/videos/${activeVideo.id}`, {
+        token,
+        method: "PATCH",
+        body: JSON.stringify(payload),
+      });
 
       setEditStatus("success");
-      window.dispatchEvent(new CustomEvent("video-updated", {
-        detail: {
-          id: activeVideo.id,
-          edited: Boolean(editIsEdited),
-          title: editTitle.trim(),
-          context: editDescription.trim() || ""
-        }
-      }));
+      window.dispatchEvent(new CustomEvent("video-updated", { detail: data }));
 
       setTimeout(() => {
         setIsEditing(false);
@@ -163,35 +103,23 @@ export const useGlobalVideoModal = () => {
   };
 
   const handleDeleteVideo = async () => {
-    if (!window.confirm("¿Estás seguro de que quieres eliminar este clip permanentemente?")) {
+    if (!window.confirm("Seguro que quieres eliminar este clip permanentemente?")) {
       return;
     }
 
     setEditStatus("deleting");
+    setUpdateError("");
+
     try {
-      const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/videos/${activeVideo.id}`,
-        {
-          method: "DELETE",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.status === 401) {
-        window.dispatchEvent(new Event("auth-expired"));
-        throw new Error("Tu sesión ha expirado. Por favor, inicia sesión de nuevo.");
-      }
-
-      if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.detail || "Error al eliminar el archivo");
-      }
+      await apiRequest(`/videos/${activeVideo.id}`, {
+        token,
+        method: "DELETE",
+        fallbackError: "Error al eliminar el archivo",
+      });
 
       setEditStatus("success");
       window.dispatchEvent(new CustomEvent("video-deleted", {
-        detail: { id: activeVideo.id }
+        detail: { id: activeVideo.id },
       }));
 
       setTimeout(() => {
@@ -210,6 +138,7 @@ export const useGlobalVideoModal = () => {
     closeVideo,
     videoRef,
     canEdit,
+    canDelete,
     isEditing,
     setIsEditing,
     editStatus,
@@ -229,6 +158,6 @@ export const useGlobalVideoModal = () => {
     handleSaveChanges,
     handleDeleteVideo,
     isFavorite,
-    toggleFavorite
+    toggleFavorite,
   };
 };

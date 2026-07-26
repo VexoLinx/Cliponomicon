@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useVideoThumbnail } from "./useVideoThumbnail";
+import { getVideoThumbnailUrl, VIDEO_PROCESSING_STATUSES } from "../../../services/api/videoMapper";
+import { apiRequest } from "../../../services/api/http";
 
-const activeStatuses = ["pending", "processing", "in_progress", "working", "active"];
+const activeStatuses = VIDEO_PROCESSING_STATUSES;
 
 export const useVideoData = (initialData) => {
   const [videoCore, setVideoCore] = useState(initialData?.video ? initialData.video : initialData);
@@ -10,12 +12,10 @@ export const useVideoData = (initialData) => {
   const videoId = videoCore?.id || videoCore?._id || initialData?.id;
   const isProcessing = activeStatuses.includes(videoCore?.processing_status?.toLowerCase());
 
-  const isEdited = videoCore?.edited === true || initialData?.edited === true;
-
-  const hookThumbnailSrc = useVideoThumbnail(videoId);
+  const hookThumbnailSrc = useVideoThumbnail(videoCore);
   
   const baseThumbnail = !isProcessing && videoId
-    ? `${import.meta.env.VITE_API_URL}/videos/${videoId}/thumbnail${isEdited ? "?variant_type=edited" : ""}`
+    ? getVideoThumbnailUrl(videoCore)
     : hookThumbnailSrc;
 
   const finalThumbnailSrc = thumbBuster 
@@ -46,16 +46,13 @@ export const useVideoData = (initialData) => {
 
     const checkStatus = async () => {
       try {
-        const res = await fetch(`${import.meta.env.VITE_API_URL}/videos/${videoId}`);
-        if (res.ok) {
-          const freshData = await res.json();
-          const stillWorking = activeStatuses.includes(freshData.processing_status?.toLowerCase());
+        const freshData = await apiRequest(`/videos/${videoId}`);
+        const stillWorking = activeStatuses.includes(freshData.processing_status?.toLowerCase());
 
-          if (!stillWorking) {
-            setVideoCore(freshData);
-            setThumbBuster(Date.now());
-            window.dispatchEvent(new Event("videos-changed"));
-          }
+        if (!stillWorking) {
+          setVideoCore(freshData);
+          setThumbBuster(Date.now());
+          window.dispatchEvent(new Event("videos-changed"));
         }
       } catch (err) {
         console.error("Error en el autochequeo:", err);

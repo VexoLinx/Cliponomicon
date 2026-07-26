@@ -6,6 +6,7 @@ import { CiLink } from "react-icons/ci";
 import VideoUpdateModal from "../VideoUpdateModal/VideoUpdateModal";
 import { useGlobalVideoModal } from "./useGlobalVideoModal";
 import CustomVideoPlayer from "../CustomVideoPlayer/CustomVideoPlayer";
+import { getClipUrl } from "../../../services/api/videoMapper";
 import "./GlobalVideoModal.css";
 
 const GlobalVideoModal = () => {
@@ -16,6 +17,7 @@ const GlobalVideoModal = () => {
     activeVideo,
     closeVideo,
     canEdit,
+    canDelete,
     isEditing,
     setIsEditing,
     editStatus,
@@ -43,7 +45,7 @@ const GlobalVideoModal = () => {
 
   const handleCopyLink = (e) => {
     e.stopPropagation();
-    const clipUrl = `${import.meta.env.VITE_API_URL}/clip/${activeVideo.id}`;
+    const clipUrl = getClipUrl(activeVideo.id);
 
     navigator.clipboard
       .writeText(clipUrl)
@@ -149,7 +151,7 @@ const GlobalVideoModal = () => {
           errorMessage={updateError}
           onClose={() => setIsEditing(false)}
           onSave={handleSaveChanges}
-          onDelete={handleDeleteVideo}
+          onDelete={canDelete ? handleDeleteVideo : undefined}
           onRetry={() => setEditStatus("editing")}
         />
       )}

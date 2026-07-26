@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { IoClose, IoCut } from "react-icons/io5";
 import { MdCloudUpload, MdError } from "react-icons/md";
+import { apiRequest } from "../../../services/api/http";
 import "./VideoUpdateModal.css";
 import "../videos.css";
 
@@ -36,13 +37,8 @@ const VideoUpdateModal = ({
   useEffect(() => {
     const fetchFreshCategories = async () => {
       try {
-        const res = await fetch(
-          `${import.meta.env.VITE_API_URL || ""}/category`,
-        );
-        if (res.ok) {
-          const data = await res.json();
-          setLocalCategories(data);
-        }
+        const data = await apiRequest("/category");
+        setLocalCategories(data);
       } catch (err) {
         console.error(
           "Error actualizando lista de categorías en el modal:",
@@ -170,9 +166,11 @@ const VideoUpdateModal = ({
               </div>
 
               <div className="sidebar-footer-video">
-                <button className="footer-btn delete-btn" onClick={onDelete}>
-                  Eliminar Clip
-                </button>
+                {onDelete && (
+                  <button className="footer-btn delete-btn" onClick={onDelete}>
+                    Eliminar Clip
+                  </button>
+                )}
                 <div className="sidebar-footer-buttons-group">
                   <button className="footer-btn cancel-btn" onClick={onClose}>
                     Cancelar

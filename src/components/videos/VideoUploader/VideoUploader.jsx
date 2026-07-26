@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import VideoUploadButton from "./VideoUploadButton";
 import VideoEditModal from "../VideoEditModal";
 import { useVideoUpload } from "./useVideoUpload";
+import { apiRequest } from "../../../services/api/http";
 import "./VideoUploader.css";
 import "../videos.css";
 
@@ -31,11 +32,8 @@ const VideoUploader = () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/category`);
-      if (res.ok) {
-        const data = await res.json();
-        setCategories(data);
-      }
+      const data = await apiRequest("/category");
+      setCategories(data);
     } catch (err) {
       console.error("Error cargando categorías para el uploader:", err);
     }

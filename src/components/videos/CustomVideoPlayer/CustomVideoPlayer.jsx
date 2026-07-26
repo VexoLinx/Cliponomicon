@@ -14,7 +14,7 @@ const CustomVideoPlayer = ({ video }) => {
   const {
     isPlaying, progress, currentTime, duration, volume,
     isMuted, isFullscreen, activeMenu, videoVariant,
-    playbackRate, isDownloading, currentStreamUrl
+    playbackRate, isDownloading, currentStreamUrl, availableVariants
   } = states;
   const {
     togglePlay, handleTimeUpdate, handleLoadedMetadata,
@@ -113,7 +113,7 @@ const CustomVideoPlayer = ({ video }) => {
                         <div className="settings-item" onClick={() => setActiveMenu('quality')}>
                           <span>Calidad</span>
                           <div className="settings-item-right">
-                            <span>{videoVariant === 'low_h264' ? 'Baja' : 'Original'}</span>
+                            <span>{videoVariant}</span>
                             <IoChevronForward />
                           </div>
                         </div>
@@ -140,18 +140,15 @@ const CustomVideoPlayer = ({ video }) => {
                         <div className="settings-header" onClick={() => setActiveMenu('main')}>
                           <IoChevronBack /> <span>Calidad</span>
                         </div>
-                        <div 
-                          className={`settings-item ${videoVariant === "original" || videoVariant === "edited" ? "active" : ""}`}
-                          onClick={() => changeQuality(video?.edited ? "edited" : "original")}
-                        >
-                          Original
-                        </div>
-                        <div 
-                          className={`settings-item ${videoVariant === "low_h264" ? "active" : ""}`}
-                          onClick={() => changeQuality("low_h264")}
-                        >
-                          Baja (low_h264)
-                        </div>
+                        {availableVariants.map((variant) => (
+                          <div
+                            key={variant}
+                            className={`settings-item ${videoVariant === variant ? "active" : ""}`}
+                            onClick={() => changeQuality(variant)}
+                          >
+                            {variant}
+                          </div>
+                        ))}
                       </>
                     )}
 

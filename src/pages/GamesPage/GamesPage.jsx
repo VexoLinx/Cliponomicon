@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import GameCard from "./GameCard/GameCard";
+import { apiRequest } from "../../services/api/http";
 import "./GamesPage.css";
 
 const GamesPage = () => {
@@ -10,17 +11,13 @@ const GamesPage = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_URL}/category`);
-        
-        if (!response.ok) {
-          throw new Error("Error al cargar las categorías");
-        }
-        
-        const data = await response.json();
+        const data = await apiRequest("/category", {
+          fallbackError: "Error al cargar las categorias",
+        });
         setCategories(data);
       } catch (err) {
         console.error("Error fetching categories:", err);
-        setError("No se pudieron cargar los juegos. Inténtalo de nuevo más tarde.");
+        setError("No se pudieron cargar los juegos. Intentalo de nuevo mas tarde.");
       } finally {
         setLoading(false);
       }
@@ -31,25 +28,24 @@ const GamesPage = () => {
 
   return (
     <div className="page-container">
+      {loading && <p className="grid-status-text">Cargando categorias...</p>}
 
-      {loading && <p className="grid-status-text">Cargando categorías...</p>}
-      
       {error && <p className="grid-status-text">{error}</p>}
 
       {!loading && !error && categories.length === 0 && (
-        <p className="grid-status-text">Aún no hay categorías registradas.</p>
+        <p className="grid-status-text">Aun no hay categorias registradas.</p>
       )}
 
       {!loading && categories.length > 0 && (
         <div className="games-grid">
           {categories.map((category) => (
-            <GameCard 
-              key={category.id} 
+            <GameCard
+              key={category.id}
               game={{
                 id: category.id,
                 name: category.name,
-                image: category.thumbnail_horizontal_url || "https://placehold.co/460x215/222/white?text=Sin+Imagen"
-              }} 
+                image: category.thumbnail_horizontal_url || "https://placehold.co/460x215/222/white?text=Sin+Imagen",
+              }}
             />
           ))}
         </div>

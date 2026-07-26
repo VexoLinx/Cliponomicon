@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useVideoModal } from "../../../context/VideoContext";
 import { useVideoData } from "./useVideoData";
+import { getClipUrl, getVideoStreamUrl, pickVideoVariant } from "../../../services/api/videoMapper";
 import "./VideoCard.css";
 import { CiLink } from "react-icons/ci";
 
@@ -132,10 +133,7 @@ const VideoCard = ({ data = {} }) => {
 
     const rawDate = videoCore?.source_created_at || videoCore?.created_at;
 
-    const hasEditedVariant = videoCore?.variants?.some(
-      (v) => v.variant_type === "edited",
-    );
-    const fallbackUrl = `${import.meta.env.VITE_API_URL}/videos/${videoId}/stream?variant_type=${hasEditedVariant ? "edited" : "original"}`;
+    const fallbackUrl = getVideoStreamUrl(videoId, pickVideoVariant(videoCore));
 
     const videoDataNormalized = {
       ...videoCore,
@@ -164,7 +162,7 @@ const VideoCard = ({ data = {} }) => {
   const handleCopyLink = (e, targetVideoId) => {
     e.stopPropagation();
 
-    const clipUrl = `${import.meta.env.VITE_API_URL}/clip/${targetVideoId}`;
+    const clipUrl = getClipUrl(targetVideoId);
 
     navigator.clipboard
       .writeText(clipUrl)
@@ -176,7 +174,7 @@ const VideoCard = ({ data = {} }) => {
       })
       .catch((error) => {
         console.error("Fallo al copiar:", error);
-        const fallbackLink = `${window.location.origin}/games/${targetVideoId}`;
+        const fallbackLink = getClipUrl(targetVideoId);
         navigator.clipboard
           .writeText(fallbackLink)
           .catch((err) => console.error("Fallo el fallback", err));
