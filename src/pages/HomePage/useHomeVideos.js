@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearch } from "../../context/SearchContext";
-import { useAuth } from "../../context/AuthContext"; 
+import { useAuth } from "../../context/AuthContext";
 
 const API_URL = import.meta.env.VITE_API_URL || "";
 const VIDEOS_URL = `${API_URL}/videos`;
@@ -31,19 +31,19 @@ const mapApiVideoToCard = (video) => {
     }
 
     const mainCategory = video.categories?.[0] || video.category;
-    
-    // 1. Esto controla la UI (La etiqueta visual "EDIT")
-    const isEdited = video.edited === true; 
 
-    // 🔥 2. LA CLAVE: Comprobamos si existe un archivo físico de la variante editada
+    // 1. Esto controla la UI (La etiqueta visual "EDIT")
+    const isEdited = video.edited === true;
+
+    // 2. LA CLAVE: Comprobamos si existe un archivo físico de la variante editada
     const hasEditedVariant = video.variants?.some(v => v.variant_type === "edited");
 
     return {
         id: video.id,
-        // 🔥 3. Usamos hasEditedVariant para pedir las URLs, para que no den error 404
+        // 3. Usamos hasEditedVariant para pedir las URLs, para que no den error 404
         thumbnail: getVideoThumbnailUrl(video.id, hasEditedVariant),
         videoUrl: getVideoStreamUrl(video.id, hasEditedVariant),
-        
+
         gameIcon: mainCategory?.thumbnail_horizontal_url ||
             mainCategory?.horizontal_thumbnail_url ||
             mainCategory?.thumbnail_url ||
@@ -59,11 +59,11 @@ const mapApiVideoToCard = (video) => {
         userHandle: finalUserHandle,
         linkText: "enlace",
         context: video.description || "",
-        
-        processing_status: video.processing_status, 
+
+        processing_status: video.processing_status,
 
         // 4. Pasamos el booleano real para que aparezca la etiqueta en VideoCard
-        edited: isEdited, 
+        edited: isEdited,
         edited_at: video.edited_at,
     };
 };
@@ -78,26 +78,25 @@ export const useHomeVideos = () => {
     const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
 
     const { filters } = useSearch();
-    const { token } = useAuth(); 
+    const { token } = useAuth();
 
     const loadVideos = async (currentOffset, append = false, signal = null) => {
         try {
             if (append) setIsFetchingNextPage(true);
 
-            const url = new URL(VIDEOS_URL);
-            if (filters.text) url.searchParams.append("title", filters.text);
-            if (filters.tag) url.searchParams.append("tags", filters.tag);
-
-            url.searchParams.append("limit", LIMIT);
-            url.searchParams.append("offset", currentOffset);
+            const params = new URLSearchParams();
+            if (filters.text) params.append("title", filters.text);
+            if (filters.tag) params.append("tags", filters.tag);
+            params.append("limit", LIMIT);
+            params.append("offset", currentOffset);
 
             const headers = { Accept: "application/json" };
             if (token) {
                 headers["Authorization"] = `Bearer ${token}`;
             }
 
-            const response = await fetch(url.toString(), {
-                headers, 
+            const response = await fetch(`${VIDEOS_URL}?${params.toString()}`, {
+                headers,
                 signal: signal,
             });
 
@@ -134,7 +133,7 @@ export const useHomeVideos = () => {
         loadVideos(0, false, controller.signal);
 
         return () => controller.abort();
-    }, [filters, token]); 
+    }, [filters, token]);
 
     const loadMoreVideos = useCallback(() => {
         if (isFetchingNextPage || !hasMore) return;
@@ -156,8 +155,8 @@ export const useHomeVideos = () => {
     useEffect(() => {
         const handleVideoUpdated = (e) => {
             const updatedVid = e.detail;
-            setVideos((prevVideos) => 
-                prevVideos.map((v) => 
+            setVideos((prevVideos) =>
+                prevVideos.map((v) =>
                     v.id === updatedVid.id ? { ...v, ...updatedVid } : v
                 )
             );
