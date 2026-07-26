@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearch } from "../../context/SearchContext";
 import { useAuth } from "../../context/AuthContext"; 
 
-const API_URL = import.meta.env.VITE_API_URL || "";
+const API_URL = import.meta.env.VITE_API_URL;
 const VIDEOS_URL = `${API_URL}/videos`;
 
 const getVideoStreamUrl = (videoId, isEdited) =>
