@@ -57,6 +57,191 @@
   background-color: #121824;
 }
 
+.filter-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.filter-button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 38px;
+  border: 1px solid #2d3748;
+  border-radius: 8px;
+  background: rgba(22, 30, 44, 0.78);
+  color: #fff;
+  cursor: pointer;
+}
+
+.filter-button span {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  display: grid;
+  place-items: center;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: #8f44fd;
+  color: #fff;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.filters-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.72);
+  padding: 20px;
+}
+
+.filters-modal {
+  width: min(760px, 100%);
+  max-height: min(780px, calc(100vh - 40px));
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: #15151c;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  color: #fff;
+  padding: 20px;
+}
+
+.filters-modal-header,
+.filters-modal-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.filters-modal-header {
+  margin-bottom: 18px;
+}
+
+.filters-modal-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.filters-close-button,
+.filters-secondary-button,
+.filters-apply-button {
+  min-height: 38px;
+  border-radius: 8px;
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.filters-close-button {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  border: 0;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.filters-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.filters-field {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.filters-field input,
+.filters-field select {
+  min-height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  padding: 0 12px;
+}
+
+.filters-field option {
+  background: #15151c;
+}
+
+.filters-section {
+  margin-top: 18px;
+}
+
+.filters-section-title {
+  display: block;
+  margin-bottom: 10px;
+  color: rgba(255, 255, 255, 0.78);
+  font-weight: 800;
+}
+
+.filters-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filters-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 36px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  padding: 0 12px;
+  cursor: pointer;
+}
+
+.filters-chip input {
+  accent-color: #8f44fd;
+}
+
+.filters-modal-actions {
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.filters-secondary-button {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: transparent;
+  padding: 0 16px;
+}
+
+.filters-apply-button {
+  border: 0;
+  background: #8f44fd;
+  padding: 0 16px;
+}
+
+@media (max-width: 720px) {
+  .topbar {
+    gap: 10px;
+    padding: 0 12px;
+  }
+
+  .filters-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .sort-select {
+    max-width: 104px;
+  }
+}
+
 .topbar-empty {
   justify-content: flex-end;
 }

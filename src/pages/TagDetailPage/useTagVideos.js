@@ -23,6 +23,18 @@ export const useTagVideos = (tagId) => {
       const data = await listVideos({
         tagIds: [tagId],
         title: filters.scope === "tag-detail" ? filters.text : undefined,
+        categoryIds:
+          filters.scope === "tag-detail" && filters.categoryIds?.length
+            ? filters.categoryIds
+            : undefined,
+        ownerId: filters.scope === "tag-detail" ? filters.ownerId : undefined,
+        createdDate: filters.scope === "tag-detail" ? filters.createdDate || undefined : undefined,
+        createdFrom: filters.scope === "tag-detail" ? filters.createdFrom || undefined : undefined,
+        createdTo: filters.scope === "tag-detail" ? filters.createdTo || undefined : undefined,
+        edited:
+          filters.scope === "tag-detail" && filters.edited !== ""
+            ? filters.edited === "true"
+            : undefined,
         limit: LIMIT,
         offset: currentOffset,
         mapToCards: false,
@@ -44,7 +56,17 @@ export const useTagVideos = (tagId) => {
       setLoading(false);
       setIsFetchingNextPage(false);
     }
-  }, [filters.scope, filters.text, tagId]);
+  }, [
+    filters.categoryIds,
+    filters.createdDate,
+    filters.createdFrom,
+    filters.createdTo,
+    filters.edited,
+    filters.ownerId,
+    filters.scope,
+    filters.text,
+    tagId,
+  ]);
 
   useEffect(() => {
     if (!tagId) return;

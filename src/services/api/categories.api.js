@@ -5,8 +5,11 @@ import {
   mapSteamGridDbGridList,
 } from "../mappers/steam.mapper";
 
-export const listCategories = async ({ mapResponse = true } = {}) => {
-  const data = await apiRequest("/category");
+export const listCategories = async ({ name, signal, mapResponse = true } = {}) => {
+  const data = await apiRequest("/category", {
+    signal,
+    params: { name },
+  });
   return mapResponse ? mapCategories(data) : data;
 };
 

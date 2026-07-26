@@ -23,6 +23,18 @@ export const useGameVideos = (categoryId) => {
       const data = await listVideos({
         categoryIds: [categoryId],
         title: filters.scope === "game-detail" ? filters.text : undefined,
+        tagIds:
+          filters.scope === "game-detail" && filters.tagIds?.length
+            ? filters.tagIds
+            : undefined,
+        ownerId: filters.scope === "game-detail" ? filters.ownerId : undefined,
+        createdDate: filters.scope === "game-detail" ? filters.createdDate || undefined : undefined,
+        createdFrom: filters.scope === "game-detail" ? filters.createdFrom || undefined : undefined,
+        createdTo: filters.scope === "game-detail" ? filters.createdTo || undefined : undefined,
+        edited:
+          filters.scope === "game-detail" && filters.edited !== ""
+            ? filters.edited === "true"
+            : undefined,
         limit: LIMIT,
         offset: currentOffset,
         mapToCards: false,
@@ -44,7 +56,17 @@ export const useGameVideos = (categoryId) => {
       setLoading(false);
       setIsFetchingNextPage(false);
     }
-  }, [categoryId, filters.scope, filters.text]);
+  }, [
+    categoryId,
+    filters.createdDate,
+    filters.createdFrom,
+    filters.createdTo,
+    filters.edited,
+    filters.ownerId,
+    filters.scope,
+    filters.tagIds,
+    filters.text,
+  ]);
 
   useEffect(() => {
     if (!categoryId) return;

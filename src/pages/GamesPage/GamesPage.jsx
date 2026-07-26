@@ -13,7 +13,9 @@ const GamesPage = () => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const data = await listCategories();
+        const data = await listCategories({
+          name: filters.scope === "games" ? filters.text || undefined : undefined,
+        });
         setCategories(data);
       } catch (err) {
         console.error("Error fetching categories:", err);
@@ -24,14 +26,7 @@ const GamesPage = () => {
     };
 
     fetchCategories();
-  }, []);
-
-  const visibleCategories =
-    filters.scope === "games" && filters.text
-      ? categories.filter((category) =>
-          category.name.toLowerCase().includes(filters.text.toLowerCase()),
-        )
-      : categories;
+  }, [filters.scope, filters.text]);
 
   return (
     <div className="page-container">
@@ -39,13 +34,13 @@ const GamesPage = () => {
 
       {error && <p className="grid-status-text">{error}</p>}
 
-      {!loading && !error && visibleCategories.length === 0 && (
+      {!loading && !error && categories.length === 0 && (
         <p className="grid-status-text">Aun no hay categorias registradas.</p>
       )}
 
-      {!loading && visibleCategories.length > 0 && (
+      {!loading && categories.length > 0 && (
         <div className="games-grid">
-          {visibleCategories.map((category) => (
+          {categories.map((category) => (
             <GameCard
               key={category.id}
               game={{
