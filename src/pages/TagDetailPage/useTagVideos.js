@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useSearch } from "../../context/SearchContext";
 import { listVideos } from "../../services/api/videos.api";
 import { mapVideoToCard, VIDEO_PROCESSING_STATUSES } from "../../services/mappers/video.mapper";
 
@@ -11,6 +12,7 @@ export const useTagVideos = (tagId) => {
   const [hasMore, setHasMore] = useState(true);
   const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
   const [error, setError] = useState(null);
+  const { filters } = useSearch();
 
   const fetchTagVideos = useCallback(async (currentOffset, append = false) => {
     if (!tagId) return;
@@ -20,6 +22,7 @@ export const useTagVideos = (tagId) => {
 
       const data = await listVideos({
         tagIds: [tagId],
+        title: filters.scope === "tag-detail" ? filters.text : undefined,
         limit: LIMIT,
         offset: currentOffset,
         mapToCards: false,
@@ -41,7 +44,7 @@ export const useTagVideos = (tagId) => {
       setLoading(false);
       setIsFetchingNextPage(false);
     }
-  }, [tagId]);
+  }, [filters.scope, filters.text, tagId]);
 
   useEffect(() => {
     if (!tagId) return;

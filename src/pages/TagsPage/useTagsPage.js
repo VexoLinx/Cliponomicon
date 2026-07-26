@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import { useSearch } from "../../context/SearchContext";
 import { createTag, listTags } from "../../services/api/tags.api";
 
 export const useTagsPage = (token) => {
@@ -9,23 +10,30 @@ export const useTagsPage = (token) => {
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState(null);
   const [createStatus, setCreateStatus] = useState("");
+  const { filters } = useSearch();
 
-  const fetchTags = useCallback(async () => {
+  const fetchTags = useCallback(async (signal = null) => {
     try {
       setLoading(true);
-      const data = await listTags();
+      const data = await listTags({
+        name: filters.scope === "tags" ? filters.text || undefined : undefined,
+        signal,
+      });
       setTags(data);
       setError(null);
     } catch (err) {
+      if (err.name === "AbortError") return;
       console.error("Error fetching tags:", err);
       setError("No se pudieron cargar los tags. Intentalo de nuevo mas tarde.");
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [filters.scope, filters.text]);
 
   useEffect(() => {
-    fetchTags();
+    const controller = new AbortController();
+    fetchTags(controller.signal);
+    return () => controller.abort();
   }, [fetchTags]);
 
   const handleCreateTag = async (event) => {

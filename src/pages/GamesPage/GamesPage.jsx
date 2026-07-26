@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from "react";
 import GameCard from "./GameCard/GameCard";
 import { listCategories } from "../../services/api/categories.api";
+import { useSearch } from "../../context/SearchContext";
 import "./GamesPage.css";
 
 const GamesPage = () => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { filters } = useSearch();
 
   useEffect(() => {
     const fetchCategories = async () => {
@@ -24,19 +26,26 @@ const GamesPage = () => {
     fetchCategories();
   }, []);
 
+  const visibleCategories =
+    filters.scope === "games" && filters.text
+      ? categories.filter((category) =>
+          category.name.toLowerCase().includes(filters.text.toLowerCase()),
+        )
+      : categories;
+
   return (
     <div className="page-container">
       {loading && <p className="grid-status-text">Cargando categorias...</p>}
 
       {error && <p className="grid-status-text">{error}</p>}
 
-      {!loading && !error && categories.length === 0 && (
+      {!loading && !error && visibleCategories.length === 0 && (
         <p className="grid-status-text">Aun no hay categorias registradas.</p>
       )}
 
-      {!loading && categories.length > 0 && (
+      {!loading && visibleCategories.length > 0 && (
         <div className="games-grid">
-          {categories.map((category) => (
+          {visibleCategories.map((category) => (
             <GameCard
               key={category.id}
               game={{

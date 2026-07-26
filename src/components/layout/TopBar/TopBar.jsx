@@ -1,12 +1,22 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { BsSearch } from "react-icons/bs";
 import { useSearch } from "../../../context/SearchContext";
 import { listTags } from "../../../services/api/tags.api";
 import "./TopBar.css";
+import { useTopBarSearchMode } from "./useTopBarSearchMode";
 
-const parseSearchQuery = (query) => {
-  if (!query) return { text: "", owner: null, tag: null, tagId: null };
-  const filters = { text: "", owner: null, tag: null, tagId: null };
+const EMPTY_FILTERS = {
+  text: "",
+  owner: null,
+  ownerId: null,
+  tag: null,
+  tagId: null,
+};
+
+const parseVideoSearchQuery = (query) => {
+  if (!query) return EMPTY_FILTERS;
+
+  const filters = { ...EMPTY_FILTERS };
   const parts = query.split(" ");
   const textParts = [];
 
@@ -24,19 +34,35 @@ const parseSearchQuery = (query) => {
   return filters;
 };
 
+const parsePlainSearchQuery = (query) => ({
+  ...EMPTY_FILTERS,
+  text: query.trim().toLowerCase(),
+});
+
 const TopBar = () => {
   const { setFilters } = useSearch();
+  const mode = useTopBarSearchMode();
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
+    setSearchTerm("");
+    setFilters((prev) => ({ ...prev, ...EMPTY_FILTERS, scope: mode.key }));
+  }, [mode.key, setFilters]);
+
+  useEffect(() => {
+    if (mode.type === "hidden") return undefined;
+
     const controller = new AbortController();
 
     const delayDebounceFn = setTimeout(() => {
       const applyFilters = async () => {
-        const parsed = parseSearchQuery(searchTerm);
+        const parsed =
+          mode.type === "video"
+            ? parseVideoSearchQuery(searchTerm)
+            : parsePlainSearchQuery(searchTerm);
 
-        if (!parsed.tag) {
-          setFilters((prev) => ({ ...prev, ...parsed, tagId: null }));
+        if (mode.type !== "video" || !parsed.tag) {
+          setFilters((prev) => ({ ...prev, ...parsed, scope: mode.key }));
           return;
         }
 
@@ -45,18 +71,18 @@ const TopBar = () => {
           const exactMatch = tags.find(
             (tag) => tag.name.toLowerCase() === parsed.tag.toLowerCase(),
           );
+
           setFilters((prev) => ({
             ...prev,
             ...parsed,
+            scope: mode.key,
             tagId: exactMatch?.id || null,
           }));
         } catch (error) {
-          if (error.name === "AbortError") {
-            return;
-          }
+          if (error.name === "AbortError") return;
 
           console.error("Error resolviendo tag de busqueda:", error);
-          setFilters((prev) => ({ ...prev, ...parsed, tagId: null }));
+          setFilters((prev) => ({ ...prev, ...parsed, scope: mode.key, tagId: null }));
         }
       };
 
@@ -67,28 +93,41 @@ const TopBar = () => {
       controller.abort();
       clearTimeout(delayDebounceFn);
     };
-  }, [searchTerm, setFilters]);
+  }, [mode.key, mode.type, searchTerm, setFilters]);
 
   return (
-    <header className="topbar">
-      <div className="search-container">
-        <span className="search-icon"><BsSearch /></span>
-        <input
-          type="text"
-          placeholder="@Username, #Tag, Titulo..."
-          className="search-input"
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-        />
-      </div>
+    <header className={`topbar ${mode.type === "hidden" ? "topbar-empty" : ""}`}>
+      {mode.type !== "hidden" && (
+        <>
+          <div className="search-container">
+            <span className="search-icon">
+              <BsSearch />
+            </span>
+            <input
+              type="text"
+              placeholder={mode.placeholder}
+              className="search-input"
+              value={searchTerm}
+              onChange={(event) => setSearchTerm(event.target.value)}
+            />
+          </div>
 
-      <div className="filter-container">
-        <select className="sort-select" onChange={(e) => setFilters((prev) => ({ ...prev, sort: e.target.value }))}>
-          <option value="newest">Nuevos</option>
-          <option value="popular">Mas visto</option>
-          <option value="edited">Editados</option>
-        </select>
-      </div>
+          {mode.showSort && (
+            <div className="filter-container">
+              <select
+                className="sort-select"
+                onChange={(event) =>
+                  setFilters((prev) => ({ ...prev, sort: event.target.value, scope: mode.key }))
+                }
+              >
+                <option value="newest">Nuevos</option>
+                <option value="popular">Mas visto</option>
+                <option value="edited">Editados</option>
+              </select>
+            </div>
+          )}
+        </>
+      )}
     </header>
   );
 };

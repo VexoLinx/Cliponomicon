@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { useSearch } from "../../context/SearchContext";
 import { listFavoriteVideos } from "../../services/api/interactions.api";
 import { APP_EVENTS, onAppEvent } from "../../events/appEvents";
 
@@ -13,6 +14,7 @@ export const useFavoritesVideos = () => {
   const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
 
   const { token, user } = useAuth();
+  const { filters } = useSearch();
 
   const fetchFavorites = useCallback(async (currentOffset, append = false) => {
     if (!token) {
@@ -30,8 +32,22 @@ export const useFavoritesVideos = () => {
       });
 
       const mappedItems = data.items || [];
+      const visibleItems =
+        filters.scope === "favorites" && filters.text
+          ? mappedItems.filter((video) =>
+              [
+                video.title,
+                video.context,
+                video.description,
+                video.gameName,
+                video.userHandle,
+              ]
+                .filter(Boolean)
+                .some((value) => value.toLowerCase().includes(filters.text.toLowerCase())),
+            )
+          : mappedItems;
 
-      setFavorites((prev) => (append ? [...prev, ...mappedItems] : mappedItems));
+      setFavorites((prev) => (append ? [...prev, ...visibleItems] : visibleItems));
       setHasMore(currentOffset + mappedItems.length < (data.total ?? currentOffset + mappedItems.length));
     } catch (error) {
       console.error("Error cargando favoritos:", error);
@@ -39,7 +55,7 @@ export const useFavoritesVideos = () => {
       setLoading(false);
       setIsFetchingNextPage(false);
     }
-  }, [token]);
+  }, [filters.scope, filters.text, token]);
 
   useEffect(() => {
     setLoading(true);

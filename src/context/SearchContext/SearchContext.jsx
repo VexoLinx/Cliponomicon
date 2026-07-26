@@ -6,8 +6,10 @@ export const SearchProvider = ({ children }) => {
   const [filters, setFilters] = useState({
     text: "",
     owner: null,
+    ownerId: null,
     tag: null,
     tagId: null,
+    scope: "videos",
     sort: "newest",
   });
 

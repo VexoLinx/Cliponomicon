@@ -56,3 +56,7 @@
 .sort-select option {
   background-color: #121824;
 }
+
+.topbar-empty {
+  justify-content: flex-end;
+}

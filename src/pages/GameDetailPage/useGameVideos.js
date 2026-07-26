@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { useSearch } from "../../context/SearchContext";
 import { listVideos } from "../../services/api/videos.api";
 import { mapVideoToCard, VIDEO_PROCESSING_STATUSES } from "../../services/mappers/video.mapper";
 
@@ -11,6 +12,7 @@ export const useGameVideos = (categoryId) => {
   const [hasMore, setHasMore] = useState(true);
   const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
   const [error, setError] = useState(null);
+  const { filters } = useSearch();
 
   const fetchGameVideos = useCallback(async (currentOffset, append = false) => {
     if (!categoryId) return;
@@ -20,6 +22,7 @@ export const useGameVideos = (categoryId) => {
 
       const data = await listVideos({
         categoryIds: [categoryId],
+        title: filters.scope === "game-detail" ? filters.text : undefined,
         limit: LIMIT,
         offset: currentOffset,
         mapToCards: false,
@@ -41,7 +44,7 @@ export const useGameVideos = (categoryId) => {
       setLoading(false);
       setIsFetchingNextPage(false);
     }
-  }, [categoryId]);
+  }, [categoryId, filters.scope, filters.text]);
 
   useEffect(() => {
     if (!categoryId) return;
