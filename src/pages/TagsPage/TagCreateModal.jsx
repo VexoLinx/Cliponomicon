@@ -2,6 +2,7 @@ import ReactDOM from "react-dom";
 
 const TagCreateModal = ({
   creating,
+  title = "Crear tag",
   newTagName,
   onClose,
   onSubmit,
@@ -11,7 +12,7 @@ const TagCreateModal = ({
     <div className="tag-modal-overlay" onClick={onClose}>
       <form className="tag-modal" onSubmit={onSubmit} onClick={(event) => event.stopPropagation()}>
         <div className="tag-modal-header">
-          <h2>Crear tag</h2>
+          <h2>{title}</h2>
           <button className="tag-modal-close" type="button" onClick={onClose}>
             x
           </button>
@@ -40,7 +41,7 @@ const TagCreateModal = ({
             type="submit"
             disabled={creating || !newTagName.trim()}
           >
-            {creating ? "Creando..." : "Crear"}
+            {creating ? "Guardando..." : "Guardar"}
           </button>
         </div>
       </form>

@@ -33,6 +33,12 @@
   font-weight: 700;
 }
 
+.tags-toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .tag-create-button {
   min-height: 44px;
   border: 0;
@@ -42,6 +48,32 @@
   font-weight: 700;
   padding: 0 16px;
   cursor: pointer;
+}
+
+.tag-manage-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  font-weight: 700;
+  padding: 0 14px;
+  cursor: pointer;
+  user-select: none;
+}
+
+.tag-manage-toggle.active {
+  border-color: rgba(143, 68, 253, 0.8);
+  background: rgba(143, 68, 253, 0.18);
+}
+
+.tag-manage-toggle input {
+  width: 16px;
+  height: 16px;
+  accent-color: #8f44fd;
 }
 
 .tag-create-button:disabled {
@@ -63,15 +95,57 @@
 .tag-card {
   display: flex;
   align-items: center;
+  justify-content: space-between;
   gap: 6px;
   min-height: 52px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.06);
   color: #fff;
-  padding: 0 14px;
+  padding: 0;
   text-decoration: none;
   transition: border-color 0.2s ease, transform 0.2s ease, background 0.2s ease;
+}
+
+.tag-card-link {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  flex: 1;
+  min-height: 52px;
+  color: inherit;
+  padding: 0 14px;
+  text-decoration: none;
+}
+
+.tag-card-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding-right: 8px;
+}
+
+.tag-card-actions button {
+  min-height: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 0 9px;
+  cursor: pointer;
+}
+
+.tag-card-actions button.danger {
+  border-color: rgba(255, 84, 84, 0.38);
+  color: #ff8c8c;
+}
+
+.tag-card-actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
 }
 
 .tag-card:hover {
@@ -165,5 +239,20 @@
   .tags-toolbar {
     align-items: stretch;
     flex-direction: column;
+  }
+
+  .tags-toolbar-actions {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .tag-card.is-manageable {
+    align-items: stretch;
+    flex-direction: column;
+    padding-bottom: 8px;
+  }
+
+  .tag-card-actions {
+    padding: 0 8px;
   }
 }
