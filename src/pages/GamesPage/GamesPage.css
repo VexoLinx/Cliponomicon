@@ -1,0 +1,22 @@
+.games-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 370px), 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+@media (max-width: 768px) {
+    .games-grid {
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
+        gap: 16px;
+        padding: 16px;
+    }
+}
+
+@media (max-width: 575px) {
+    .games-grid {
+        grid-template-columns: 1fr; 
+        gap: 12px;
+        padding: 10px;
+    }
+}

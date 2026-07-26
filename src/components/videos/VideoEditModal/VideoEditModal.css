@@ -1,0 +1,236 @@
+.custom-combobox-container {
+  position: relative;
+  width: 100%;
+}
+
+.combobox-wrapper-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background-color: #040412;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.combobox-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  padding: 10px 35px 10px 12px;
+  font-size: 0.95rem;
+  outline: none;
+}
+
+.combobox-input::placeholder {
+  color: #8b949e;
+  opacity: 1;
+}
+
+.combobox-actions {
+  position: absolute;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  color: #8b949e;
+  pointer-events: none;
+}
+
+.combobox-arrow {
+  font-size: 1.3rem;
+  transition: transform 0.2s ease;
+}
+
+.combobox-arrow.open {
+  transform: rotate(180deg);
+}
+
+.combobox-dropdown-menu {
+  position: absolute;
+  top: 105%;
+  left: 0;
+  width: 100%;
+  background-color: #0d1117;
+  border: 1px solid #30363d;
+  border-radius: 6px;
+  max-height: 220px;
+  overflow-y: auto;
+  z-index: 999;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  padding: 4px 0;
+}
+
+.dropdown-section-title {
+  padding: 6px 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #58a6ff;
+  text-transform: uppercase;
+  background-color: #161b22;
+  letter-spacing: 0.5px;
+}
+
+.dropdown-section-title.steam-title {
+  color: #ff7b72;
+  border-top: 1px solid #21262d;
+}
+
+.dropdown-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  color: #c9d1d9;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.dropdown-item:hover {
+  background-color: #1f242c;
+  color: #ffffff;
+}
+
+.dropdown-item.steam-item {
+  border-bottom: 1px solid #21262d;
+}
+
+.dropdown-item.steam-item:last-child {
+  border-bottom: none;
+}
+
+.import-badge {
+  font-size: 0.75rem;
+  background-color: #21262d;
+  color: #58a6ff;
+  padding: 2px 8px;
+  border-radius: 4px;
+  border: 1px solid #30363d;
+}
+
+.dropdown-item.steam-item:hover .import-badge {
+  background-color: #1f6feb;
+  color: #ffffff;
+  border-color: #58a6ff;
+}
+
+.dropdown-no-results {
+  padding: 12px;
+  font-size: 0.85rem;
+  color: #8b949e;
+  text-align: center;
+}
+
+.selection-info-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 6px 0 16px 0;
+  width: 100%;
+}
+
+.selection-info-container .info-icon {
+  font-size: 2.15rem;
+  flex-shrink: 0;
+}
+
+.selection-info-container .info-text-block {
+  color: #94a3b8;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  font-family: inherit;
+}
+
+.batch-preview-list {
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.batch-preview-title {
+  color: #00e5ff;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+
+.batch-preview-items {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: 100%;
+  flex-grow: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-right: 6px;
+}
+
+.batch-preview-item {
+  background: rgba(255, 255, 255, 0.05);
+  padding: 12px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #eeeeee;
+}
+
+.batch-preview-items::-webkit-scrollbar {
+  width: 6px;
+}
+
+.batch-preview-items::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 4px;
+}
+
+.batch-preview-items::-webkit-scrollbar-thumb {
+  background: #1e293b;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.batch-preview-items::-webkit-scrollbar-thumb:hover {
+  background: #00e5ff;
+}
+
+.batch-preview-size {
+  color: #888888;
+  font-variant-numeric: tabular-nums;
+}
+
+.progress-bar-fill {
+  background-color: #00e5ff;
+  height: 100%;
+  transition: width 0.4s ease-in-out;
+}
+
+.upload-status-text {
+  margin-top: 10px;
+  color: #cbd5e1;
+  font-size: 0.9rem;
+}
+
+.batch-name-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+}
+
+.batch-file-icon {
+  flex-shrink: 0;
+  color: #8b5cf6;
+  font-size: 1.2rem;
+}
+
+.batch-file-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

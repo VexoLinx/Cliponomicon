@@ -1,0 +1,51 @@
+.favorites-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-top: 0px;
+    margin-bottom: 24px;
+    letter-spacing: 0.5px;
+}
+
+.favorites-grid {
+    display: grid;
+    align-items: start;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    width: 100%;
+}
+
+.fav-message,
+.no-favorites {
+    font-size: 1.1rem;
+    color: #64748b;
+    text-align: center;
+    margin-top: 40px;
+    font-family: sans-serif;
+}
+
+@media (max-width: 1440px) {
+    .favorites-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+}
+
+@media (max-width: 1080px) {
+    .favorites-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 16px;
+    }
+}
+
+@media (max-width: 794px) {
+    .favorites-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+}
+
+@media (max-width: 575px) {
+    .favorites-grid {
+        grid-template-columns: repeat(1, 1fr);
+    }
+}

@@ -1,0 +1,19 @@
+.video-grid {
+  display: grid;
+  align-items: start;
+  grid-template-columns: repeat(auto-fill, minmax(max(260px, calc(25% - 20px)), 1fr));
+  gap: 24px;
+  width: 100%;
+}
+
+@media (max-width: 575px) {
+  .content-area {
+    padding: 16px;
+    padding-bottom: 80px; 
+  }
+  
+  .video-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}

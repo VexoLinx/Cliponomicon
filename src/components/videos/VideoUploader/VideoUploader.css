@@ -1,0 +1,112 @@
+.video-uploader-wrapper {
+    margin-top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.tool-title {
+    font-size: 11px;
+    text-transform: uppercase;
+    color: #4b5563;
+    letter-spacing: 1px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.upload-dropzone {
+    border: 2px dashed #1f2937;
+    border-radius: 10px;
+    padding: 20px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.upload-dropzone:hover {
+    border-color: #f43f5e;
+    background: rgba(244, 63, 94, 0.05);
+}
+
+.upload-dropzone span {
+    font-size: 12px;
+    color: #9ca3af;
+}
+
+.file-name-scroll {
+    font-size: 10px;
+    color: #d1d5db;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+}
+
+@media (min-width: 576px) {
+  .sidebar.collapsed {
+    width: 75px;
+    padding: 20px 5px;
+    align-items: center;
+  }
+
+  .sidebar.collapsed .sidebar-header .title,
+  .sidebar.collapsed .nav-icon,
+  .sidebar.collapsed .login-user,
+  .sidebar.collapsed .version-info,
+  .sidebar.collapsed .tool-title,
+  .sidebar.collapsed .upload-dropzone span,
+  .sidebar.collapsed .file-name-scroll {
+    display: none;
+  }
+
+  .sidebar.collapsed .login-btn {
+    justify-content: center;
+    width: 45px;
+    height: 45px;
+    padding: 0;
+    border-radius: 50%;
+    font-size: 24px;
+    color: transparent;
+  }
+
+  .sidebar.collapsed .login-btn svg {
+    color: white;
+  }
+
+  .sidebar.collapsed .sidebar-header {
+    justify-content: center;
+    margin-bottom: 30px;
+  }
+
+  .sidebar.collapsed .nav-item {
+    justify-content: center;
+    padding: 12px;
+  }
+
+  /* Estilos del uploader plegado */
+  .sidebar.collapsed .video-uploader-wrapper {
+    align-items: center;
+  }
+
+  .sidebar.collapsed .upload-dropzone {
+    padding: 10px;
+    width: 45px;
+    height: 45px;
+    border-radius: 8px;
+    border: 2px dashed #4b5563;
+    justify-content: center;
+    margin: 0 auto;
+  }
+
+  .sidebar.collapsed .upload-dropzone:hover {
+    border-color: #f43f5e;
+  }
+
+  .sidebar.collapsed .upload-dropzone svg {
+    font-size: 24px;
+  }
+}
