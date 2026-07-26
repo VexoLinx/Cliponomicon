@@ -16,7 +16,7 @@ export const useHomeVideos = () => {
   const { filters } = useSearch();
   const { token } = useAuth();
 
-  const loadVideos = async (currentOffset, append = false, signal = null) => {
+  const loadVideos = useCallback(async (currentOffset, append = false, signal = null) => {
     try {
       if (append) setIsFetchingNextPage(true);
 
@@ -32,12 +32,7 @@ export const useHomeVideos = () => {
 
       const mappedItems = Array.isArray(data.items) ? data.items : [];
 
-      if (append) {
-        setVideos((prev) => [...prev, ...mappedItems]);
-      } else {
-        setVideos(mappedItems);
-      }
-
+      setVideos((prev) => (append ? [...prev, ...mappedItems] : mappedItems));
       setHasMore(currentOffset + mappedItems.length < (data.total ?? currentOffset + mappedItems.length));
       setStatusText(!append && mappedItems.length === 0 ? "No hay videos disponibles." : "");
     } catch (error) {
@@ -46,7 +41,7 @@ export const useHomeVideos = () => {
     } finally {
       if (append) setIsFetchingNextPage(false);
     }
-  };
+  }, [filters, token]);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -58,14 +53,14 @@ export const useHomeVideos = () => {
     loadVideos(0, false, controller.signal);
 
     return () => controller.abort();
-  }, [filters, token]);
+  }, [loadVideos]);
 
   const loadMoreVideos = useCallback(() => {
     if (isFetchingNextPage || !hasMore) return;
     const nextOffset = offset + LIMIT;
     setOffset(nextOffset);
     loadVideos(nextOffset, true);
-  }, [offset, isFetchingNextPage, hasMore, filters, token]);
+  }, [offset, isFetchingNextPage, hasMore, loadVideos]);
 
   useEffect(() => {
     const handleVideosRefresh = () => {
@@ -75,7 +70,7 @@ export const useHomeVideos = () => {
     };
     window.addEventListener("videos-changed", handleVideosRefresh);
     return () => window.removeEventListener("videos-changed", handleVideosRefresh);
-  }, [filters, token]);
+  }, [loadVideos]);
 
   useEffect(() => {
     const handleVideoUpdated = (event) => {

@@ -13,7 +13,7 @@ export const useFavoritesVideos = () => {
 
   const { token, user } = useAuth();
 
-  const fetchFavorites = async (currentOffset, append = false) => {
+  const fetchFavorites = useCallback(async (currentOffset, append = false) => {
     if (!token) {
       setLoading(false);
       return;
@@ -30,12 +30,7 @@ export const useFavoritesVideos = () => {
 
       const mappedItems = data.items || [];
 
-      if (append) {
-        setFavorites((prev) => [...prev, ...mappedItems]);
-      } else {
-        setFavorites(mappedItems);
-      }
-
+      setFavorites((prev) => (append ? [...prev, ...mappedItems] : mappedItems));
       setHasMore(currentOffset + mappedItems.length < (data.total ?? currentOffset + mappedItems.length));
     } catch (error) {
       console.error("Error cargando favoritos:", error);
@@ -43,7 +38,7 @@ export const useFavoritesVideos = () => {
       setLoading(false);
       setIsFetchingNextPage(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     setLoading(true);
@@ -63,7 +58,7 @@ export const useFavoritesVideos = () => {
     return () => {
       window.removeEventListener("favorites-changed", handleFavoritesRefresh);
     };
-  }, [token, user?.id]);
+  }, [fetchFavorites, user?.id]);
 
   const loadMoreFavorites = useCallback(() => {
     if (isFetchingNextPage || !hasMore) return;
@@ -71,7 +66,7 @@ export const useFavoritesVideos = () => {
     const nextOffset = offset + LIMIT;
     setOffset(nextOffset);
     fetchFavorites(nextOffset, true);
-  }, [offset, isFetchingNextPage, hasMore]);
+  }, [offset, isFetchingNextPage, hasMore, fetchFavorites]);
 
   return {
     favorites,

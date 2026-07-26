@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { API_URL } from "../../services/api/http";
 import { getCurrentUser } from "../../services/api/auth.api";
@@ -26,7 +26,7 @@ export const useSettingsProfile = () => {
 
   const { token } = useAuth();
 
-  const loadProfile = async (abortController = null) => {
+  const loadProfile = useCallback(async (abortController = null) => {
     try {
       const data = await getCurrentUser({
         token,
@@ -42,7 +42,7 @@ export const useSettingsProfile = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [token]);
 
   useEffect(() => {
     if (activeTab !== "profile") return;
@@ -50,7 +50,7 @@ export const useSettingsProfile = () => {
     setLoading(true);
     loadProfile(controller);
     return () => controller.abort();
-  }, [activeTab, token]);
+  }, [activeTab, loadProfile]);
 
   const handleUpdateProfile = async (event) => {
     event.preventDefault();

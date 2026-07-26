@@ -15,19 +15,21 @@ Leyenda:
 - La forma correcta actual de informar al frontend de variantes disponibles es el campo `variants` de cada `VideoDetailResponse`. Si en el futuro hace falta poblar menus antes de tener un video, crear un endpoint explicito tipo `GET /videos/variant-types`.
 - Avatar queda fuera de alcance por ahora.
 - Los endpoints `admin` no pertenecen a este frontend y quedan explicitamente fuera de la capa API de esta app.
+- La busqueda `#tag` queda bloqueada hasta que backend exponga un endpoint para buscar/resolver tags por texto o id y devolver el `tag_id`.
 
 ## Prioridad alta: errores y riesgos funcionales
 
-1. [ ] **Instalar y fijar dependencias de desarrollo**
+1. [x] ~~**Instalar y fijar dependencias de desarrollo**~~
    - `npm run lint` y `npm run build` fallan porque no existen los binarios locales `eslint` y `vite`.
    - Accion: ejecutar `npm install` o `npm ci`, confirmar que se crea `node_modules`, y despues volver a ejecutar `npm run lint` y `npm run build`.
+   - Estado: hecho. `npm ci`, `npm run lint` y `npm run build` pasan correctamente.
    - Archivos relacionados: `package.json`, `package-lock.json`.
 
-2. [ ] **Arreglar la codificacion de textos**
-   - Hay mojibake visible en muchos archivos: `ConfiguraciÃ³n`, `sesiÃ³n`, `AÃ±adir`, `vÃ­deos`, `Â¿Seguro...?`, etc.
+2. [x] ~~**Arreglar la codificacion de textos**~~
+   - Habia mojibake visible en muchos textos de la app y documentacion.
    - Tambien `README.md` parece contener caracteres nulos o codificacion rota.
    - Accion: normalizar archivos a UTF-8 sin BOM y corregir textos visibles, comentarios y README.
-   - Archivos afectados: `src/App.jsx`, `src/pages/**`, `src/components/**`, `Dockerfile`, `README.md`.
+   - Estado: hecho para los textos con mojibake detectables en `src`; `README.md` fue reemplazado por documentacion limpia en UTF-8/ASCII.
 
 3. [x] ~~**Unificar eventos de autenticacion**~~
    - Accion: definir una constante unica de evento, por ejemplo `AUTH_EXPIRED_EVENT`, y usarla en toda la app.
@@ -36,17 +38,18 @@ Leyenda:
 4. [x] ~~**No calcular permisos de edicion desde textos de UI**~~
    - Estado: hecho en `src/components/videos/GlobalVideoModal/useGlobalVideoModal.js`; ahora usa `can_edit`, `can_delete` e `is_owner`.
 
-5. [~] **Revisar URLs incorrectas o inconsistentes**
+5. [x] ~~**Revisar URLs incorrectas o inconsistentes**~~
    - En `VideoCard`, el fallback de copiar enlace usa `/games/${targetVideoId}`, pero esa ruta espera un `categoryId`, no un video.
    - Algunas URLs usan `import.meta.env.VITE_API_URL` sin fallback y otras usan `|| ""`.
    - Accion: crear helpers centralizados para rutas publicas y endpoints API.
-   - Estado: parcialmente corregido con `src/services/api/http.js` y `src/services/api/videoMapper.js`. Ya se corrigieron URLs de clip, stream, thumbnail y variantes de video. Quedan algunos flujos secundarios usando URLs directas.
+   - Estado: hecho. `.env.example` y `docker-compose.yml` apuntan a la API real directa; las URLs de clip/stream/thumbnail salen de `src/services/api`.
+   - Nota: la busqueda `#tag` queda esperando endpoint backend para resolver texto a `tag_id`.
    - Archivos: `src/components/videos/VideoCard/VideoCard.jsx`, `src/components/videos/GlobalVideoModal/GlobalVideoModal.jsx`, hooks con `VITE_API_URL`.
 
-6. [ ] **Corregir dependencias de hooks y posibles closures obsoletos**
+6. [x] ~~**Corregir dependencias de hooks y posibles closures obsoletos**~~
    - Hay funciones async declaradas dentro de hooks y usadas en efectos sin `useCallback`, con dependencias incompletas.
    - Ejemplos: `useLogin` llama `handleSSOCallback` desde `useEffect`; `useFavoritesVideos` registra listeners que cierran sobre versiones antiguas de `fetchFavorites`; `useHomeVideos` recrea `loadVideos` en cada render.
-   - Accion: envolver callbacks compartidos con `useCallback` o mover la logica a servicios/query hooks bien delimitados.
+   - Estado: hecho en los hooks principales de login, home, favoritos y detalle de juego.
 
 7. [x] ~~**Evitar leaks de object URLs en subida**~~
    - Estado: hecho en `src/components/videos/VideoUploader/useVideoUpload.js`.
@@ -141,21 +144,21 @@ Leyenda:
 
 ## Prioridad media: configuracion y despliegue
 
-26. [ ] **Documentar variables de entorno reales**
+26. [x] ~~**Documentar variables de entorno reales**~~
     - `.env.example` solo contiene una variable minima y el README principal sigue siendo el de plantilla Vite.
-    - Accion: documentar `VITE_API_URL`, `APP_PORT`, `API_URL`, red Docker externa, alias y comandos de desarrollo.
+    - Estado: hecho en `.env.example` y `README.md`.
 
-27. [ ] **Revisar mismatch de puertos y URLs**
+27. [x] ~~**Revisar mismatch de puertos y URLs**~~
     - `docker-compose.yml` compila con `VITE_API_URL=${API_URL:-http://localhost:3000/api}`, mientras el servicio frontend expone `${APP_PORT:-8000}:80`.
-    - Accion: confirmar si el frontend debe llamar al puente desde navegador, desde Nginx proxy o desde red Docker. Ajustar `nginx.conf`/env segun decision.
+    - Estado: hecho. El frontend apunta directo a la API real y `docker-compose.yml` ya no levanta `api-puente`.
 
 28. [ ] **Excluir carpetas innecesarias del build Docker**
     - El Dockerfile hace `COPY . .`, lo que puede copiar docs, carpetas auxiliares y posiblemente `Api_puente`.
     - Accion: revisar `.dockerignore` y asegurar que `Api_puente`, archivos locales y artefactos no entren en el build del frontend si no hacen falta.
 
-29. [ ] **Actualizar README principal**
+29. [x] ~~**Actualizar README principal**~~
     - Ahora mantiene texto de plantilla Vite y duplicados corruptos de `Cliponomicon`.
-    - Accion: reemplazar por documentacion real: descripcion, requisitos, setup, scripts, env, arquitectura y troubleshooting.
+    - Estado: hecho.
 
 ## Prioridad baja: limpieza y consistencia
 

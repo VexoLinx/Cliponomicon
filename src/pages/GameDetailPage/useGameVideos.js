@@ -12,7 +12,9 @@ export const useGameVideos = (categoryId) => {
   const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
   const [error, setError] = useState(null);
 
-  const fetchGameVideos = async (currentOffset, append = false) => {
+  const fetchGameVideos = useCallback(async (currentOffset, append = false) => {
+    if (!categoryId) return;
+
     try {
       if (append) setIsFetchingNextPage(true);
 
@@ -29,13 +31,9 @@ export const useGameVideos = (categoryId) => {
       );
       const mappedItems = readyItems.map(mapVideoToCard);
 
-      if (append) {
-        setVideos((prev) => [...prev, ...mappedItems]);
-      } else {
-        setVideos(mappedItems);
-      }
-
+      setVideos((prev) => (append ? [...prev, ...mappedItems] : mappedItems));
       setHasMore(currentOffset + items.length < (data.total ?? currentOffset + items.length));
+      setError(null);
     } catch (err) {
       console.error("Error fetching game videos:", err);
       setError("No se pudieron cargar los videos de este juego.");
@@ -43,7 +41,7 @@ export const useGameVideos = (categoryId) => {
       setLoading(false);
       setIsFetchingNextPage(false);
     }
-  };
+  }, [categoryId]);
 
   useEffect(() => {
     if (!categoryId) return;
@@ -52,14 +50,14 @@ export const useGameVideos = (categoryId) => {
     setOffset(0);
     setHasMore(true);
     fetchGameVideos(0, false);
-  }, [categoryId]);
+  }, [categoryId, fetchGameVideos]);
 
   const loadMoreVideos = useCallback(() => {
     if (isFetchingNextPage || !hasMore) return;
     const nextOffset = offset + LIMIT;
     setOffset(nextOffset);
     fetchGameVideos(nextOffset, true);
-  }, [offset, isFetchingNextPage, hasMore, categoryId]);
+  }, [offset, isFetchingNextPage, hasMore, fetchGameVideos]);
 
   return { videos, loading, error, hasMore, isFetchingNextPage, loadMoreVideos };
 };

@@ -13,8 +13,6 @@ const VideoUpdateModal = ({
   setTitle,
   description,
   setDescription,
-  isRegisteredOnly,
-  setIsRegisteredOnly,
   isEdited,
   setIsEdited,
   categoryId,
@@ -26,12 +24,11 @@ const VideoUpdateModal = ({
   onDelete,
   onRetry,
 }) => {
-  const [aspectRatio, setAspectRatio] = useState("16 / 9");
   const [localCategories, setLocalCategories] = useState(categoriesList);
 
   const handleVideoLoad = (e) => {
     const { videoWidth, videoHeight } = e.currentTarget;
-    setAspectRatio(`${videoWidth} / ${videoHeight}`);
+    e.currentTarget.style.aspectRatio = `${videoWidth} / ${videoHeight}`;
   };
 
   useEffect(() => {

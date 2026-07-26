@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import {
@@ -18,17 +18,7 @@ export const useLogin = () => {
   const location = useLocation();
   const { login } = useAuth();
 
-  useEffect(() => {
-    const params = new URLSearchParams(location.search);
-    const code = params.get("code");
-    const state = params.get("state");
-
-    if (code && state) {
-      handleSSOCallback(code, state);
-    }
-  }, [location.search]);
-
-  const handleSSOCallback = async (code, state) => {
+  const handleSSOCallback = useCallback(async (code, state) => {
     setIsSSOProcessing(true);
     setError(null);
 
@@ -42,7 +32,17 @@ export const useLogin = () => {
     } finally {
       setIsSSOProcessing(false);
     }
-  };
+  }, [login, navigate]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const code = params.get("code");
+    const state = params.get("state");
+
+    if (code && state) {
+      handleSSOCallback(code, state);
+    }
+  }, [location.search, handleSSOCallback]);
 
   const handleSSOLogin = async () => {
     setIsLoading(true);
