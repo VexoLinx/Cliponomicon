@@ -3,17 +3,17 @@ import { createTag, listTags } from "../../services/api/tags.api";
 
 export const useTagsPage = (token) => {
   const [tags, setTags] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
   const [newTagName, setNewTagName] = useState("");
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState(null);
   const [createStatus, setCreateStatus] = useState("");
 
-  const fetchTags = useCallback(async (name = searchTerm) => {
+  const fetchTags = useCallback(async () => {
     try {
       setLoading(true);
-      const data = await listTags({ name: name.trim() || undefined });
+      const data = await listTags();
       setTags(data);
       setError(null);
     } catch (err) {
@@ -22,15 +22,11 @@ export const useTagsPage = (token) => {
     } finally {
       setLoading(false);
     }
-  }, [searchTerm]);
+  }, []);
 
   useEffect(() => {
-    const timeoutId = setTimeout(() => {
-      fetchTags(searchTerm);
-    }, 250);
-
-    return () => clearTimeout(timeoutId);
-  }, [fetchTags, searchTerm]);
+    fetchTags();
+  }, [fetchTags]);
 
   const handleCreateTag = async (event) => {
     event.preventDefault();
@@ -46,6 +42,7 @@ export const useTagsPage = (token) => {
         return exists ? currentTags : [createdTag, ...currentTags];
       });
       setNewTagName("");
+      setIsCreateModalOpen(false);
       setCreateStatus("Tag creado.");
       setTimeout(() => setCreateStatus(""), 2500);
     } catch (err) {
@@ -61,11 +58,11 @@ export const useTagsPage = (token) => {
     creating,
     error,
     handleCreateTag,
+    isCreateModalOpen,
     loading,
     newTagName,
-    searchTerm,
+    setIsCreateModalOpen,
     setNewTagName,
-    setSearchTerm,
     tags,
   };
 };

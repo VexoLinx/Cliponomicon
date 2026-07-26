@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import TagCreateModal from "./TagCreateModal";
 import { useTagsPage } from "./useTagsPage";
 import "./TagsPage.css";
 
@@ -10,43 +11,30 @@ const TagsPage = () => {
     creating,
     error,
     handleCreateTag,
+    isCreateModalOpen,
     loading,
     newTagName,
-    searchTerm,
+    setIsCreateModalOpen,
     setNewTagName,
-    setSearchTerm,
     tags,
   } = useTagsPage(token);
 
   return (
     <div className="page-container tags-page">
       <div className="tags-toolbar">
-        <input
-          className="tag-search-input"
-          type="search"
-          value={searchTerm}
-          onChange={(event) => setSearchTerm(event.target.value)}
-          placeholder="Buscar tag..."
-        />
+        <div className="tags-summary">
+          <span>{tags.length} tags</span>
+        </div>
 
-        <form className="tag-create-form" onSubmit={handleCreateTag}>
-          <input
-            className="tag-create-input"
-            type="text"
-            value={newTagName}
-            onChange={(event) => setNewTagName(event.target.value)}
-            placeholder="Nuevo tag"
-            maxLength={100}
-          />
-          <button
-            className="tag-create-button"
-            type="submit"
-            disabled={!token || creating || !newTagName.trim()}
-            title={token ? "Crear tag" : "Inicia sesion para crear tags"}
-          >
-            {creating ? "Creando..." : "Crear tag"}
-          </button>
-        </form>
+        <button
+          className="tag-create-button"
+          type="button"
+          disabled={!token}
+          title={token ? "Crear tag" : "Inicia sesion para crear tags"}
+          onClick={() => setIsCreateModalOpen(true)}
+        >
+          Crear tag
+        </button>
       </div>
 
       {createStatus && <p className="tag-status-text">{createStatus}</p>}
@@ -67,6 +55,16 @@ const TagsPage = () => {
             </Link>
           ))}
         </div>
+      )}
+
+      {isCreateModalOpen && (
+        <TagCreateModal
+          creating={creating}
+          newTagName={newTagName}
+          onClose={() => setIsCreateModalOpen(false)}
+          onSubmit={handleCreateTag}
+          setNewTagName={setNewTagName}
+        />
       )}
     </div>
   );

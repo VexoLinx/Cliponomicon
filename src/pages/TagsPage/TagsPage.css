@@ -5,13 +5,12 @@
 }
 
 .tags-toolbar {
-  display: grid;
-  grid-template-columns: minmax(220px, 1fr) minmax(280px, 420px);
+  display: flex;
+  justify-content: space-between;
   gap: 14px;
   align-items: center;
 }
 
-.tag-search-input,
 .tag-create-input {
   width: 100%;
   min-height: 44px;
@@ -24,16 +23,14 @@
   outline: none;
 }
 
-.tag-search-input:focus,
 .tag-create-input:focus {
   border-color: rgba(143, 68, 253, 0.8);
   box-shadow: 0 0 0 3px rgba(143, 68, 253, 0.18);
 }
 
-.tag-create-form {
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 10px;
+.tags-summary {
+  color: rgba(255, 255, 255, 0.72);
+  font-weight: 700;
 }
 
 .tag-create-button {
@@ -94,9 +91,79 @@
   white-space: nowrap;
 }
 
+.tag-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 3000;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.72);
+  padding: 20px;
+}
+
+.tag-modal {
+  width: min(420px, 100%);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 8px;
+  background: #15151c;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+  padding: 20px;
+}
+
+.tag-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.tag-modal-header h2 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.tag-modal-close {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  cursor: pointer;
+}
+
+.tag-modal-label {
+  display: block;
+  margin-bottom: 8px;
+  color: rgba(255, 255, 255, 0.78);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.tag-modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.tag-modal-secondary {
+  min-height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 8px;
+  background: transparent;
+  color: #fff;
+  font-weight: 700;
+  padding: 0 16px;
+  cursor: pointer;
+}
+
 @media (max-width: 720px) {
-  .tags-toolbar,
-  .tag-create-form {
-    grid-template-columns: 1fr;
+  .tags-toolbar {
+    align-items: stretch;
+    flex-direction: column;
   }
 }
