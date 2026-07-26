@@ -79,10 +79,10 @@ Leyenda:
     - Eran dificiles de rastrear, no tenian nombres centralizados, mezclaban `snake_case` y kebab-case y acoplaban componentes lejanos.
     - Estado: hecho. Los nombres viven en `src/events/appEvents.js` y el acceso a `window` queda encapsulado en `emitAppEvent` / `onAppEvent`.
 
-12. [~] **Dividir componentes grandes**
+12. [x] ~~**Dividir componentes grandes**~~
     - `SettingsPage.jsx`, `VideoUpdateModal.jsx`, `GlobalVideoModal/useGlobalVideoModal.js`, `VideoCard.jsx` y `CustomVideoPlayer` mezclan presentacion, datos, permisos, efectos y acciones.
     - Accion: dividir por responsabilidad: secciones visuales, formularios, hooks de datos, servicios API y componentes puros.
-    - Estado: parcial. `SettingsPage.jsx` se redujo a contenedor y sus tarjetas/formularios viven en `src/pages/SettingsPage/components`. Quedan por cortar `VideoUpdateModal`, `VideoCard`, `GlobalVideoModal/useGlobalVideoModal.js` y `CustomVideoPlayer`.
+    - Estado: hecho. `SettingsPage`, `VideoUpdateModal`, `GlobalVideoModal`, `VideoCard` y `CustomVideoPlayer` quedaron como contenedores pequenos apoyados en subcomponentes y hooks especificos.
 
 13. [x] ~~**Eliminar la carpeta `back` obsoleta**~~
     - Estado: hecho. La capa activa vive en `src/services/api` y los mappers en `src/services/mappers`.
