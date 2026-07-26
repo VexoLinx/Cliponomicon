@@ -42,7 +42,7 @@ const CategoryCombobox = ({ categoryId, setCategoryId, categories, onRefreshCate
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, []);
+  }, [setSearchResults, setSearchTerm]);
 
   const handleInputChange = (e) => {
     const value = e.target.value;

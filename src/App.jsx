@@ -17,8 +17,10 @@ import HomePage from "./pages/HomePage";
 import GamesPage from "./pages/GamesPage";
 import FavoritesPage from "./pages/FavoritesPage";
 import SettingsPage from "./pages/SettingsPage";
+import TagsPage from "./pages/TagsPage";
 import LoginPage from "./pages/LoginPage";
 import GameDetailPage from "./pages/GameDetailPage/GameDetailPage";
+import TagDetailPage from "./pages/TagDetailPage";
 
 import "./App.css";
 
@@ -38,6 +40,8 @@ function App() {
               <Route path="/" element={<HomePage />} />
               <Route path="/games" element={<GamesPage />} />
               <Route path="/games/:categoryId" element={<GameDetailPage />} />
+              <Route path="/tags" element={<TagsPage />} />
+              <Route path="/tags/:tagId" element={<TagDetailPage />} />
 
               {/* Rutas con restricción de sesión activa */}
               <Route

@@ -1,30 +1,9 @@
 import { useState, useEffect, useCallback } from "react";
+import { useSearch } from "../../context/SearchContext";
+import { listVideos } from "../../services/api/videos.api";
+import { mapVideoToCard, VIDEO_PROCESSING_STATUSES } from "../../services/mappers/video.mapper";
 
-const API_URL = import.meta.env.VITE_API_URL || "";
 const LIMIT = 20;
-
-const getVideoStreamUrl = (videoId) => `${API_URL}/videos/${videoId}/stream?variant_type=original`;
-const getVideoThumbnailUrl = (videoId) => `${API_URL}/videos/${videoId}/thumbnail`;
-
-const mapApiVideoToCard = (video) => {
-  let finalUserHandle = "@usuario";
-  if (video.owner?.username) finalUserHandle = `@${video.owner.username}`;
-  const mainCategory = video.categories?.[0] || video.category;
-
-  return {
-    id: video.id,
-    thumbnail: getVideoThumbnailUrl(video.id),
-    gameIcon: mainCategory?.thumbnail_horizontal_url || "https://via.placeholder.com/40",
-    title: video.title,
-    gameName: mainCategory?.name || "Sin categoría",
-    date: video.created_at ? new Date(video.created_at).toLocaleDateString("es-ES") : "",
-    duration_seconds: video.duration_seconds, 
-    rating: String(video.favorite_count ?? 0),
-    userHandle: finalUserHandle,
-    context: video.description || "",
-    videoUrl: getVideoStreamUrl(video.id),
-  };
-};
 
 export const useGameVideos = (categoryId) => {
   const [videos, setVideos] = useState([]);
@@ -33,38 +12,61 @@ export const useGameVideos = (categoryId) => {
   const [hasMore, setHasMore] = useState(true);
   const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
   const [error, setError] = useState(null);
+  const { filters } = useSearch();
 
-  const fetchGameVideos = async (currentOffset, append = false) => {
+  const fetchGameVideos = useCallback(async (currentOffset, append = false) => {
+    if (!categoryId) return;
+
     try {
       if (append) setIsFetchingNextPage(true);
 
-      const response = await fetch(
-        `${API_URL}/videos?category_ids=${categoryId}&limit=${LIMIT}&offset=${currentOffset}`
-      );
+      const data = await listVideos({
+        categoryIds: [categoryId],
+        title: filters.scope === "game-detail" ? filters.text : undefined,
+        tagIds:
+          filters.scope === "game-detail" && filters.tagIds?.length
+            ? filters.tagIds
+            : undefined,
+        ownerId: filters.scope === "game-detail" ? filters.ownerId : undefined,
+        createdDate: filters.scope === "game-detail" ? filters.createdDate || undefined : undefined,
+        createdFrom: filters.scope === "game-detail" ? filters.createdFrom || undefined : undefined,
+        createdTo: filters.scope === "game-detail" ? filters.createdTo || undefined : undefined,
+        edited:
+          filters.scope === "game-detail" && filters.edited !== ""
+            ? filters.edited === "true"
+            : undefined,
+        limit: LIMIT,
+        offset: currentOffset,
+        mapToCards: false,
+      });
 
-      if (!response.ok) throw new Error("Error al cargar los clips del juego");
-
-      const data = await response.json();
       const items = data.items || [];
-      
-      const readyItems = items.filter(video => video.processing_status !== "pending");
-      const mappedItems = readyItems.map(mapApiVideoToCard);
+      const readyItems = items.filter(
+        (video) => !VIDEO_PROCESSING_STATUSES.includes(video.processing_status),
+      );
+      const mappedItems = readyItems.map(mapVideoToCard);
 
-      if (append) {
-        setVideos((prev) => [...prev, ...mappedItems]);
-      } else {
-        setVideos(mappedItems);
-      }
-
-      setHasMore(items.length === LIMIT);
+      setVideos((prev) => (append ? [...prev, ...mappedItems] : mappedItems));
+      setHasMore(currentOffset + items.length < (data.total ?? currentOffset + items.length));
+      setError(null);
     } catch (err) {
       console.error("Error fetching game videos:", err);
-      setError("No se pudieron cargar los vídeos de este juego.");
+      setError("No se pudieron cargar los videos de este juego.");
     } finally {
       setLoading(false);
       setIsFetchingNextPage(false);
     }
-  };
+  }, [
+    categoryId,
+    filters.createdDate,
+    filters.createdFrom,
+    filters.createdTo,
+    filters.edited,
+    filters.ownerId,
+    filters.scope,
+    filters.tagIds,
+    filters.text,
+  ]);
 
   useEffect(() => {
     if (!categoryId) return;
@@ -73,14 +75,14 @@ export const useGameVideos = (categoryId) => {
     setOffset(0);
     setHasMore(true);
     fetchGameVideos(0, false);
-  }, [categoryId]);
+  }, [categoryId, fetchGameVideos]);
 
   const loadMoreVideos = useCallback(() => {
     if (isFetchingNextPage || !hasMore) return;
     const nextOffset = offset + LIMIT;
     setOffset(nextOffset);
     fetchGameVideos(nextOffset, true);
-  }, [offset, isFetchingNextPage, hasMore, categoryId]);
+  }, [offset, isFetchingNextPage, hasMore, fetchGameVideos]);
 
   return { videos, loading, error, hasMore, isFetchingNextPage, loadMoreVideos };
 };

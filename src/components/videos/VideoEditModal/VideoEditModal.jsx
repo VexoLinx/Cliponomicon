@@ -19,8 +19,6 @@ const VideoEditModal = ({
   setTitle,
   description,
   setDescription,
-  isRegisteredOnly,
-  setIsRegisteredOnly,
   isEdited,
   setIsEdited,
   categoryId,

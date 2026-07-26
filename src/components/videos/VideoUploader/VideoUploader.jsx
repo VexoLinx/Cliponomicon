@@ -2,6 +2,8 @@ import React, { useState, useEffect } from "react";
 import VideoUploadButton from "./VideoUploadButton";
 import VideoEditModal from "../VideoEditModal";
 import { useVideoUpload } from "./useVideoUpload";
+import { listCategories } from "../../../services/api/categories.api";
+import { APP_EVENTS, onAppEvent } from "../../../events/appEvents";
 import "./VideoUploader.css";
 import "../videos.css";
 
@@ -31,11 +33,8 @@ const VideoUploader = () => {
 
   const fetchCategories = async () => {
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/category`);
-      if (res.ok) {
-        const data = await res.json();
-        setCategories(data);
-      }
+      const data = await listCategories();
+      setCategories(data);
     } catch (err) {
       console.error("Error cargando categorías para el uploader:", err);
     }
@@ -44,10 +43,7 @@ const VideoUploader = () => {
   useEffect(() => {
     fetchCategories();
 
-    window.addEventListener("categories_updated", fetchCategories);
-    return () => {
-      window.removeEventListener("categories_updated", fetchCategories);
-    };
+    return onAppEvent(APP_EVENTS.CATEGORIES_UPDATED, fetchCategories);
   }, [status]);
 
   return (

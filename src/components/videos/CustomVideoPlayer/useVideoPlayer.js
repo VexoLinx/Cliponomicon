@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from "react";
+import { downloadVideoVariantBlob, getVideoStreamUrl } from "../../../services/api/videoMedia.api";
+import { getVideoVariantTypes, pickVideoVariant } from "../../../services/mappers/video.mapper";
 
 export const useVideoPlayer = (video) => {
   const videoRef = useRef(null);
@@ -7,8 +9,7 @@ export const useVideoPlayer = (video) => {
 
   const getInitialVariant = () => {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent) || window.innerWidth < 768;
-    if (isMobile) return "low_h264";
-    return video?.edited ? "edited" : "original";
+    return pickVideoVariant(video, { mobile: isMobile });
   };
 
   const [isPlaying, setIsPlaying] = useState(true);
@@ -32,7 +33,8 @@ export const useVideoPlayer = (video) => {
   const [playbackRate, setPlaybackRate] = useState(1);
   const [isDownloading, setIsDownloading] = useState(false);
 
-  const currentStreamUrl = `${import.meta.env.VITE_API_URL}/videos/${video?.id}/stream?variant_type=${videoVariant}`;
+  const availableVariants = getVideoVariantTypes(video);
+  const currentStreamUrl = getVideoStreamUrl(video?.id, videoVariant);
 
   useEffect(() => {
     if (videoRef.current) {
@@ -136,7 +138,7 @@ export const useVideoPlayer = (video) => {
   }, []);
 
   const handleVideoError = () => {
-    if (videoVariant !== "low_h264") {
+    if (availableVariants.includes("low_h264") && videoVariant !== "low_h264") {
       setVideoVariant("low_h264");
     }
   };
@@ -181,8 +183,7 @@ export const useVideoPlayer = (video) => {
     setIsDownloading(true);
 
     try {
-      const response = await fetch(currentStreamUrl);
-      const blob = await response.blob();
+      const blob = await downloadVideoVariantBlob(video?.id, videoVariant);
       const blobUrl = window.URL.createObjectURL(blob);
 
       const a = document.createElement("a");
@@ -206,7 +207,7 @@ export const useVideoPlayer = (video) => {
     states: {
       isPlaying, progress, currentTime, duration, volume,
       isMuted, isFullscreen, activeMenu, videoVariant,
-      playbackRate, isDownloading, currentStreamUrl
+      playbackRate, isDownloading, currentStreamUrl, availableVariants
     },
     actions: {
       togglePlay, handleTimeUpdate, handleLoadedMetadata,
