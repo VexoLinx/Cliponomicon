@@ -27,6 +27,7 @@ const TagsPage = () => {
     tags,
     updating,
   } = useTagsPage(token);
+
   const canManageTags = token && ["admin", "super_admin"].includes(user?.role);
 
   return (
@@ -41,14 +42,16 @@ const TagsPage = () => {
             className="tag-create-button"
             type="button"
             disabled={!token}
-            title={token ? "Crear tag" : "Inicia sesion para crear tags"}
+            title={token ? "Crear tag" : "Inicia sesión para crear tags"}
             onClick={() => setIsCreateModalOpen(true)}
           >
             Crear tag
           </button>
 
           {canManageTags && (
-            <label className={`tag-manage-toggle ${isManageMode ? "active" : ""}`}>
+            <label
+              className={`tag-manage-toggle ${isManageMode ? "active" : ""}`}
+            >
               <input
                 type="checkbox"
                 checked={isManageMode}
@@ -61,21 +64,27 @@ const TagsPage = () => {
       </div>
 
       {createStatus && <p className="tag-status-text">{createStatus}</p>}
-      {!token && <p className="tag-status-text">Inicia sesion para crear tags.</p>}
+      {!token && (
+        <p className="tag-status-text">Inicia sesión para crear tags.</p>
+      )}
       {loading && <p className="grid-status-text">Cargando tags...</p>}
       {error && <p className="grid-status-text">{error}</p>}
 
       {!loading && !error && tags.length === 0 && (
-        <p className="grid-status-text">Aun no hay tags registrados.</p>
+        <p className="grid-status-text">Aún no hay tags registrados.</p>
       )}
 
       {!loading && tags.length > 0 && (
         <div className="tags-grid">
           {tags.map((tag) => (
-            <div key={tag.id} className={`tag-card ${isManageMode ? "is-manageable" : ""}`}>
+            <div key={tag.id} className="tag-card">
               <Link className="tag-card-link" to={`/tags/${tag.id}`}>
-                <span className="tag-prefix">#</span>
-                <span className="tag-name">{tag.name}</span>
+                <div className="tag-text-wrapper">
+                  <span className="tag-prefix">#</span>
+                  <span className="tag-name" title={tag.name}>
+                    {tag.name}
+                  </span>
+                </div>
               </Link>
 
               {canManageTags && isManageMode && (
