@@ -49,16 +49,16 @@ const TagsPage = () => {
           </button>
 
           {canManageTags && (
-            <label
+            <button
+              type="button"
               className={`tag-manage-toggle ${isManageMode ? "active" : ""}`}
+              onClick={() => setIsManageMode(!isManageMode)}
             >
-              <input
-                type="checkbox"
-                checked={isManageMode}
-                onChange={(event) => setIsManageMode(event.target.checked)}
-              />
-              <span>Modificar</span>
-            </label>
+              <div className="toggle-text-wrapper">
+                <span className="toggle-text-default">Modificar</span>
+                <span className="toggle-text-active">Terminar edición</span>
+              </div>
+            </button>
           )}
         </div>
       </div>

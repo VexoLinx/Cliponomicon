@@ -75,40 +75,79 @@
   box-shadow: none;
 }
 
-/* --- Toggle Modificar --- */
+/* --- Botón Modificar (Animado) --- */
 .tag-manage-toggle {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  min-height: 40px;
+  justify-content: center;
+  width: 160px; 
+  height: 40px; 
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.04);
   color: rgba(255, 255, 255, 0.8);
   font-size: 0.9rem;
   font-weight: 600;
-  padding: 0 14px;
+  padding: 0; 
   cursor: pointer;
   user-select: none;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .tag-manage-toggle:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
-}
-
-.tag-manage-toggle.active {
-  border-color: rgba(143, 68, 253, 0.6);
-  background: rgba(143, 68, 253, 0.15);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.3);
   color: #fff;
 }
 
-.tag-manage-toggle input {
-  width: 16px;
-  height: 16px;
-  accent-color: #8f44fd;
-  cursor: pointer;
+/* Estado activo (Modo Edición) */
+.tag-manage-toggle.active {
+  border-color: rgba(255, 84, 84, 0.5);
+  background: rgba(255, 84, 84, 0.15);
+  color: #ff8c8c;
+}
+
+.tag-manage-toggle.active:hover {
+  background: rgba(255, 84, 84, 0.25);
+  border-color: rgba(255, 84, 84, 0.8);
+  color: #fff;
+}
+
+/* --- Animación de los textos (Efecto rodillo) --- */
+.toggle-text-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%; 
+  overflow: hidden;
+}
+
+.toggle-text-default,
+.toggle-text-active {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* ESTADO NORMAL */
+.toggle-text-default {
+  transform: translateY(0);
+}
+.toggle-text-active {
+  transform: translateY(100%);
+}
+
+.tag-manage-toggle.active .toggle-text-default {
+  transform: translateY(-100%);
+}
+
+.tag-manage-toggle.active .toggle-text-active {
+  transform: translateY(0);
 }
 
 /* --- Textos de estado --- */
