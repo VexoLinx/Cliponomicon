@@ -94,9 +94,9 @@ export const useGamesPage = (token) => {
   };
 
   const openEditModal = (category) => {
-    setEditingCategory(category);
-    setNewCategoryName(category.name);
-    setIsCreateModalOpen(true);
+    // setEditingCategory(category);
+    // setNewCategoryName(category.name);
+    // setIsCreateModalOpen(true);
   };
 
   const closeModal = () => {
