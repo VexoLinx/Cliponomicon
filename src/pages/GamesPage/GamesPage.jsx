@@ -1,41 +1,78 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import GameCard from "./GameCard/GameCard";
-import { listCategories } from "../../services/api/categories.api";
-import { useSearch } from "../../context/SearchContext";
+import GameCreateModal from "./GameCreateModal";
+import GameImportModal from "./GameImportModal/GameImportModal";
+import { useAuth } from "../../context/AuthContext";
+import { useGamesPage } from "./useGamesPage";
 import "./GamesPage.css";
 
 const GamesPage = () => {
-  const [categories, setCategories] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-  const { filters } = useSearch();
+  const { token, user } = useAuth();
+  const {
+    actionStatus,
+    categories,
+    creating,
+    deletingCategoryId,
+    editingCategory,
+    error,
+    isCreateModalOpen,
+    isManageMode,
+    loading,
+    newCategoryName,
+    updating,
+    refreshGames,
+    closeModal,
+    handleDeleteCategory,
+    handleUpdateCategory,
+    openEditModal,
+    setIsCreateModalOpen,
+    setIsManageMode,
+    setNewCategoryName,
+  } = useGamesPage(token);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await listCategories({
-          name: filters.scope === "games" ? filters.text || undefined : undefined,
-        });
-        setCategories(data);
-      } catch (err) {
-        console.error("Error fetching categories:", err);
-        setError("No se pudieron cargar los juegos. Intentalo de nuevo mas tarde.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchCategories();
-  }, [filters.scope, filters.text]);
+  const canManageGames = token && ["admin", "super_admin"].includes(user?.role);
 
   return (
-    <div className="page-container">
-      {loading && <p className="grid-status-text">Cargando categorias...</p>}
+    <div className="page-container games-page">
+      <div className="games-toolbar">
+        <div className="games-summary">
+          <span>{categories.length} juegos</span>
+        </div>
 
+        <div className="games-toolbar-actions">
+          <button
+            className="game-create-button"
+            type="button"
+            disabled={!token}
+            title={token ? "Importar juego" : "Inicia sesión para crear juegos"}
+            onClick={() => setIsCreateModalOpen(true)}
+          >
+            Añadir juego
+          </button>
+
+          {canManageGames && (
+            <button
+              type="button"
+              className={`game-manage-toggle ${isManageMode ? "active" : ""}`}
+              onClick={() => setIsManageMode(!isManageMode)}
+            >
+              <div className="toggle-text-wrapper">
+                <span className="toggle-text-default">Modificar</span>
+                <span className="toggle-text-active">Terminar edición</span>
+              </div>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {actionStatus && <p className="grid-status-text">{actionStatus}</p>}
+      {!token && <p className="grid-status-text">Inicia sesión para crear juegos.</p>}
+      
+      {loading && <p className="grid-status-text">Cargando categorías...</p>}
       {error && <p className="grid-status-text">{error}</p>}
 
       {!loading && !error && categories.length === 0 && (
-        <p className="grid-status-text">Aun no hay categorias registradas.</p>
+        <p className="grid-status-text">Aún no hay categorías registradas.</p>
       )}
 
       {!loading && categories.length > 0 && (
@@ -48,9 +85,34 @@ const GamesPage = () => {
                 name: category.name,
                 image: category.thumbnail_horizontal_url || "https://placehold.co/460x215/222/white?text=Sin+Imagen",
               }}
+              canManageGames={canManageGames}
+              isManageMode={isManageMode}
+              onEdit={openEditModal}
+              onDelete={handleDeleteCategory}
+              isDeleting={deletingCategoryId === category.id}
             />
           ))}
         </div>
+      )}
+
+      {isCreateModalOpen && !editingCategory && (
+        <GameImportModal
+          onClose={() => setIsCreateModalOpen(false)}
+          onImportSuccess={() => {
+            refreshGames();
+          }}
+        />
+      )}
+
+      {editingCategory && (
+        <GameCreateModal
+          creating={updating}
+          title={"Modificar juego"}
+          newGameName={newCategoryName}
+          onClose={closeModal}
+          onSubmit={handleUpdateCategory}
+          setNewGameName={setNewCategoryName}
+        />
       )}
     </div>
   );

@@ -1,0 +1,164 @@
+/* src/pages/GamesPage/GameImportModal.css */
+.game-import-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  backdrop-filter: blur(4px);
+}
+
+.game-import-modal {
+  background-color: #111827; /* Fondo oscuro */
+  border: 1px solid #1f2937;
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.75);
+  overflow: hidden;
+  animation: modalFadeIn 0.2s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.game-import-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background-color: #1f2937;
+  border-bottom: 1px solid #374151;
+}
+
+.game-import-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f3f4f6;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.game-import-close {
+  background: transparent;
+  border: none;
+  color: #9ca3af;
+  font-size: 1.5rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.game-import-close:hover {
+  background-color: #374151;
+  color: #ef4444; /* Rojo al pasar el ratón */
+}
+
+.game-import-body {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.game-import-label {
+  font-size: 0.85rem;
+  color: #9ca3af;
+  font-weight: 500;
+  text-transform: uppercase;
+}
+
+.game-import-input {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #030712;
+  border: 1px solid #374151;
+  border-radius: 8px;
+  color: #f3f4f6;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.2s;
+  box-sizing: border-box;
+}
+
+.game-import-input:focus {
+  border-color: #3b82f6;
+}
+
+.game-import-results-container {
+  max-height: 280px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+
+/* Scrollbar personalizada */
+.game-import-results-container::-webkit-scrollbar {
+  width: 6px;
+}
+.game-import-results-container::-webkit-scrollbar-thumb {
+  background-color: #4b5563;
+  border-radius: 4px;
+}
+
+.game-import-result-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  background-color: #1f2937;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.game-import-result-item:hover:not(.disabled) {
+  background-color: #374151;
+}
+
+.game-import-result-item.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.game-import-game-name {
+  font-size: 0.95rem;
+  color: #e5e7eb;
+  font-weight: 500;
+}
+
+.game-import-badge {
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background-color: #3b82f6;
+  color: #ffffff;
+  font-weight: 600;
+  transition: background-color 0.2s;
+}
+
+.game-import-result-item:hover:not(.disabled) .game-import-badge {
+  background-color: #2563eb;
+}
+
+.game-import-status-msg {
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+  padding: 20px 0;
+}

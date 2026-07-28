@@ -1,7 +1,7 @@
 import { useState } from "react";
-import { useAuth } from "../../context/AuthContext";
-import { importSteamCategory, searchSteamCategories } from "../../services/api/categories.api";
-import { APP_EVENTS, emitAppEvent } from "../../events/appEvents";
+import { useAuth } from "../context/AuthContext";
+import { importSteamCategory, searchSteamCategories } from "../services/api/categories.api";
+import { APP_EVENTS, emitAppEvent } from "../events/appEvents";
 
 export const useSteamSearch = (onImportSuccess) => {
   const [searchTerm, setSearchTerm] = useState("");

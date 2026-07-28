@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { MdArrowDropDown } from "react-icons/md";
-import { useSteamSearch } from "../../useSteamSearch";
+import { useSteamSearch } from "../../../../hooks/useSteamSearch";
 
 const CategoryCombobox = ({ categoryId, setCategoryId, categories, onRefreshCategories }) => {
   const [isOpen, setIsOpen] = useState(false);

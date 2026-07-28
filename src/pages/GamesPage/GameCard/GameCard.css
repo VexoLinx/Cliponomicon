@@ -49,6 +49,57 @@
     text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.8);
 }
 
+/* --- Botones de la Tarjeta (Editar/Borrar) --- */
+.game-card-actions {
+  position: absolute;
+  bottom: 15px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  z-index: 20;
+  padding: 0 15px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.game-card-actions button {
+  min-height: 32px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px;
+  background: rgba(10, 10, 14, 0.8);
+  backdrop-filter: blur(4px);
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.game-card-actions button:hover:not(:disabled) {
+  background: rgba(143, 68, 253, 0.3);
+  color: #fff;
+  border-color: rgba(143, 68, 253, 0.6);
+}
+
+.game-card-actions button.danger {
+  border-color: rgba(255, 84, 84, 0.3);
+  color: #ff8c8c;
+  background: rgba(255, 84, 84, 0.1);
+}
+
+.game-card-actions button.danger:hover:not(:disabled) {
+  background: rgba(255, 84, 84, 0.3);
+  color: #fff;
+  border-color: #ff8c8c;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 @media (max-width: 768px) {
     .game-card {
         border-radius: 10px; 
