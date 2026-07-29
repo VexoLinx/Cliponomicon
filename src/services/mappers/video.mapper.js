@@ -11,9 +11,18 @@ const PREFERRED_MOBILE_VARIANTS = ["low_h264", "original_h264", "original", "ori
 export const getVideoVariantTypes = (video) => {
   const fromApi = video?.variants
     ?.map((variant) => variant.variant_type)
-    .filter(Boolean);
+    .filter(Boolean) || [];
 
-  return [...new Set(fromApi?.length ? fromApi : ["low_h264", "original"])];
+  if (fromApi.length === 0) {
+    return ["original", "low_h264"];
+  }
+
+  const hasOriginal = fromApi.some(v => v.includes("original"));
+  if (!hasOriginal) {
+    fromApi.unshift("original");
+  }
+
+  return [...new Set(fromApi)];
 };
 
 export const pickVideoVariant = (video, { mobile = false } = {}) => {
