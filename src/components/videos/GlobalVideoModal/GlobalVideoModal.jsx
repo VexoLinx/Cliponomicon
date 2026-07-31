@@ -5,6 +5,7 @@ import VideoUpdateModal from "../VideoUpdateModal/VideoUpdateModal";
 import VideoModalSidebar from "./VideoModalSidebar";
 import { useCopyClipLink } from "./useCopyClipLink";
 import { useGlobalVideoModal } from "./useGlobalVideoModal";
+import { IoChevronBack, IoChevronForward } from "react-icons/io5";
 import "./GlobalVideoModal.css";
 
 const GlobalVideoModal = () => {
@@ -17,8 +18,21 @@ const GlobalVideoModal = () => {
   return ReactDOM.createPortal(
     <div className="modal-overlay" onClick={modal.closeVideo}>
       <div className="modal-content" onClick={(event) => event.stopPropagation()}>
-        <div className="modal-video-container">
+        
+        <div className="modal-video-container" style={{ position: 'relative' }}>
+          {modal.hasPrev && (
+            <button className="carousel-nav-btn prev" onClick={modal.playPrev}>
+              <IoChevronBack />
+            </button>
+          )}
+
           <CustomVideoPlayer video={modal.activeVideo} />
+
+          {modal.hasNext && (
+            <button className="carousel-nav-btn next" onClick={modal.playNext}>
+              <IoChevronForward />
+            </button>
+          )}
         </div>
 
         <VideoModalSidebar

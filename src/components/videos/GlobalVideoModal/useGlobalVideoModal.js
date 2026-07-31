@@ -5,7 +5,15 @@ import { useFavoriteVideo } from "./useFavoriteVideo";
 import { useVideoEditState } from "./useVideoEditState";
 
 export const useGlobalVideoModal = () => {
-  const { activeVideo, closeVideo } = useVideoModal();
+  const { 
+    activeVideo, 
+    closeVideo, 
+    playNext, 
+    playPrev, 
+    hasNext, 
+    hasPrev 
+  } = useVideoModal();
+  
   const { token } = useAuth();
   const videoRef = useRef(null);
 
@@ -25,6 +33,10 @@ export const useGlobalVideoModal = () => {
     canEdit,
     closeVideo,
     videoRef,
+    playNext,
+    playPrev,
+    hasNext,
+    hasPrev,
     ...editing,
     ...favorite,
   };
