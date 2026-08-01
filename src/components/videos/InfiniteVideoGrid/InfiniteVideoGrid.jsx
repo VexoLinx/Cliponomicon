@@ -1,5 +1,6 @@
-import React, { useRef, useCallback } from "react";
+import React, { useRef, useCallback, useEffect } from "react";
 import VideoCard from "../VideoCard/VideoCard";
+import {useVideoModal} from "../../../context/VideoContext/VideoContext";
 
 const InfiniteVideoGrid = ({ 
   videos, 
@@ -9,6 +10,12 @@ const InfiniteVideoGrid = ({
   loadMoreVideos 
 }) => {
   const observer = useRef();
+
+  const { registerPlaylist } = useVideoModal();
+
+  useEffect(() => {
+    registerPlaylist(videos, loadMoreVideos, hasMore);
+  }, [videos, loadMoreVideos, hasMore, registerPlaylist]);
 
   const lastVideoElementRef = useCallback(node => {
     if (isFetchingNextPage) return;
