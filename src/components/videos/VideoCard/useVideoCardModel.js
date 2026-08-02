@@ -23,12 +23,12 @@ export const useVideoCardModel = ({
   const isEdited = videoCore?.edited === true || data?.edited === true;
 
   const rawDate =
-    videoCore?.source_created_at ||
-    videoCore?.created_at ||
-    data?.source_created_at ||
-    data?.created_at;
+    videoCore?.source_updated_at ||
+    data?.source_updated_at ||
+    videoCore?.updated_at ||
+    data?.updated_at;
 
-  const modalDate = videoCore?.source_created_at || videoCore?.created_at;
+  const modalDate = videoCore?.source_updated_at || videoCore?.updated_at;
   const userHandle = videoCore?.owner?.username
     ? `@${videoCore.owner.username}`
     : videoCore?.userHandle || data?.userHandle || "@usuario";
