@@ -52,7 +52,7 @@ export const mapVideoToCard = (video) => {
   const mainCategory = categories?.[0] || category;
   const variantType = pickVideoVariant(video);
   const sourceDate = video.source_updated_at || video.updated_at;
-  
+
   return {
     ...video,
     id: video.id,
