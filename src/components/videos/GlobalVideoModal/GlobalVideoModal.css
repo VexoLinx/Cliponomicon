@@ -323,3 +323,9 @@
 .carousel-nav-btn.next {
   right: 16px;
 }
+
+.video-technical-dates {
+    font-size: 0.75rem;
+    color: #94a3b8; 
+    font-family: monospace; 
+}

@@ -61,6 +61,11 @@ export const useVideoUpload = () => {
         formData.append("is_registered_only", String(isRegisteredOnly));
         formData.append("edited", String(isEdited));
 
+        if (currentFile.lastModified) {
+          const sourceDate = new Date(currentFile.lastModified).toISOString();
+          formData.append("source_updated_at", sourceDate);
+        }
+
         if (categoryId) {
           formData.append("category_ids", categoryId);
         }

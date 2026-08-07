@@ -21,16 +21,24 @@ const VideoModalSidebar = ({
 
     <div className="sidebar-info">
       <h2 className="video-title-modal">{activeVideo.title}</h2>
+      
       <div className="video-meta-row">
         <span className="user-handle-modal">{activeVideo.userHandle || "@usuario"}</span>
         <span className="meta-separator">|</span>
-        <span className="video-date-modal">{activeVideo.date}</span>
+        <span className="game-name-modal">{activeVideo.gameName || "General"}</span>
+        
+        {activeVideo.modalDualDates && (
+          <>
+            <span className="meta-separator">|</span>
+            <span className="video-technical-dates">
+              {activeVideo.modalDualDates}
+            </span>
+          </>
+        )}
       </div>
 
-      <p className="game-name-modal">{activeVideo.gameName || "General"}</p>
-
       <div className="video-context-box">
-        <p>{activeVideo.context || "Aqui ira la descripcion o contexto del video..."}</p>
+        <p>{activeVideo.context || "Aquí irá la descripción o contexto del vídeo..."}</p>
       </div>
     </div>
 
@@ -45,7 +53,7 @@ const VideoModalSidebar = ({
           onClick={toggleFavorite}
         >
           {isFavorite ? <IoStar className="star-icon" /> : <IoStarOutline className="star-icon" />}
-          <span>{isFavorite ? "Favorito" : "Anadir a favoritos"}</span>
+          <span>{isFavorite ? "Favorito" : "Añadir a favoritos"}</span>
         </button>
       )}
 
