@@ -77,12 +77,14 @@ const VideoEditModal = ({
                     </div>
                   </>
                 )}
+                
                 <CategoryCombobox
                   categoryId={categoryId}
                   setCategoryId={setCategoryId}
                   categories={categories}
                   onRefreshCategories={onRefreshCategories}
                 />
+                
                 <label className="input-label">
                   Descripción {files.length > 1 ? "común del lote" : ""}
                 </label>
@@ -118,6 +120,15 @@ const VideoEditModal = ({
                     {isEdited ? "Activado" : "Desactivado"}
                   </div>
                 </button>
+
+                <div className="upload-metadata-warning">
+                  <FcInfo className="warning-icon" />
+                  <p>
+                    Si el clip no tiene la fecha de creación en sus metadatos internos, 
+                    se utilizará por defecto la fecha de la última modificación del archivo.
+                  </p>
+                </div>
+
                 {errorMessage && (
                   <p className="error-text-sidebar">{errorMessage}</p>
                 )}

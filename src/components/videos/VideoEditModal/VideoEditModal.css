@@ -234,3 +234,27 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
+
+.upload-metadata-warning {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background-color: #0f172a;
+  border: 1px solid #0f172a;
+  border-left: 4px solid #3b82f6;
+  padding: 4px;
+  border-radius: 6px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
+
+.upload-metadata-warning p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #94a3b8;
+  line-height: 1.4;
+}
+
+.upload-metadata-warning .warning-icon {
+  font-size: 4.1rem;
+}

@@ -40,18 +40,12 @@ export const formatVideoDate = (date) => {
   });
 };
 
-export const formatDualDates = (createdAt, updatedAt) => {
-  const createdStr = createdAt ? formatVideoDate(createdAt) : "Desconocida";
-  const updatedStr = updatedAt ? formatVideoDate(updatedAt) : "Desconocida";
-  return `source_created_at: ${createdStr} -- source_updated_at: ${updatedStr}`;
-};
-
 export const mapVideoToCard = (video) => {
   const categories = mapCategories(video.categories);
   const category = mapCategory(video.category);
   const mainCategory = categories?.[0] || category;
   const variantType = pickVideoVariant(video);
-  const sourceDate = video.source_updated_at || video.updated_at;
+  const sourceDate = video.source_created_at;
 
   return {
     ...video,
@@ -68,9 +62,6 @@ export const mapVideoToCard = (video) => {
       "https://placehold.co/40",
     gameName: mainCategory?.name || "Sin categoria",
     date: formatVideoDate(sourceDate),
-    
-    modalDualDates: formatDualDates(video.source_created_at, video.source_updated_at),
-    
     rating: String(video.favorite_count ?? 0),
     userHandle: video.owner?.username ? `@${video.owner.username}` : "@usuario",
     context: video.description || "",

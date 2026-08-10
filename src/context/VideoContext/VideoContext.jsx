@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useCallback, useMemo } from 'react';
+import { mapVideoToCard } from '../../services/mappers/video.mapper';
 
 const VideoContext = createContext(null);
 
@@ -9,7 +10,8 @@ export const VideoProvider = ({ children }) => {
   const [gridControls, setGridControls] = useState({ loadMore: null, hasMore: false });
 
   const openVideo = useCallback((videoData) => {
-    setActiveVideo(videoData);
+    const formattedVideo = videoData.date ? videoData : mapVideoToCard(videoData);
+    setActiveVideo(formattedVideo);
   }, []);
 
   const closeVideo = useCallback(() => {

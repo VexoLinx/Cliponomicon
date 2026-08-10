@@ -22,19 +22,20 @@ const VideoModalSidebar = ({
     <div className="sidebar-info">
       <h2 className="video-title-modal">{activeVideo.title}</h2>
       
-      <div className="video-meta-row">
-        <span className="user-handle-modal">{activeVideo.userHandle || "@usuario"}</span>
-        <span className="meta-separator">|</span>
-        <span className="game-name-modal">{activeVideo.gameName || "General"}</span>
-        
-        {activeVideo.modalDualDates && (
-          <>
-            <span className="meta-separator">|</span>
-            <span className="video-technical-dates">
-              {activeVideo.modalDualDates}
-            </span>
-          </>
-        )}
+      <div className="meta-group-container">
+        <div className="video-meta-row">
+          <span className="user-handle-modal">{activeVideo.userHandle || "@usuario"}</span>
+          
+          {activeVideo.date && (
+            <>
+              <span className="meta-separator">|</span>
+              <span className="video-technical-dates">
+                {activeVideo.date}
+              </span>
+            </>
+          )}
+        </div>
+        <p className="game-name-modal">{activeVideo.gameName || "General"}</p>
       </div>
 
       <div className="video-context-box">
