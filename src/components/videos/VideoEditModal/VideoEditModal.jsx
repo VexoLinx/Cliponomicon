@@ -23,6 +23,8 @@ const VideoEditModal = ({
   setIsEdited,
   categoryId,
   setCategoryId,
+  sourceCreatedAt,
+  setSourceCreatedAt,
   categories = [],
   onRefreshCategories,
   errorMessage,
@@ -83,6 +85,14 @@ const VideoEditModal = ({
                   setCategoryId={setCategoryId}
                   categories={categories}
                   onRefreshCategories={onRefreshCategories}
+                />
+
+                <label className="input-label">Fecha del Clip</label>
+                <input
+                  type="date"
+                  className="edit-input-title"
+                  value={sourceCreatedAt}
+                  onChange={(e) => setSourceCreatedAt(e.target.value)}
                 />
                 
                 <label className="input-label">

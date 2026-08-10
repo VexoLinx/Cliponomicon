@@ -22,6 +22,8 @@ const VideoUploader = () => {
     setIsRegisteredOnly,
     isEdited,
     setIsEdited,
+    sourceCreatedAt,     
+    setSourceCreatedAt, 
     errorMessage,
     handleFileSelect,
     handleUpload,
@@ -42,7 +44,6 @@ const VideoUploader = () => {
 
   useEffect(() => {
     fetchCategories();
-
     return onAppEvent(APP_EVENTS.CATEGORIES_UPDATED, fetchCategories);
   }, [status]);
 
@@ -70,6 +71,8 @@ const VideoUploader = () => {
           setIsRegisteredOnly={setIsRegisteredOnly}
           categoryId={selectedCategory}
           setCategoryId={setSelectedCategory}
+          sourceCreatedAt={sourceCreatedAt}     
+          setSourceCreatedAt={setSourceCreatedAt} 
           categories={categories}
           onRefreshCategories={fetchCategories}
           errorMessage={errorMessage}

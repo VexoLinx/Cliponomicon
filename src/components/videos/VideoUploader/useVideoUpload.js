@@ -13,6 +13,7 @@ export const useVideoUpload = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [currentUploadIndex, setCurrentUploadIndex] = useState(0);
   const [isEdited, setIsEdited] = useState(false);
+  const [sourceCreatedAt, setSourceCreatedAt] = useState("");
   const { token } = useAuth();
 
   useEffect(() => {
@@ -33,9 +34,14 @@ export const useVideoUpload = () => {
     if (fileArray.length === 1) {
       setVideoPreview(URL.createObjectURL(fileArray[0]));
       setTitle(fileArray[0].name.replace(/\.[^/.]+$/, ""));
+      if (fileArray[0].lastModified) {
+          const fileDate = new Date(fileArray[0].lastModified).toISOString().split("T")[0];
+          setSourceCreatedAt(fileDate);
+      }
     } else {
       setVideoPreview("");
       setTitle("");
+      setSourceCreatedAt("");
     }
     setStatus("editing");
   };
@@ -61,9 +67,12 @@ export const useVideoUpload = () => {
         formData.append("is_registered_only", String(isRegisteredOnly));
         formData.append("edited", String(isEdited));
 
-        if (currentFile.lastModified) {
-          const sourceDate = new Date(currentFile.lastModified).toISOString();
-          formData.append("source_created_at", sourceDate);
+        if (sourceCreatedAt) {
+          const userDate = new Date(sourceCreatedAt).toISOString();
+          formData.append("source_created_at", userDate);
+        } else if (currentFile.lastModified) {
+          const fileDate = new Date(currentFile.lastModified).toISOString();
+          formData.append("source_created_at", fileDate);
         }
 
         if (categoryId) {
@@ -99,6 +108,7 @@ export const useVideoUpload = () => {
     setIsRegisteredOnly(false);
     setErrorMessage("");
     setCurrentUploadIndex(0);
+    setSourceCreatedAt("");
   };
 
   return {
@@ -115,6 +125,8 @@ export const useVideoUpload = () => {
     setIsRegisteredOnly,
     isEdited,
     setIsEdited,
+    sourceCreatedAt,    
+    setSourceCreatedAt, 
     errorMessage,
     handleFileSelect,
     handleUpload,

@@ -4,7 +4,11 @@ import { pickVideoVariant } from "../../../services/mappers/video.mapper";
 const formatDate = (isoString) => {
   if (!isoString) return "";
 
-  return new Date(isoString)
+  const cleanDate = isoString.includes("T") 
+    ? isoString 
+    : isoString.replace(/-/g, "/");
+
+  return new Date(cleanDate)
     .toLocaleDateString("es-ES", {
       day: "numeric",
       month: "short",
@@ -28,14 +32,15 @@ export const useVideoCardModel = ({
     videoCore?.created_at ||
     data?.created_at;
 
-  const modalDate = videoCore?.source_created_at || videoCore?.created_at;
+  const formattedDate = videoCore?.date || (rawDate ? formatDate(rawDate) : "");
+
   const userHandle = videoCore?.owner?.username
     ? `@${videoCore.owner.username}`
     : videoCore?.userHandle || data?.userHandle || "@usuario";
 
   return {
     card: {
-      date: videoCore?.date || (rawDate ? formatDate(rawDate) : data?.date || "Reciente"),
+      date: formattedDate || "Reciente",
       durationSeconds: videoCore?.duration_seconds ?? data?.duration_seconds ?? 0,
       isEdited,
       ratingToShow:
@@ -63,7 +68,7 @@ export const useVideoCardModel = ({
       gameName: categoryName,
       gameIcon: categoryIcon,
       userHandle,
-      date: videoCore?.date || modalDate?.split("T")[0] || "",
+      date: formattedDate,
     },
   };
 };

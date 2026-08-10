@@ -33,7 +33,12 @@ export const pickVideoVariant = (video, { mobile = false } = {}) => {
 
 export const formatVideoDate = (date) => {
   if (!date) return "";
-  return new Date(date).toLocaleDateString("es-ES", {
+  
+  const cleanDate = typeof date === "string" && !date.includes("T")
+    ? date.replace(/-/g, "/")
+    : date;
+
+  return new Date(cleanDate).toLocaleDateString("es-ES", {
     day: "2-digit",
     month: "short",
     year: "numeric",
@@ -45,7 +50,11 @@ export const mapVideoToCard = (video) => {
   const category = mapCategory(video.category);
   const mainCategory = categories?.[0] || category;
   const variantType = pickVideoVariant(video);
-  const sourceDate = video.source_created_at;
+
+  const sourceDate =
+    video.source_created_at ||
+    video.created_at ||
+    video.updated_at;
 
   return {
     ...video,
