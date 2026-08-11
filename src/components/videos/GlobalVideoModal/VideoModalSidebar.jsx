@@ -55,6 +55,21 @@ const VideoModalSidebar = ({
           <p>{activeVideo.context || "Aqui ira la descripcion o contexto del video..."}</p>
         </div>
 
+        {activeVideo.tags?.length > 0 && (
+          <div className="modal-tags">
+            {activeVideo.tags.map((tag) => (
+              <Link
+                key={tag.id}
+                className="modal-tag"
+                to={`/tags/${tag.id}`}
+                onClick={closeVideo}
+              >
+                #{tag.name}
+              </Link>
+            ))}
+          </div>
+        )}
+
         <div className="reaction-row">
           {reactionTypes.map((reaction) => (
             <button

@@ -123,6 +123,31 @@ a.user-handle-modal:hover {
     line-height: 1.5;
 }
 
+.modal-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.modal-tag {
+    min-height: 28px;
+    max-width: 100%;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+    background: #0f172a;
+    color: #cbd5e1;
+    display: inline-flex;
+    align-items: center;
+    padding: 0 10px;
+    font-size: 0.8rem;
+    text-decoration: none;
+}
+
+.modal-tag:hover {
+    border-color: #38bdf8;
+    color: #ffffff;
+}
+
 .reaction-row {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
