@@ -74,6 +74,7 @@ const VideoCard = ({ data = {} }) => {
         categoryIcon={categoryIcon}
         categoryName={categoryName}
         date={card.date}
+        ownerId={card.ownerId}
         title={card.title}
         userHandle={card.userHandle}
       />

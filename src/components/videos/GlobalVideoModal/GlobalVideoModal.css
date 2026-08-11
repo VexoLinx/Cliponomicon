@@ -92,6 +92,13 @@
 
 .user-handle-modal {
     font-weight: 500;
+    color: #cbd5e1;
+    text-decoration: none;
+}
+
+a.user-handle-modal:hover {
+    color: #ffffff;
+    text-decoration: underline;
 }
 
 .game-name-modal {
@@ -114,6 +121,38 @@
     font-size: 0.85rem;
     color: #cbd5e1;
     line-height: 1.5;
+}
+
+.reaction-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.reaction-btn {
+    min-height: 38px;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+    background: #0f172a;
+    color: #cbd5e1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    cursor: pointer;
+    font-size: 0.78rem;
+}
+
+.reaction-btn:hover:not(:disabled),
+.reaction-btn.is-active {
+    background: #1e293b;
+    border-color: #64748b;
+    color: #ffffff;
+}
+
+.reaction-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.55;
 }
 
 .sidebar-footer-video {

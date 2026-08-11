@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import InfiniteVideoGrid from "../../components/videos/InfiniteVideoGrid/InfiniteVideoGrid";
 import { useTagVideos } from "./useTagVideos";
+import "./TagDetailPage.css";
 
 const TagDetailPage = () => {
   const { tagId } = useParams();
@@ -10,6 +11,7 @@ const TagDetailPage = () => {
     isFetchingNextPage,
     loadMoreVideos,
     loading,
+    tag,
     videos,
   } = useTagVideos(tagId);
 
@@ -31,6 +33,11 @@ const TagDetailPage = () => {
 
   return (
     <div className="page-container">
+      {tag && (
+        <header className="tag-detail-header">
+          <h1>#{tag.name}</h1>
+        </header>
+      )}
       <InfiniteVideoGrid
         videos={videos}
         statusText={videos.length === 0 ? "Aun no hay clips para este tag." : ""}

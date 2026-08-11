@@ -39,10 +39,15 @@ const GlobalVideoModal = () => {
           activeVideo={modal.activeVideo}
           canEdit={modal.canEdit}
           closeVideo={modal.closeVideo}
+          currentReaction={modal.currentReaction}
           handleCopyLink={copyLink}
           handleOpenEdit={modal.handleOpenEdit}
           isFavorite={modal.isFavorite}
+          isUpdatingReaction={modal.isUpdatingReaction}
+          reactionCounts={modal.reactionCounts}
+          reactionTypes={modal.reactionTypes}
           token={token}
+          toggleReaction={modal.toggleReaction}
           toggleFavorite={modal.toggleFavorite}
         />
       </div>

@@ -118,6 +118,7 @@ const TopBar = () => {
             {mode.showSort && (
               <select
                 className="sort-select"
+                value={filters.sort}
                 onChange={(event) =>
                   setFilters((prev) => ({ ...prev, sort: event.target.value, scope: mode.key }))
                 }

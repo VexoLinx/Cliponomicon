@@ -37,6 +37,7 @@ export const useVideoCardModel = ({
   const userHandle = videoCore?.owner?.username
     ? `@${videoCore.owner.username}`
     : videoCore?.userHandle || data?.userHandle || "@usuario";
+  const ownerId = videoCore?.owner?.id || videoCore?.userId || videoCore?.user_id || data?.userId || data?.user_id;
 
   return {
     card: {
@@ -49,6 +50,7 @@ export const useVideoCardModel = ({
           : videoCore?.popularity_score || data?.rating || 0,
       title: videoCore?.title || data?.title || "Sin titulo",
       userHandle,
+      ownerId,
     },
     modalVideo: {
       ...videoCore,
@@ -68,6 +70,7 @@ export const useVideoCardModel = ({
       gameName: categoryName,
       gameIcon: categoryIcon,
       userHandle,
+      ownerId,
       date: formattedDate,
     },
   };

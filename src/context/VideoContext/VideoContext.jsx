@@ -18,6 +18,13 @@ export const VideoProvider = ({ children }) => {
     setActiveVideo(null);
   }, []);
 
+  const updateActiveVideo = useCallback((updater) => {
+    setActiveVideo((current) => {
+      if (!current) return current;
+      return typeof updater === "function" ? updater(current) : { ...current, ...updater };
+    });
+  }, []);
+
   const registerPlaylist = useCallback((videos, loadMore = null, hasMore = false) => {
     setPlaylist(videos);
     setGridControls({ loadMore, hasMore });
@@ -51,12 +58,23 @@ export const VideoProvider = ({ children }) => {
     activeVideo,
     openVideo,
     closeVideo,
+    updateActiveVideo,
     registerPlaylist,
     playNext,
     playPrev,
     hasNext,
     hasPrev
-  }), [activeVideo, openVideo, closeVideo, registerPlaylist, playNext, playPrev, hasNext, hasPrev]);
+  }), [
+    activeVideo,
+    openVideo,
+    closeVideo,
+    updateActiveVideo,
+    registerPlaylist,
+    playNext,
+    playPrev,
+    hasNext,
+    hasPrev,
+  ]);
 
   return (
     <VideoContext.Provider value={value}>

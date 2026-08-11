@@ -33,7 +33,9 @@ export const getH264ClipResponse = (videoId, { token } = {}) =>
 export const getVideoDownloadResponse = (videoId, { token } = {}) =>
   apiRequest(`/videos/${videoId}/download`, { token });
 
-export const downloadVideoVariantBlob = async (videoId, variantType) => {
-  const response = await getVideoStreamResponse(videoId, variantType);
+export const downloadVideoVariantBlob = async (videoId, variantType, { token } = {}) => {
+  const response = variantType
+    ? await getVideoStreamResponse(videoId, variantType, { token })
+    : await getVideoDownloadResponse(videoId, { token });
   return response.blob();
 };

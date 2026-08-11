@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearch } from "../../context/SearchContext";
 import { listVideos } from "../../services/api/videos.api";
+import { getVideoSortParams } from "../../services/api/videoSort";
 import { mapVideoToCard, VIDEO_PROCESSING_STATUSES } from "../../services/mappers/video.mapper";
 
 const LIMIT = 20;
@@ -35,6 +36,7 @@ export const useGameVideos = (categoryId) => {
           filters.scope === "game-detail" && filters.edited !== ""
             ? filters.edited === "true"
             : undefined,
+        ...getVideoSortParams(filters.scope === "game-detail" ? filters.sort : "newest"),
         limit: LIMIT,
         offset: currentOffset,
         mapToCards: false,
@@ -64,6 +66,7 @@ export const useGameVideos = (categoryId) => {
     filters.edited,
     filters.ownerId,
     filters.scope,
+    filters.sort,
     filters.tagIds,
     filters.text,
   ]);

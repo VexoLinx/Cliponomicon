@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { useSearch } from "../../context/SearchContext";
 import { useAuth } from "../../context/AuthContext";
 import { listVideos } from "../../services/api/videos.api";
+import { getVideoSortParams } from "../../services/api/videoSort";
 import { mapVideoToCard } from "../../services/mappers/video.mapper";
 import { APP_EVENTS, onAppEvent } from "../../events/appEvents";
 
@@ -32,6 +33,7 @@ export const useHomeVideos = () => {
         createdFrom: filters.createdFrom || undefined,
         createdTo: filters.createdTo || undefined,
         edited: filters.edited === "" ? undefined : filters.edited === "true",
+        ...getVideoSortParams(filters.sort),
         limit: LIMIT,
         offset: currentOffset,
       });
