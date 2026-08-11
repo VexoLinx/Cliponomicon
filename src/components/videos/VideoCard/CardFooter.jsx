@@ -1,6 +1,15 @@
 import { Link } from "react-router-dom";
 
-const CardFooter = ({ categoryIcon, categoryName, date, ownerId, tags = [], title, userHandle }) => (
+const CardFooter = ({
+  categoryIcon,
+  categoryName,
+  date,
+  ownerAvatarUrl,
+  ownerId,
+  tags = [],
+  title,
+  userHandle,
+}) => (
   <div className="card-footer">
     <div className="game-icon-container">
       <img src={categoryIcon} alt={categoryName} className="game-icon" />
@@ -9,6 +18,16 @@ const CardFooter = ({ categoryIcon, categoryName, date, ownerId, tags = [], titl
       <h3 className="video-title" title={title}>{title}</h3>
       <p className="game-name">{categoryName}</p>
       <div className="user-data">
+        {ownerAvatarUrl && (
+          <img
+            className="user-avatar-mini"
+            src={ownerAvatarUrl}
+            alt={userHandle}
+            onError={(event) => {
+              event.currentTarget.style.display = "none";
+            }}
+          />
+        )}
         {ownerId ? (
           <Link
             className="user-handle"

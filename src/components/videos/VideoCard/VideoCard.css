@@ -159,6 +159,16 @@
   width: 100%;
 }
 
+.user-avatar-mini {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  object-fit: cover;
+  border: 1px solid #1e293b;
+  flex-shrink: 0;
+  margin-right: 6px;
+}
+
 .user-handle {
   color: #00ff00;
   font-weight: 500;

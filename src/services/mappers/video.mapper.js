@@ -1,4 +1,5 @@
 import { getVideoStreamUrl, getVideoThumbnailUrl } from "../api/videoMedia.api";
+import { getAvatarUrl } from "../api/users.api";
 import { mapCategories, mapCategory } from "./category.mapper";
 import { mapReactionCounts } from "./interaction.mapper";
 import { mapTags } from "./tag.mapper";
@@ -50,6 +51,7 @@ export const mapVideoToCard = (video) => {
   const category = mapCategory(video.category);
   const mainCategory = categories?.[0] || category;
   const variantType = pickVideoVariant(video);
+  const ownerId = video.owner?.id || video.user_id || video.userId;
 
   const sourceDate =
     video.source_created_at ||
@@ -73,6 +75,8 @@ export const mapVideoToCard = (video) => {
     date: formatVideoDate(sourceDate),
     rating: String(video.favorite_count ?? 0),
     userHandle: video.owner?.username ? `@${video.owner.username}` : "@usuario",
+    ownerId,
+    ownerAvatarUrl: ownerId ? getAvatarUrl(ownerId) : "",
     context: video.description || "",
     isProcessing: VIDEO_PROCESSING_STATUSES.includes(video.processing_status),
   };

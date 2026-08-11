@@ -85,6 +85,15 @@
     font-size: 0.95rem;
 }
 
+.user-avatar-modal {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    object-fit: cover;
+    border: 1px solid #1e293b;
+    flex-shrink: 0;
+}
+
 .meta-separator {
     color: #334155;
     font-weight: 300;

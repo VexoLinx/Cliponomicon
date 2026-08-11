@@ -1,6 +1,7 @@
 import { CiLink } from "react-icons/ci";
 import { IoClose, IoStar, IoStarOutline } from "react-icons/io5";
 import { Link } from "react-router-dom";
+import { getAvatarUrl } from "../../../services/api/users.api";
 
 const VideoModalSidebar = ({
   activeVideo,
@@ -18,6 +19,7 @@ const VideoModalSidebar = ({
   toggleReaction,
 }) => {
   const ownerId = activeVideo?.owner?.id || activeVideo?.userId || activeVideo?.user_id;
+  const ownerAvatarUrl = activeVideo?.ownerAvatarUrl || (ownerId ? getAvatarUrl(ownerId) : "");
 
   return (
     <div className="modal-sidebar">
@@ -33,6 +35,16 @@ const VideoModalSidebar = ({
 
         <div className="meta-group-container">
           <div className="video-meta-row">
+            {ownerAvatarUrl && (
+              <img
+                className="user-avatar-modal"
+                src={ownerAvatarUrl}
+                alt={activeVideo.userHandle || "@usuario"}
+                onError={(event) => {
+                  event.currentTarget.style.display = "none";
+                }}
+              />
+            )}
             {ownerId ? (
               <Link className="user-handle-modal" to={`/users/${ownerId}`} onClick={closeVideo}>
                 {activeVideo.userHandle || "@usuario"}
