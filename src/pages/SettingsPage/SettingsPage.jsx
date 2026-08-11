@@ -31,7 +31,13 @@ const SettingsPage = ({ setShowApiTester }) => {
   } = useSettingsProfile();
 
   const { token, user } = useAuth();
+  
   const canRegisterUsers = token && user && user.role !== "user";
+
+  const canAccessBackoffice = 
+    token && 
+    user && 
+    ["admin", "superadmin", "super_admin"].includes(user.role?.toLowerCase());
 
   return (
     <div className="settings-container">
@@ -39,6 +45,7 @@ const SettingsPage = ({ setShowApiTester }) => {
         <SettingsSidebar
           activeTab={activeTab}
           canRegisterUsers={canRegisterUsers}
+          canAccessBackoffice={canAccessBackoffice}
           setActiveTab={setActiveTab}
         />
 
