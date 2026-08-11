@@ -3,6 +3,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { useVideoModal } from "../../../context/VideoContext";
 import { useFavoriteVideo } from "./useFavoriteVideo";
 import { useVideoEditState } from "./useVideoEditState";
+import { mapUser } from "../../../services/mappers/user.mapper";
 
 export const useGlobalVideoModal = () => {
   const { 
@@ -14,11 +15,41 @@ export const useGlobalVideoModal = () => {
     hasPrev 
   } = useVideoModal();
   
-  const { token } = useAuth();
+  const { token, user: rawUser } = useAuth();
+  const user = mapUser(rawUser); 
+  
   const videoRef = useRef(null);
 
-  const canEdit = token && Boolean(activeVideo?.can_edit ?? activeVideo?.canEdit ?? activeVideo?.is_owner);
-  const canDelete = token && Boolean(activeVideo?.can_delete ?? activeVideo?.canDelete ?? activeVideo?.is_owner);
+  const normalizedRole = user?.role?.toString().toLowerCase() || "";
+  const isSuperAdmin = normalizedRole === "superadmin" || normalizedRole === "super_admin";
+
+  const currentUserId = user?.id;
+  const videoOwnerId = activeVideo?.owner?.id ?? activeVideo?.userId ?? activeVideo?.user_id;
+
+  const isOwnerById = Boolean(
+    currentUserId && 
+    videoOwnerId && 
+    String(currentUserId) === String(videoOwnerId)
+  );
+
+  const currentUsername = (user?.username ?? "").toLowerCase();
+  const videoOwnerUsername = (
+    activeVideo?.owner?.username ?? 
+    activeVideo?.userHandle ?? 
+    activeVideo?.username ?? 
+    ""
+  ).toLowerCase().replace("@", "");
+
+  const isOwnerByHandle = Boolean(
+    currentUsername && 
+    videoOwnerUsername && 
+    currentUsername === videoOwnerUsername
+  );
+
+  const isOwner = isOwnerById || isOwnerByHandle;
+
+  const canEdit = Boolean(token && (isSuperAdmin || isOwner));
+  const canDelete = Boolean(token && (isSuperAdmin || isOwner));
 
   const favorite = useFavoriteVideo({ activeVideo, token });
   const editing = useVideoEditState({ activeVideo, closeVideo, token });
