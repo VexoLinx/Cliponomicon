@@ -26,11 +26,11 @@ export const deleteUser = (userId, { token } = {}) =>
     token,
   });
 
-export const updateAvatar = async (userId, formData, { token, mapResponse = true } = {}) => {
+export const updateAvatar = async (userId, payload, { token, mapResponse = true } = {}) => {
   const data = await apiRequest(`/users/${userId}/avatar`, {
     method: "PUT",
     token,
-    body: formData,
+    body: JSON.stringify(payload),
   });
   return mapResponse ? mapUser(data) : data;
 };
