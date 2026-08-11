@@ -89,7 +89,9 @@ export const useSettingsProfile = () => {
 
     try {
       const avatar = await fileToBase64(file);
-      await updateAvatar(profileData.id, { avatar }, { token });
+      const formData = new FormData();
+      formData.append("avatar", avatar);
+      await updateAvatar(profileData.id, formData, { token });
       await loadProfile();
       setAvatarStatus({ type: "success", msg: "Avatar actualizado." });
       setTimeout(() => setAvatarStatus({ type: "", msg: "" }), 3000);
