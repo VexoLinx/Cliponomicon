@@ -3,6 +3,7 @@ import EditSidebar from "./EditSidebar";
 import EditVideoPane from "./EditVideoPane";
 import UpdateStatusPanel from "./UpdateStatusPanel";
 import { useVideoUpdateCategories } from "./useVideoUpdateCategories";
+import { useVideoUpdateTags } from "./useVideoUpdateTags";
 import "./VideoUpdateModal.css";
 import "../videos.css";
 
@@ -17,7 +18,10 @@ const VideoUpdateModal = ({
   setIsEdited,
   categoryId,
   setCategoryId,
+  tagIds = [],
+  setTagIds,
   categoriesList = [],
+  tagsList = [],
   errorMessage,
   onClose,
   onSave,
@@ -30,6 +34,7 @@ const VideoUpdateModal = ({
     setCategoryId,
     video,
   });
+  const localTags = useVideoUpdateTags(tagsList);
 
   const handleVideoLoad = (event) => {
     const { videoWidth, videoHeight } = event.currentTarget;
@@ -53,13 +58,16 @@ const VideoUpdateModal = ({
               errorMessage={errorMessage}
               isEdited={isEdited}
               localCategories={localCategories}
+              localTags={localTags}
               onClose={onClose}
               onDelete={onDelete}
               onSave={onSave}
               setCategoryId={setCategoryId}
               setDescription={setDescription}
               setIsEdited={setIsEdited}
+              setTagIds={setTagIds}
               setTitle={setTitle}
+              tagIds={tagIds}
               title={title}
               video={video}
             />

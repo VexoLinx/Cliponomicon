@@ -2,6 +2,7 @@ export const APP_EVENTS = {
   AUTH_EXPIRED: "auth-expired",
   CATEGORIES_UPDATED: "categories-updated",
   FAVORITES_CHANGED: "favorites-changed",
+  TAGS_UPDATED: "tags-updated",
   VIDEOS_CHANGED: "videos-changed",
   VIDEO_DELETED: "video-deleted",
   VIDEO_UPDATED: "video-updated",

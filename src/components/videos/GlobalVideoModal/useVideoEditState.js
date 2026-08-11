@@ -12,6 +12,7 @@ export const useVideoEditState = ({ activeVideo, closeVideo, token }) => {
   const [editIsRegistered, setEditIsRegistered] = useState(false);
   const [editIsEdited, setEditIsEdited] = useState(false);
   const [editCategoryId, setEditCategoryId] = useState("");
+  const [editTagIds, setEditTagIds] = useState([]);
   const [editSourceCreatedAt, setEditSourceCreatedAt] = useState("");
   const [updateError, setUpdateError] = useState("");
 
@@ -23,6 +24,7 @@ export const useVideoEditState = ({ activeVideo, closeVideo, token }) => {
     setEditIsRegistered(activeVideo.is_registered_only || activeVideo.isRegisteredOnly || false);
     setEditIsEdited(activeVideo.edited || false);
     setEditCategoryId(activeVideo.categories?.[0]?.id || activeVideo.category?.id || "");
+    setEditTagIds(activeVideo.tags?.map((tag) => String(tag.id)).filter(Boolean) || []);
     
     const rawDate = activeVideo.source_created_at || activeVideo.created_at;
     setEditSourceCreatedAt(rawDate ? rawDate.split("T")[0] : "");
@@ -50,7 +52,7 @@ export const useVideoEditState = ({ activeVideo, closeVideo, token }) => {
         description: editDescription.trim() || null,
         is_registered_only: Boolean(editIsRegistered),
         edited: Boolean(editIsEdited),
-        tag_ids: activeVideo.tags?.map((tag) => tag.id).filter(Boolean) || [],
+        tag_ids: editTagIds,
         source_created_at: editSourceCreatedAt ? new Date(editSourceCreatedAt).toISOString() : null,
       };
 
@@ -97,6 +99,7 @@ export const useVideoEditState = ({ activeVideo, closeVideo, token }) => {
     editIsEdited,
     editIsRegistered,
     editSourceCreatedAt,
+    editTagIds,
     editStatus,
     editTitle,
     handleDeleteVideo,
@@ -108,6 +111,7 @@ export const useVideoEditState = ({ activeVideo, closeVideo, token }) => {
     setEditIsEdited,
     setEditIsRegistered,
     setEditSourceCreatedAt,
+    setEditTagIds,
     setEditStatus,
     setEditTitle,
     setIsEditing,

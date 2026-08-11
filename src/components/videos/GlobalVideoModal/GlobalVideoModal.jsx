@@ -64,6 +64,8 @@ const GlobalVideoModal = () => {
           setIsEdited={modal.setEditIsEdited}
           categoryId={modal.editCategoryId}
           setCategoryId={modal.setEditCategoryId}
+          tagIds={modal.editTagIds}
+          setTagIds={modal.setEditTagIds}
           errorMessage={modal.updateError}
           onClose={() => modal.setIsEditing(false)}
           onSave={modal.handleSaveChanges}

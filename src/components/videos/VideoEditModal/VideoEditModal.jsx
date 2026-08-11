@@ -6,6 +6,8 @@ import { FcInfo } from "react-icons/fc";
 import VideoPreviewSection from "./components/VideoPreviewSection";
 import CategoryCombobox from "./components/CategoryCombobox";
 import UploadStatusSection from "./components/UploadStatusSection";
+import TagSelector from "../TagSelector";
+import "../TagSelector/TagSelector.css";
 
 import "./VideoEditModal.css";
 import "../videos.css";
@@ -26,6 +28,9 @@ const VideoEditModal = ({
   sourceCreatedAt,
   setSourceCreatedAt,
   categories = [],
+  selectedTagIds = [],
+  setSelectedTagIds,
+  tags = [],
   onRefreshCategories,
   errorMessage,
   onClose,
@@ -85,6 +90,12 @@ const VideoEditModal = ({
                   setCategoryId={setCategoryId}
                   categories={categories}
                   onRefreshCategories={onRefreshCategories}
+                />
+
+                <TagSelector
+                  selectedTagIds={selectedTagIds}
+                  setSelectedTagIds={setSelectedTagIds}
+                  tags={tags}
                 />
 
                 <label className="input-label">Fecha del Clip</label>
