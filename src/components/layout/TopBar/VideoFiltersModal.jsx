@@ -1,4 +1,5 @@
 import ReactDOM from "react-dom";
+import { useMemo, useState } from "react";
 
 const EMPTY_FORM = {
   categoryIds: [],
@@ -38,8 +39,91 @@ const getDateRangeForPreset = (preset) => {
   return { createdFrom: "", createdTo: "" };
 };
 
-const toggleArrayValue = (values, value) =>
-  values.includes(value) ? values.filter((item) => item !== value) : [...values, value];
+const ChoiceListFilter = ({
+  emptyText,
+  items,
+  label,
+  placeholder,
+  prefix = "",
+  selectedIds,
+  setSelectedIds,
+}) => {
+  const [query, setQuery] = useState("");
+  const selectedSet = useMemo(() => new Set(selectedIds), [selectedIds]);
+
+  const selectedItems = useMemo(
+    () => items.filter((item) => selectedSet.has(item.id)),
+    [items, selectedSet],
+  );
+
+  const resultItems = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+
+    return items
+      .filter((item) => !selectedSet.has(item.id))
+      .filter((item) => !normalizedQuery || item.name.toLowerCase().includes(normalizedQuery))
+      .slice(0, 8);
+  }, [items, query, selectedSet]);
+
+  const addItem = (itemId) => {
+    setSelectedIds([...selectedIds, itemId]);
+    setQuery("");
+  };
+
+  const removeItem = (itemId) => {
+    setSelectedIds(selectedIds.filter((id) => id !== itemId));
+  };
+
+  return (
+    <div className="filters-section">
+      <span className="filters-section-title">{label}</span>
+
+      {selectedItems.length > 0 && (
+        <div className="filters-selected-list">
+          {selectedItems.map((item) => (
+            <button
+              key={item.id}
+              className="filters-selected-pill"
+              type="button"
+              onClick={() => removeItem(item.id)}
+              title="Quitar"
+            >
+              <span>{prefix}{item.name}</span>
+              <strong>x</strong>
+            </button>
+          ))}
+        </div>
+      )}
+
+      <div className="filters-choice-box">
+        <input
+          className="filters-choice-input"
+          type="search"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder={placeholder}
+        />
+
+        <div className="filters-choice-results">
+          {resultItems.length === 0 ? (
+            <span className="filters-choice-empty">{emptyText}</span>
+          ) : (
+            resultItems.map((item) => (
+              <button
+                key={item.id}
+                className="filters-choice-option"
+                type="button"
+                onClick={() => addItem(item.id)}
+              >
+                {prefix}{item.name}
+              </button>
+            ))
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const VideoFiltersModal = ({
   categories,
@@ -162,39 +246,24 @@ const VideoFiltersModal = ({
           )}
         </div>
 
-        <div className="filters-section">
-          <span className="filters-section-title">Categorias</span>
-          <div className="filters-chip-list">
-            {categories.map((category) => (
-              <label key={category.id} className="filters-chip">
-                <input
-                  type="checkbox"
-                  checked={filters.categoryIds.includes(category.id)}
-                  onChange={() =>
-                    updateField("categoryIds", toggleArrayValue(filters.categoryIds, category.id))
-                  }
-                />
-                <span>{category.name}</span>
-              </label>
-            ))}
-          </div>
-        </div>
+        <ChoiceListFilter
+          emptyText="No hay categorias que coincidan."
+          items={categories}
+          label="Categorias"
+          placeholder="Buscar categoria..."
+          selectedIds={filters.categoryIds}
+          setSelectedIds={(ids) => updateField("categoryIds", ids)}
+        />
 
-        <div className="filters-section">
-          <span className="filters-section-title">Tags</span>
-          <div className="filters-chip-list">
-            {tags.map((tag) => (
-              <label key={tag.id} className="filters-chip">
-                <input
-                  type="checkbox"
-                  checked={filters.tagIds.includes(tag.id)}
-                  onChange={() => updateField("tagIds", toggleArrayValue(filters.tagIds, tag.id))}
-                />
-                <span>#{tag.name}</span>
-              </label>
-            ))}
-          </div>
-        </div>
+        <ChoiceListFilter
+          emptyText="No hay tags que coincidan."
+          items={tags}
+          label="Tags"
+          placeholder="Buscar tag..."
+          prefix="#"
+          selectedIds={filters.tagIds}
+          setSelectedIds={(ids) => updateField("tagIds", ids)}
+        />
 
         <footer className="filters-modal-actions">
           <button className="filters-secondary-button" type="button" onClick={resetForm}>
