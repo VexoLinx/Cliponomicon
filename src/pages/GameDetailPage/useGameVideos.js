@@ -29,7 +29,6 @@ export const useGameVideos = (categoryId) => {
             ? filters.tagIds
             : undefined,
         ownerId: filters.scope === "game-detail" ? filters.ownerId : undefined,
-        createdDate: filters.scope === "game-detail" ? filters.createdDate || undefined : undefined,
         createdFrom: filters.scope === "game-detail" ? filters.createdFrom || undefined : undefined,
         createdTo: filters.scope === "game-detail" ? filters.createdTo || undefined : undefined,
         edited:
@@ -60,7 +59,6 @@ export const useGameVideos = (categoryId) => {
     }
   }, [
     categoryId,
-    filters.createdDate,
     filters.createdFrom,
     filters.createdTo,
     filters.edited,

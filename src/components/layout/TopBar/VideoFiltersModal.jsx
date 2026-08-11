@@ -4,10 +4,38 @@ const EMPTY_FORM = {
   categoryIds: [],
   tagIds: [],
   ownerId: "",
-  createdDate: "",
   createdFrom: "",
   createdTo: "",
+  datePreset: "any",
   edited: "",
+};
+
+const toDateInputValue = (date) => date.toISOString().slice(0, 10);
+
+const getDateRangeForPreset = (preset) => {
+  const today = new Date();
+  const start = new Date(today);
+
+  if (preset === "today") {
+    return { createdFrom: toDateInputValue(today), createdTo: toDateInputValue(today) };
+  }
+
+  if (preset === "last7") {
+    start.setDate(today.getDate() - 6);
+    return { createdFrom: toDateInputValue(start), createdTo: toDateInputValue(today) };
+  }
+
+  if (preset === "last30") {
+    start.setDate(today.getDate() - 29);
+    return { createdFrom: toDateInputValue(start), createdTo: toDateInputValue(today) };
+  }
+
+  if (preset === "thisMonth") {
+    start.setDate(1);
+    return { createdFrom: toDateInputValue(start), createdTo: toDateInputValue(today) };
+  }
+
+  return { createdFrom: "", createdTo: "" };
 };
 
 const toggleArrayValue = (values, value) =>
@@ -25,6 +53,24 @@ const VideoFiltersModal = ({
 }) => {
   const updateField = (field, value) => {
     setFilters((current) => ({ ...current, [field]: value }));
+  };
+
+  const updateDatePreset = (preset) => {
+    setFilters((current) => ({
+      ...current,
+      datePreset: preset,
+      ...(preset === "custom"
+        ? { createdFrom: current.createdFrom, createdTo: current.createdTo }
+        : getDateRangeForPreset(preset)),
+    }));
+  };
+
+  const updateCustomDate = (field, value) => {
+    setFilters((current) => ({
+      ...current,
+      datePreset: "custom",
+      [field]: value,
+    }));
   };
 
   const resetForm = () => {
@@ -58,44 +104,62 @@ const VideoFiltersModal = ({
             </select>
           </label>
 
-          <label className="filters-field">
+          <div className="filters-field">
             <span>Editado</span>
+            <div className="filters-segmented" role="group" aria-label="Filtro de editado">
+              {[
+                ["", "Todos"],
+                ["true", "Editados"],
+                ["false", "Sin editar"],
+              ].map(([value, label]) => (
+                <button
+                  key={value || "all"}
+                  className={filters.edited === value ? "active" : ""}
+                  type="button"
+                  onClick={() => updateField("edited", value)}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <label className="filters-field">
+            <span>Fecha</span>
             <select
-              value={filters.edited}
-              onChange={(event) => updateField("edited", event.target.value)}
+              value={filters.datePreset || "any"}
+              onChange={(event) => updateDatePreset(event.target.value)}
             >
-              <option value="">Todos</option>
-              <option value="true">Editados</option>
-              <option value="false">Sin editar</option>
+              <option value="any">Cualquier fecha</option>
+              <option value="today">Hoy</option>
+              <option value="last7">Ultimos 7 dias</option>
+              <option value="last30">Ultimos 30 dias</option>
+              <option value="thisMonth">Este mes</option>
+              <option value="custom">Rango personalizado</option>
             </select>
           </label>
 
-          <label className="filters-field">
-            <span>Fecha exacta</span>
-            <input
-              type="date"
-              value={filters.createdDate}
-              onChange={(event) => updateField("createdDate", event.target.value)}
-            />
-          </label>
+          {(filters.datePreset || "any") === "custom" && (
+            <>
+              <label className="filters-field">
+                <span>Desde</span>
+                <input
+                  type="date"
+                  value={filters.createdFrom}
+                  onChange={(event) => updateCustomDate("createdFrom", event.target.value)}
+                />
+              </label>
 
-          <label className="filters-field">
-            <span>Desde</span>
-            <input
-              type="date"
-              value={filters.createdFrom}
-              onChange={(event) => updateField("createdFrom", event.target.value)}
-            />
-          </label>
-
-          <label className="filters-field">
-            <span>Hasta</span>
-            <input
-              type="date"
-              value={filters.createdTo}
-              onChange={(event) => updateField("createdTo", event.target.value)}
-            />
-          </label>
+              <label className="filters-field">
+                <span>Hasta</span>
+                <input
+                  type="date"
+                  value={filters.createdTo}
+                  onChange={(event) => updateCustomDate("createdTo", event.target.value)}
+                />
+              </label>
+            </>
+          )}
         </div>
 
         <div className="filters-section">

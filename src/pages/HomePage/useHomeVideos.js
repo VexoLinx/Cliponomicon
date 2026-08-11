@@ -29,7 +29,6 @@ export const useHomeVideos = () => {
         ownerId: filters.ownerId,
         categoryIds: filters.categoryIds?.length ? filters.categoryIds : undefined,
         tagIds: filters.tagIds?.length ? filters.tagIds : undefined,
-        createdDate: filters.createdDate || undefined,
         createdFrom: filters.createdFrom || undefined,
         createdTo: filters.createdTo || undefined,
         edited: filters.edited === "" ? undefined : filters.edited === "true",

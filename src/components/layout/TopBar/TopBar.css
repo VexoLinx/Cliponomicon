@@ -177,6 +177,37 @@
   background: #15151c;
 }
 
+.filters-segmented {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-height: 42px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.filters-segmented button {
+  border: 0;
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.74);
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 0 8px;
+}
+
+.filters-segmented button:last-child {
+  border-right: 0;
+}
+
+.filters-segmented button:hover,
+.filters-segmented button.active {
+  background: #8f44fd;
+  color: #ffffff;
+}
+
 .filters-section {
   margin-top: 18px;
 }

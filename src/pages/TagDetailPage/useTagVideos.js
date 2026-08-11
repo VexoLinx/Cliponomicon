@@ -42,7 +42,6 @@ export const useTagVideos = (tagId) => {
             ? filters.categoryIds
             : undefined,
         ownerId: filters.scope === "tag-detail" ? filters.ownerId : undefined,
-        createdDate: filters.scope === "tag-detail" ? filters.createdDate || undefined : undefined,
         createdFrom: filters.scope === "tag-detail" ? filters.createdFrom || undefined : undefined,
         createdTo: filters.scope === "tag-detail" ? filters.createdTo || undefined : undefined,
         edited:
@@ -73,7 +72,6 @@ export const useTagVideos = (tagId) => {
     }
   }, [
     filters.categoryIds,
-    filters.createdDate,
     filters.createdFrom,
     filters.createdTo,
     filters.edited,

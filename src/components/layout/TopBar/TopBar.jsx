@@ -14,9 +14,9 @@ const EMPTY_FILTERS = {
   tag: null,
   tagId: null,
   tagIds: [],
-  createdDate: "",
   createdFrom: "",
   createdTo: "",
+  datePreset: "any",
   edited: "",
 };
 
@@ -28,9 +28,7 @@ const toPlainSearchFilters = (query) => ({
 const getActiveFilterCount = (filters) =>
   [
     filters.ownerId,
-    filters.createdDate,
-    filters.createdFrom,
-    filters.createdTo,
+    filters.datePreset !== "any" ? filters.datePreset : "",
     filters.edited,
     ...(filters.categoryIds || []),
     ...(filters.tagIds || []),
@@ -59,9 +57,9 @@ const TopBar = () => {
         ...prev,
         ...toPlainSearchFilters(searchTerm),
         categoryIds: prev.categoryIds,
-        createdDate: prev.createdDate,
         createdFrom: prev.createdFrom,
         createdTo: prev.createdTo,
+        datePreset: prev.datePreset,
         edited: prev.edited,
         ownerId: prev.ownerId,
         scope: mode.key,
@@ -76,9 +74,9 @@ const TopBar = () => {
     setFilters((prev) => ({
       ...prev,
       categoryIds: [],
-      createdDate: "",
       createdFrom: "",
       createdTo: "",
+      datePreset: "any",
       edited: "",
       ownerId: null,
       tagIds: [],
