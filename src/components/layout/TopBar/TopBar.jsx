@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { BsSearch, BsSliders } from "react-icons/bs";
 import { useSearch } from "../../../context/SearchContext";
-import "./TopBar.css";
 import { useTopBarSearchMode } from "./useTopBarSearchMode";
 import { useVideoFilterOptions } from "./useVideoFilterOptions";
 import VideoFiltersModal from "./VideoFiltersModal";
+import "./TopBar.css";
 
 const EMPTY_FILTERS = {
   text: "",
@@ -19,11 +19,6 @@ const EMPTY_FILTERS = {
   datePreset: "any",
   edited: "",
 };
-
-const toPlainSearchFilters = (query) => ({
-  ...EMPTY_FILTERS,
-  text: query.trim().toLowerCase(),
-});
 
 const getActiveFilterCount = (filters) =>
   [
@@ -55,15 +50,8 @@ const TopBar = () => {
     const delayDebounceFn = setTimeout(() => {
       setFilters((prev) => ({
         ...prev,
-        ...toPlainSearchFilters(searchTerm),
-        categoryIds: prev.categoryIds,
-        createdFrom: prev.createdFrom,
-        createdTo: prev.createdTo,
-        datePreset: prev.datePreset,
-        edited: prev.edited,
-        ownerId: prev.ownerId,
+        text: searchTerm.trim().toLowerCase(),
         scope: mode.key,
-        tagIds: prev.tagIds,
       }));
     }, 300);
 
@@ -73,13 +61,8 @@ const TopBar = () => {
   const resetVideoFilters = () => {
     setFilters((prev) => ({
       ...prev,
-      categoryIds: [],
-      createdFrom: "",
-      createdTo: "",
-      datePreset: "any",
-      edited: "",
-      ownerId: null,
-      tagIds: [],
+      ...EMPTY_FILTERS,
+      text: prev.text, 
     }));
   };
 
@@ -116,14 +99,13 @@ const TopBar = () => {
             {mode.showSort && (
               <select
                 className="sort-select"
-                value={filters.sort}
+                value={filters.sort || "newest"}
                 onChange={(event) =>
                   setFilters((prev) => ({ ...prev, sort: event.target.value, scope: mode.key }))
                 }
               >
-                <option value="newest">Nuevos</option>
-                <option value="popular">Mas visto</option>
-                <option value="edited">Editados</option>
+                <option value="newest">Más recientes</option>
+                <option value="oldest">Más antiguos</option>
               </select>
             )}
           </div>
