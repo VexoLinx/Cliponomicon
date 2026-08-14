@@ -1,15 +1,13 @@
-import { useState } from "react";
 import { useVideoModal } from "../../../context/VideoContext";
-import { getClipUrl } from "../../../services/api/videoMedia.api";
 import CardFooter from "./CardFooter";
 import CardHeader from "./CardHeader";
 import { useVideoCardModel } from "./useVideoCardModel";
 import { useVideoData } from "./useVideoData";
+import { useCopyClipLink } from "../GlobalVideoModal/useCopyClipLink"; 
 import "./VideoCard.css";
 
 const VideoCard = ({ data = {} }) => {
   const { openVideo } = useVideoModal();
-  const [showToast, setShowToast] = useState(false);
 
   const {
     videoCore,
@@ -20,6 +18,8 @@ const VideoCard = ({ data = {} }) => {
     categoryName,
     categoryIcon,
   } = useVideoData(data);
+
+  const { copyLink, showToast } = useCopyClipLink(videoId);
 
   const { card, modalVideo } = useVideoCardModel({
     categoryIcon,
@@ -37,23 +37,6 @@ const VideoCard = ({ data = {} }) => {
     openVideo(modalVideo);
   };
 
-  const handleCopyLink = (event, targetVideoId) => {
-    event.stopPropagation();
-
-    navigator.clipboard
-      .writeText(getClipUrl(targetVideoId))
-      .then(() => {
-        setShowToast(true);
-        setTimeout(() => setShowToast(false), 2000);
-      })
-      .catch((error) => {
-        console.error("Fallo al copiar:", error);
-        navigator.clipboard
-          .writeText(getClipUrl(targetVideoId))
-          .catch((err) => console.error("Fallo el fallback", err));
-      });
-  };
-
   return (
     <div
       className={`video-card ${isProcessing ? "is-processing" : ""}`}
@@ -65,7 +48,7 @@ const VideoCard = ({ data = {} }) => {
         finalThumbnailSrc={finalThumbnailSrc}
         isEdited={card.isEdited}
         isProcessing={isProcessing}
-        onCopyLink={handleCopyLink}
+        onCopyLink={copyLink}
         ratingToShow={card.ratingToShow}
         thumbBuster={thumbBuster}
         videoCore={videoCore}

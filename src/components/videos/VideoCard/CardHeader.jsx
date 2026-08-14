@@ -34,7 +34,7 @@ const CardHeader = ({
       <>
         <button
           className="overlay-link card-link-button"
-          onClick={(event) => onCopyLink(event, videoCore?.id)}
+          onClick={onCopyLink}
           title="Copiar enlace"
         >
           <CiLink />
