@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useSearch } from "../../context/SearchContext";
+import { APP_EVENTS, emitAppEvent } from "../../events/appEvents";
 import { createTag, deleteTag, listTags, updateTag } from "../../services/api/tags.api";
 
 export const useTagsPage = (token) => {
@@ -55,6 +56,7 @@ export const useTagsPage = (token) => {
       });
       setNewTagName("");
       setIsCreateModalOpen(false);
+      emitAppEvent(APP_EVENTS.TAGS_UPDATED);
       setCreateStatus("Tag creado.");
       setTimeout(() => setCreateStatus(""), 2500);
     } catch (err) {
@@ -89,6 +91,7 @@ export const useTagsPage = (token) => {
         currentTags.map((tag) => (tag.id === updatedTag.id ? updatedTag : tag)),
       );
       closeTagModal();
+      emitAppEvent(APP_EVENTS.TAGS_UPDATED);
       setCreateStatus("Tag actualizado.");
       setTimeout(() => setCreateStatus(""), 2500);
     } catch (err) {
@@ -106,6 +109,7 @@ export const useTagsPage = (token) => {
       setDeletingTagId(tag.id);
       await deleteTag(tag.id, { token });
       setTags((currentTags) => currentTags.filter((currentTag) => currentTag.id !== tag.id));
+      emitAppEvent(APP_EVENTS.TAGS_UPDATED);
       setCreateStatus("Tag eliminado.");
       setTimeout(() => setCreateStatus(""), 2500);
     } catch (err) {

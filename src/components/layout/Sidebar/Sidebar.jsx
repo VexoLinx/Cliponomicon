@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import VideoUploader from "../../videos/VideoUploader/VideoUploader";
 import { IoMdPricetags, IoMdSettings } from "react-icons/io";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -8,6 +8,7 @@ import { GoStarFill, GoVideo } from "react-icons/go";
 import { CiLogin, CiLogout } from "react-icons/ci";
 import { MdArrowBackIos } from "react-icons/md";
 import Enchiridion from "../../../assets/logo.png";
+import { getVersion } from "../../../services/api/health.api";
 import "./Sidebar.css";
 
 const Sidebar = () => {
@@ -15,6 +16,25 @@ const Sidebar = () => {
   const { token, user, logout } = useAuth();
 
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [appVersion, setAppVersion] = useState("v0.8");
+
+  useEffect(() => {
+    let isMounted = true;
+
+    getVersion()
+      .then((data) => {
+        if (!isMounted) return;
+        const version = data?.version || data?.app_version || data?.commit || data?.build;
+        if (version) setAppVersion(String(version).startsWith("v") ? String(version) : `v${version}`);
+      })
+      .catch((error) => {
+        console.error("Error cargando version:", error);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -136,7 +156,7 @@ const Sidebar = () => {
         )}
 
         <div className="version-info">
-          <span>Cliponomicon v0.8</span>
+          <span>Cliponomicon {appVersion}</span>
         </div>
       </div>
     </aside>

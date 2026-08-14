@@ -3,6 +3,7 @@ import { useAuth } from "../../../context/AuthContext";
 import { useVideoModal } from "../../../context/VideoContext";
 import { useFavoriteVideo } from "./useFavoriteVideo";
 import { useVideoEditState } from "./useVideoEditState";
+import { useVideoReactions } from "./useVideoReactions";
 import { mapUser } from "../../../services/mappers/user.mapper";
 
 export const useGlobalVideoModal = () => {
@@ -12,7 +13,8 @@ export const useGlobalVideoModal = () => {
     playNext, 
     playPrev, 
     hasNext, 
-    hasPrev 
+    hasPrev,
+    updateActiveVideo,
   } = useVideoModal();
   
   const { token, user: rawUser } = useAuth();
@@ -52,6 +54,7 @@ export const useGlobalVideoModal = () => {
   const canDelete = Boolean(token && (isSuperAdmin || isOwner));
 
   const favorite = useFavoriteVideo({ activeVideo, token });
+  const reactions = useVideoReactions({ activeVideo, token, updateActiveVideo });
   const editing = useVideoEditState({ activeVideo, closeVideo, token });
 
   if (!activeVideo) {
@@ -70,5 +73,6 @@ export const useGlobalVideoModal = () => {
     hasPrev,
     ...editing,
     ...favorite,
+    ...reactions,
   };
 };

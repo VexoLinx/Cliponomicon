@@ -9,6 +9,16 @@ import {
   updateUser,
 } from "../../services/api/users.api";
 
+const fileToBase64 = (file) =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      resolve(String(reader.result || ""));
+    };
+    reader.onerror = () => reject(reader.error);
+    reader.readAsDataURL(file);
+  });
+
 export const useSettingsProfile = () => {
   const [activeTab, setActiveTab] = useState("profile");
   const [profileData, setProfileData] = useState(null);
@@ -75,10 +85,11 @@ export const useSettingsProfile = () => {
     if (!file) return;
 
     setAvatarStatus({ type: "loading", msg: "Subiendo imagen..." });
-    const formData = new FormData();
-    formData.append("avatar", file);
 
     try {
+      const avatar = await fileToBase64(file);
+      const formData = new FormData();
+      formData.append("avatar", avatar);
       await updateAvatar(profileData.id, formData, { token });
       await loadProfile();
       setAvatarStatus({ type: "success", msg: "Avatar actualizado." });

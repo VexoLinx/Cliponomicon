@@ -3,6 +3,7 @@ import VideoUploadButton from "./VideoUploadButton";
 import VideoEditModal from "../VideoEditModal";
 import { useVideoUpload } from "./useVideoUpload";
 import { listCategories } from "../../../services/api/categories.api";
+import { listTags } from "../../../services/api/tags.api";
 import { APP_EVENTS, onAppEvent } from "../../../events/appEvents";
 import "./VideoUploader.css";
 import "../videos.css";
@@ -24,6 +25,8 @@ const VideoUploader = () => {
     setIsEdited,
     sourceCreatedAt,     
     setSourceCreatedAt, 
+    selectedTagIds,
+    setSelectedTagIds,
     errorMessage,
     handleFileSelect,
     handleUpload,
@@ -31,6 +34,7 @@ const VideoUploader = () => {
   } = useVideoUpload();
 
   const [categories, setCategories] = useState([]);
+  const [tags, setTags] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState("");
 
   const fetchCategories = async () => {
@@ -42,8 +46,18 @@ const VideoUploader = () => {
     }
   };
 
+  const fetchTags = async () => {
+    try {
+      const data = await listTags();
+      setTags(data);
+    } catch (err) {
+      console.error("Error cargando tags para el uploader:", err);
+    }
+  };
+
   useEffect(() => {
     fetchCategories();
+    fetchTags();
     return onAppEvent(APP_EVENTS.CATEGORIES_UPDATED, fetchCategories);
   }, [status]);
 
@@ -74,10 +88,13 @@ const VideoUploader = () => {
           sourceCreatedAt={sourceCreatedAt}     
           setSourceCreatedAt={setSourceCreatedAt} 
           categories={categories}
+          selectedTagIds={selectedTagIds}
+          setSelectedTagIds={setSelectedTagIds}
+          tags={tags}
           onRefreshCategories={fetchCategories}
           errorMessage={errorMessage}
           onClose={resetUploader}
-          onUpload={() => handleUpload(selectedCategory)}
+          onUpload={() => handleUpload(selectedCategory, selectedTagIds)}
           onRetry={() => setStatus("editing")}
         />
       )}

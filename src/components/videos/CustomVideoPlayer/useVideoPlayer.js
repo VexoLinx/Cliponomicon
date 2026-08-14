@@ -1,8 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { downloadVideoVariantBlob, getVideoStreamUrl } from "../../../services/api/videoMedia.api";
+import { useAuth } from "../../../context/AuthContext";
 import { getVideoVariantTypes, pickVideoVariant } from "../../../services/mappers/video.mapper";
 
 export const useVideoPlayer = (video) => {
+  const { token } = useAuth();
   const videoRef = useRef(null);
   const playerContainerRef = useRef(null);
   const settingsRef = useRef(null);
@@ -216,7 +218,7 @@ export const useVideoPlayer = (video) => {
     setIsDownloading(true);
 
     try {
-      const blob = await downloadVideoVariantBlob(video?.id, videoVariant);
+      const blob = await downloadVideoVariantBlob(video?.id, null, { token });
       const blobUrl = window.URL.createObjectURL(blob);
 
       const a = document.createElement("a");

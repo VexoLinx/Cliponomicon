@@ -19,6 +19,11 @@ export const createTag = async (payload, { token, mapResponse = true } = {}) => 
   return mapResponse ? mapTag(data) : data;
 };
 
+export const getTag = async (tagId, { token, mapResponse = true } = {}) => {
+  const data = await apiRequest(`/tags/${tagId}`, { token });
+  return mapResponse ? mapTag(data) : data;
+};
+
 export const updateTag = async (tagId, payload, { token, mapResponse = true } = {}) => {
   const data = await apiRequest(`/tags/${tagId}`, {
     method: "PATCH",

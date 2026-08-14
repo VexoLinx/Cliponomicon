@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearch } from "../../context/SearchContext";
 import { listVideos } from "../../services/api/videos.api";
+import { getVideoSortParams } from "../../services/api/videoSort";
 import { mapVideoToCard, VIDEO_PROCESSING_STATUSES } from "../../services/mappers/video.mapper";
 
 const LIMIT = 20;
@@ -28,13 +29,13 @@ export const useGameVideos = (categoryId) => {
             ? filters.tagIds
             : undefined,
         ownerId: filters.scope === "game-detail" ? filters.ownerId : undefined,
-        createdDate: filters.scope === "game-detail" ? filters.createdDate || undefined : undefined,
         createdFrom: filters.scope === "game-detail" ? filters.createdFrom || undefined : undefined,
         createdTo: filters.scope === "game-detail" ? filters.createdTo || undefined : undefined,
         edited:
           filters.scope === "game-detail" && filters.edited !== ""
             ? filters.edited === "true"
             : undefined,
+        ...getVideoSortParams(filters.scope === "game-detail" ? filters.sort : "newest"),
         limit: LIMIT,
         offset: currentOffset,
         mapToCards: false,
@@ -58,12 +59,12 @@ export const useGameVideos = (categoryId) => {
     }
   }, [
     categoryId,
-    filters.createdDate,
     filters.createdFrom,
     filters.createdTo,
     filters.edited,
     filters.ownerId,
     filters.scope,
+    filters.sort,
     filters.tagIds,
     filters.text,
   ]);

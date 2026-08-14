@@ -1,4 +1,6 @@
 import { IoClose, IoCut } from "react-icons/io5";
+import TagSelector from "../TagSelector";
+import "../TagSelector/TagSelector.css";
 
 const EditSidebar = ({
   categoryId,
@@ -6,13 +8,16 @@ const EditSidebar = ({
   errorMessage,
   isEdited,
   localCategories,
+  localTags,
   onClose,
   onDelete,
   onSave,
   setCategoryId,
   setDescription,
   setIsEdited,
+  setTagIds,
   setTitle,
+  tagIds,
   title,
   video,
 }) => (
@@ -53,6 +58,12 @@ const EditSidebar = ({
           </option>
         ))}
       </select>
+
+      <TagSelector
+        selectedTagIds={tagIds}
+        setSelectedTagIds={setTagIds}
+        tags={localTags}
+      />
 
       <label className="input-label">Descripcion o Contexto</label>
       <div className="video-context-box spec-edit">

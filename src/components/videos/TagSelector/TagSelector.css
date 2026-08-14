@@ -1,0 +1,44 @@
+.video-tag-selector {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.video-tag-chip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  max-height: 118px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+
+.video-tag-chip {
+  min-height: 30px;
+  max-width: 100%;
+  border: 1px solid #1e293b;
+  border-radius: 6px;
+  background: #0f172a;
+  color: #cbd5e1;
+  cursor: pointer;
+  font-size: 0.8rem;
+  line-height: 1;
+  padding: 0 10px;
+}
+
+.video-tag-chip:hover:not(:disabled),
+.video-tag-chip.selected {
+  background: #1e293b;
+  border-color: #38bdf8;
+  color: #ffffff;
+}
+
+.video-tag-chip:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.video-tag-empty {
+  color: #64748b;
+  font-size: 0.85rem;
+}

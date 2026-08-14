@@ -14,6 +14,7 @@ export const useVideoUpload = () => {
   const [currentUploadIndex, setCurrentUploadIndex] = useState(0);
   const [isEdited, setIsEdited] = useState(false);
   const [sourceCreatedAt, setSourceCreatedAt] = useState("");
+  const [selectedTagIds, setSelectedTagIds] = useState([]);
   const { token } = useAuth();
 
   useEffect(() => {
@@ -46,7 +47,7 @@ export const useVideoUpload = () => {
     setStatus("editing");
   };
 
-  const handleUpload = async (categoryId) => {
+  const handleUpload = async (categoryId, tagIds = selectedTagIds) => {
     if (files.length === 1 && !title.trim()) {
       setErrorMessage("El titulo es obligatorio.");
       return;
@@ -79,6 +80,10 @@ export const useVideoUpload = () => {
           formData.append("category_ids", categoryId);
         }
 
+        tagIds.forEach((tagId) => {
+          formData.append("tag_ids", tagId);
+        });
+
         await uploadVideo(formData, {
           token,
           fallbackError: `Error al subir el archivo: ${currentFile.name}`,
@@ -109,6 +114,7 @@ export const useVideoUpload = () => {
     setErrorMessage("");
     setCurrentUploadIndex(0);
     setSourceCreatedAt("");
+    setSelectedTagIds([]);
   };
 
   return {
@@ -127,6 +133,8 @@ export const useVideoUpload = () => {
     setIsEdited,
     sourceCreatedAt,    
     setSourceCreatedAt, 
+    selectedTagIds,
+    setSelectedTagIds,
     errorMessage,
     handleFileSelect,
     handleUpload,
