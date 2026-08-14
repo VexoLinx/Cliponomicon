@@ -7,8 +7,12 @@ export const useCopyClipLink = (videoId) => {
   const copyLink = (event) => {
     event.stopPropagation();
 
+    const rawUrl = getClipUrl(videoId);
+    
+    const absoluteUrl = new URL(rawUrl, window.location.origin).href;
+
     navigator.clipboard
-      .writeText(getClipUrl(videoId))
+      .writeText(absoluteUrl)
       .then(() => {
         setShowToast(true);
         setTimeout(() => setShowToast(false), 2000);
