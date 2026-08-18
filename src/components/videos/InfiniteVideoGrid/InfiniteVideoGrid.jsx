@@ -1,6 +1,6 @@
 import React, { useRef, useCallback, useEffect } from "react";
 import VideoCard from "../VideoCard/VideoCard";
-import {useVideoModal} from "../../../context/VideoContext/VideoContext";
+import { useVideoModal } from "../../../context/VideoContext/VideoContext";
 
 const InfiniteVideoGrid = ({ 
   videos, 
@@ -10,12 +10,26 @@ const InfiniteVideoGrid = ({
   loadMoreVideos 
 }) => {
   const observer = useRef();
-
-  const { registerPlaylist } = useVideoModal();
+  const videoRefs = useRef(new Map());
+  const { registerPlaylist, activeVideo } = useVideoModal();
 
   useEffect(() => {
     registerPlaylist(videos, loadMoreVideos, hasMore);
   }, [videos, loadMoreVideos, hasMore, registerPlaylist]);
+
+  useEffect(() => {
+    if (activeVideo) {
+      const videoId = activeVideo.id || activeVideo._id;
+      const node = videoRefs.current.get(videoId);
+      
+      if (node) {
+        node.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center',
+        });
+      }
+    }
+  }, [activeVideo]);
 
   const lastVideoElementRef = useCallback(node => {
     if (isFetchingNextPage) return;
@@ -37,14 +51,26 @@ const InfiniteVideoGrid = ({
       {videos.length > 0 && (
         <div className="video-grid">
           {videos.map((video, index) => {
-            if (videos.length === index + 1) {
-              return (
-                <div ref={lastVideoElementRef} key={video.id || video._id}>
-                  <VideoCard data={video} />
-                </div>
-              );
-            }
-            return <VideoCard key={video.id || video._id} data={video} />;
+            const videoId = video.id || video._id;
+            const isLastElement = videos.length === index + 1;
+
+            return (
+              <VideoCard 
+                key={videoId} 
+                data={video}
+                ref={(node) => {
+                  if (node) {
+                    videoRefs.current.set(videoId, node);
+                  } else {
+                    videoRefs.current.delete(videoId);
+                  }
+                  
+                  if (isLastElement) {
+                    lastVideoElementRef(node);
+                  }
+                }} 
+              />
+            );
           })}
         </div>
       )}

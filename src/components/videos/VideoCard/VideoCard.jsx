@@ -1,3 +1,4 @@
+import React, { forwardRef } from "react";
 import { useVideoModal } from "../../../context/VideoContext";
 import CardFooter from "./CardFooter";
 import CardHeader from "./CardHeader";
@@ -6,7 +7,7 @@ import { useVideoData } from "./useVideoData";
 import { useCopyClipLink } from "../GlobalVideoModal/useCopyClipLink"; 
 import "./VideoCard.css";
 
-const VideoCard = ({ data = {} }) => {
+const VideoCard = forwardRef(({ data = {} }, ref) => {
   const { openVideo } = useVideoModal();
 
   const {
@@ -39,6 +40,7 @@ const VideoCard = ({ data = {} }) => {
 
   return (
     <div
+      ref={ref}
       className={`video-card ${isProcessing ? "is-processing" : ""}`}
       onClick={handlePlayVideo}
       style={{ cursor: isProcessing ? "not-allowed" : "pointer" }}
@@ -67,6 +69,8 @@ const VideoCard = ({ data = {} }) => {
       {showToast && <div className="copy-toast">Enlace copiado</div>}
     </div>
   );
-};
+});
+
+VideoCard.displayName = "VideoCard";
 
 export default VideoCard;
