@@ -8,8 +8,9 @@ export const useAuthProviderState = () => {
         return savedUser ? JSON.parse(savedUser) : null;
     });
 
-    const login = (newToken, userData) => {
+    const login = (newToken, newRefreshToken, userData) => {
         localStorage.setItem("token", newToken);
+        localStorage.setItem("refreshToken", newRefreshToken);
         localStorage.setItem("userData", JSON.stringify(userData));
         setToken(newToken);
         setUser(userData);
@@ -17,10 +18,19 @@ export const useAuthProviderState = () => {
 
     const logout = () => {
         localStorage.removeItem("token");
+        localStorage.removeItem("refreshToken");
         localStorage.removeItem("userData");
         setToken(null);
         setUser(null);
     };
+
+    // Sincroniza el estado de React cuando http.js refresca el token en segundo plano
+    useEffect(() => {
+        const handleTokenRefreshed = () => {
+            setToken(localStorage.getItem("token"));
+        };
+        return onAppEvent(APP_EVENTS.TOKEN_REFRESHED, handleTokenRefreshed);
+    }, []);
 
     // VALIDACIÓN DEL JWT AL INICIAR O RECARGAR LA APP
     useEffect(() => {
@@ -31,9 +41,7 @@ export const useAuthProviderState = () => {
                     const decodedPayload = JSON.parse(
                         window.atob(payloadBase64.replace(/-/g, "+").replace(/_/g, "/"))
                     );
-
                     const isExpired = decodedPayload.exp * 1000 < Date.now();
-
                     if (isExpired) {
                         console.warn("Cliponomicon: El token ha expirado. Limpiando sesión...");
                         logout();
@@ -46,13 +54,11 @@ export const useAuthProviderState = () => {
         }
     }, [token]);
 
-    // ESCUCHADOR GLOBAL PARA EXPIRACIONES EN TIEMPO REAL (Respuestas 401)
     useEffect(() => {
         const handleForceLogout = () => {
             console.warn("Cliponomicon: Sesión invalidada por el servidor (401).");
             logout();
         };
-
         return onAppEvent(APP_EVENTS.AUTH_EXPIRED, handleForceLogout);
     }, []);
 

@@ -3,6 +3,12 @@ import { APP_EVENTS, emitAppEvent } from "../../events/appEvents";
 export const API_URL = import.meta.env.VITE_API_URL || "";
 
 export const getStoredToken = () => localStorage.getItem("token") || null;
+export const getStoredRefreshToken = () => localStorage.getItem("refreshToken") || null;
+
+export const setStoredTokens = (token, refreshToken) => {
+  if (token) localStorage.setItem("token", token);
+  if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
+};
 
 export const getAuthHeaders = (token = getStoredToken()) =>
   token ? { Authorization: `Bearer ${token}` } : {};
@@ -14,7 +20,6 @@ export const buildApiUrl = (path, params = {}) => {
 
   Object.entries(params).forEach(([key, value]) => {
     if (value === undefined || value === null || value === "") return;
-
     if (Array.isArray(value)) {
       value.forEach((item) => {
         if (item !== undefined && item !== null && item !== "") {
@@ -23,7 +28,6 @@ export const buildApiUrl = (path, params = {}) => {
       });
       return;
     }
-
     url.searchParams.append(key, value);
   });
 
@@ -50,13 +54,40 @@ export const resolveApiUrl = (resourceUrl) => {
 export const parseApiError = async (response, fallbackMessage) => {
   const data = await response.json().catch(() => null);
   const detail = data?.detail;
-
   if (Array.isArray(detail)) {
     return detail.map((item) => item.msg || item.message || String(item)).join(", ");
   }
-
   if (typeof detail === "string") return detail;
   return fallbackMessage || `Error HTTP ${response.status}`;
+};
+
+let refreshPromise = null;
+
+const refreshTokens = () => {
+  if (refreshPromise) return refreshPromise;
+
+  const refreshToken = getStoredRefreshToken();
+  if (!refreshToken) {
+    return Promise.reject(new Error("No hay refresh token disponible"));
+  }
+
+  refreshPromise = fetch(buildApiUrl("/auth/refresh"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Accept: "application/json" },
+    body: JSON.stringify({ refresh_token: refreshToken }),
+  })
+    .then(async (response) => {
+      if (!response.ok) throw new Error(await parseApiError(response, "Refresh fallido"));
+      const data = await response.json();
+      setStoredTokens(data.access_token, data.refresh_token);
+      emitAppEvent(APP_EVENTS.TOKEN_REFRESHED);
+      return data.access_token;
+    })
+    .finally(() => {
+      refreshPromise = null;
+    });
+
+  return refreshPromise;
 };
 
 export const apiRequest = async (path, options = {}) => {
@@ -66,6 +97,7 @@ export const apiRequest = async (path, options = {}) => {
     headers,
     body,
     fallbackError,
+    _isRetry = false,
     ...fetchOptions
   } = options;
 
@@ -81,8 +113,16 @@ export const apiRequest = async (path, options = {}) => {
     },
   });
 
-  if (response.status === 401) {
-    emitAppEvent(APP_EVENTS.AUTH_EXPIRED);
+  const isAuthEndpoint = path === "/auth/refresh" || path === "/auth/login";
+
+  if (response.status === 401 && !_isRetry && !isAuthEndpoint) {
+    try {
+      const newToken = await refreshTokens();
+      return apiRequest(path, { ...options, token: newToken, _isRetry: true });
+    } catch (refreshError) {
+      emitAppEvent(APP_EVENTS.AUTH_EXPIRED);
+      throw new Error("Sesión expirada");
+    }
   }
 
   if (!response.ok) {

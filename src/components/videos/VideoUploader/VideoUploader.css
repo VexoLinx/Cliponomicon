@@ -99,7 +99,7 @@
     border-radius: 8px;
     border: 2px dashed #4b5563;
     justify-content: center;
-    margin: 0 auto;
+    margin: 0 0 10px 0;
   }
 
   .sidebar.collapsed .upload-dropzone:hover {

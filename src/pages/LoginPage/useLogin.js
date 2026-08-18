@@ -24,7 +24,7 @@ export const useLogin = () => {
 
     try {
       const data = await completeOidcCallback({ code, state });
-      login(data.access_token, data.user);
+      login(data.access_token, data.refresh_token, data.user);
       navigate("/");
     } catch (err) {
       setError(err.message);
@@ -75,7 +75,7 @@ export const useLogin = () => {
 
     try {
       const data = await loginUser({ username, password });
-      login(data.access_token, data.user);
+      login(data.access_token, data.refresh_token, data.user);
       navigate("/");
     } catch (err) {
       setError(err.message);

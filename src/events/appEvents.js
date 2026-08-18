@@ -6,6 +6,7 @@ export const APP_EVENTS = {
   VIDEOS_CHANGED: "videos-changed",
   VIDEO_DELETED: "video-deleted",
   VIDEO_UPDATED: "video-updated",
+  TOKEN_REFRESHED: "token-refreshed",
 };
 
 export const emitAppEvent = (eventName, detail) => {

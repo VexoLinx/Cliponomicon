@@ -137,6 +137,14 @@ svg {
   width: 75px;
   padding: 20px 5px;
   align-items: center;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.sidebar.collapsed::-webkit-scrollbar{
+  display: none;
 }
 
 .sidebar.collapsed .title-wrapper,
