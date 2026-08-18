@@ -3,17 +3,22 @@ import { useSearch } from "../../context/SearchContext";
 import { listVideos } from "../../services/api/videos.api";
 import { getVideoSortParams } from "../../services/api/videoSort";
 import { mapVideoToCard, VIDEO_PROCESSING_STATUSES } from "../../services/mappers/video.mapper";
+import { APP_EVENTS, onAppEvent } from "../../events/appEvents";
+import { getListCache, setListCache, clearListCache } from "../../hooks/listCache";
 
 const LIMIT = 20;
 
 export const useGameVideos = (categoryId) => {
-  const [videos, setVideos] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [offset, setOffset] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
+  const { filters } = useSearch();
+  const cacheKey = `game:${categoryId}:${JSON.stringify(filters)}`;
+  const cached = getListCache(cacheKey);
+
+  const [videos, setVideos] = useState(cached?.videos ?? []);
+  const [loading, setLoading] = useState(cached ? false : true);
+  const [offset, setOffset] = useState(cached?.offset ?? 0);
+  const [hasMore, setHasMore] = useState(cached?.hasMore ?? true);
   const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
   const [error, setError] = useState(null);
-  const { filters } = useSearch();
 
   const fetchGameVideos = useCallback(async (currentOffset, append = false) => {
     if (!categoryId) return;
@@ -71,12 +76,21 @@ export const useGameVideos = (categoryId) => {
 
   useEffect(() => {
     if (!categoryId) return;
+
+    if (getListCache(cacheKey)) {
+      return;
+    }
+
     setLoading(true);
     setVideos([]);
     setOffset(0);
     setHasMore(true);
     fetchGameVideos(0, false);
-  }, [categoryId, fetchGameVideos]);
+  }, [cacheKey, categoryId, fetchGameVideos]);
+
+  useEffect(() => {
+    setListCache(cacheKey, { videos, offset, hasMore });
+  }, [cacheKey, videos, offset, hasMore]);
 
   const loadMoreVideos = useCallback(() => {
     if (isFetchingNextPage || !hasMore) return;
@@ -84,6 +98,39 @@ export const useGameVideos = (categoryId) => {
     setOffset(nextOffset);
     fetchGameVideos(nextOffset, true);
   }, [offset, isFetchingNextPage, hasMore, fetchGameVideos]);
+
+  useEffect(() => {
+    const handleVideosRefresh = () => {
+      clearListCache("game:");
+      setOffset(0);
+      setHasMore(true);
+      fetchGameVideos(0, false);
+    };
+    return onAppEvent(APP_EVENTS.VIDEOS_CHANGED, handleVideosRefresh);
+  }, [fetchGameVideos]);
+
+  useEffect(() => {
+    const handleVideoUpdated = (event) => {
+      const updatedVideo = event.detail;
+      setVideos((prev) =>
+        prev.map((video) =>
+          video.id === updatedVideo.id ? mapVideoToCard({ ...video, ...updatedVideo }) : video,
+        ),
+      );
+    };
+    const handleVideoDeleted = (event) => {
+      const deletedId = event.detail.id;
+      setVideos((prev) => prev.filter((video) => video.id !== deletedId));
+    };
+
+    const unsubscribeUpdated = onAppEvent(APP_EVENTS.VIDEO_UPDATED, handleVideoUpdated);
+    const unsubscribeDeleted = onAppEvent(APP_EVENTS.VIDEO_DELETED, handleVideoDeleted);
+
+    return () => {
+      unsubscribeUpdated();
+      unsubscribeDeleted();
+    };
+  }, []);
 
   return { videos, loading, error, hasMore, isFetchingNextPage, loadMoreVideos };
 };
