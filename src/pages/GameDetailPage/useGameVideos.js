@@ -11,12 +11,11 @@ const LIMIT = 20;
 export const useGameVideos = (categoryId) => {
   const { filters } = useSearch();
   const cacheKey = `game:${categoryId}:${JSON.stringify(filters)}`;
-  const cached = getListCache(cacheKey);
 
-  const [videos, setVideos] = useState(cached?.videos ?? []);
-  const [loading, setLoading] = useState(cached ? false : true);
-  const [offset, setOffset] = useState(cached?.offset ?? 0);
-  const [hasMore, setHasMore] = useState(cached?.hasMore ?? true);
+  const [videos, setVideos] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
   const [isFetchingNextPage, setIsFetchingNextPage] = useState(false);
   const [error, setError] = useState(null);
 
@@ -77,20 +76,27 @@ export const useGameVideos = (categoryId) => {
   useEffect(() => {
     if (!categoryId) return;
 
-    if (getListCache(cacheKey)) {
-      return;
-    }
+    const cachedData = getListCache(cacheKey);
 
-    setLoading(true);
-    setVideos([]);
-    setOffset(0);
-    setHasMore(true);
-    fetchGameVideos(0, false);
-  }, [cacheKey, categoryId, fetchGameVideos]);
+    if (cachedData && cachedData.videos.length > 0) {
+      setVideos(cachedData.videos);
+      setOffset(cachedData.offset);
+      setHasMore(cachedData.hasMore);
+      setLoading(false);
+    } else {
+      setLoading(true);
+      setVideos([]);
+      setOffset(0);
+      setHasMore(true);
+      fetchGameVideos(0, false);
+    }
+  }, [categoryId, cacheKey, fetchGameVideos]);
 
   useEffect(() => {
-    setListCache(cacheKey, { videos, offset, hasMore });
-  }, [cacheKey, videos, offset, hasMore]);
+    if (!loading && categoryId) {
+      setListCache(cacheKey, { videos, offset, hasMore });
+    }
+  }, [cacheKey, videos, offset, hasMore, loading, categoryId]);
 
   const loadMoreVideos = useCallback(() => {
     if (isFetchingNextPage || !hasMore) return;
