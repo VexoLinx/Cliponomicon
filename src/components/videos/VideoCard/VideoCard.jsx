@@ -8,7 +8,8 @@ import { useCopyClipLink } from "../GlobalVideoModal/useCopyClipLink";
 import "./VideoCard.css";
 
 const VideoCard = forwardRef(({ data = {} }, ref) => {
-  const { openVideo } = useVideoModal();
+  // Extraemos activeVideo directamente de tu VideoContext
+  const { openVideo, activeVideo } = useVideoModal();
 
   const {
     videoCore,
@@ -32,6 +33,11 @@ const VideoCard = forwardRef(({ data = {} }, ref) => {
     videoId,
   });
 
+  // Comprobamos si este vídeo es el que está abierto en el modal
+  const isActive = Boolean(
+    activeVideo?.id && videoId && String(activeVideo.id) === String(videoId)
+  );
+
   const handlePlayVideo = (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -42,7 +48,9 @@ const VideoCard = forwardRef(({ data = {} }, ref) => {
 
   return (
     <div
-      className={`video-card ${isProcessing ? "is-processing" : ""}`}
+      className={`video-card ${isProcessing ? "is-processing" : ""} ${
+        isActive ? "is-active-card" : ""
+      }`}
       onClick={handlePlayVideo}
       style={{ cursor: isProcessing ? "not-allowed" : "pointer" }}
       ref={ref}

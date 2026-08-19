@@ -309,3 +309,15 @@
   transform: translateY(2px); 
   filter: brightness(1.1);
 }
+
+.video-card {
+  position: relative;
+  transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1), box-shadow 4s ease;
+}
+
+.video-card.is-active-card {
+  transform: scale(0.95); 
+  box-shadow: 0 0 0 2px #ff0055, 0 10px 25px rgba(255, 0, 85, 0.4); 
+  z-index: 10; 
+  filter: brightness(1.1);
+}
