@@ -1,5 +1,4 @@
 import { getVideoStreamUrl } from "../../../services/api/videoMedia.api";
-import { getAvatarUrl } from "../../../services/api/users.api";
 import { pickVideoVariant } from "../../../services/mappers/video.mapper";
 
 const formatDate = (isoString) => {
@@ -39,11 +38,9 @@ export const useVideoCardModel = ({
   const userHandle = videoCore?.owner?.username
     ? `@${videoCore.owner.username}`
     : videoCore?.userHandle || data?.userHandle || "@usuario";
+    
   const ownerId = videoCore?.owner?.id || videoCore?.userId || videoCore?.user_id || data?.userId || data?.user_id;
-  const ownerAvatarUrl =
-    videoCore?.ownerAvatarUrl ||
-    data?.ownerAvatarUrl ||
-    (ownerId ? getAvatarUrl(ownerId) : "");
+  
   const tags = Array.isArray(videoCore?.tags) ? videoCore.tags : data?.tags || [];
 
   return {
@@ -58,7 +55,6 @@ export const useVideoCardModel = ({
       title: videoCore?.title || data?.title || "Sin titulo",
       userHandle,
       ownerId,
-      ownerAvatarUrl,
       tags,
     },
     modalVideo: {
@@ -81,7 +77,6 @@ export const useVideoCardModel = ({
       gameId: categoryId,
       userHandle,
       ownerId,
-      ownerAvatarUrl,
       tags,
       date: formattedDate,
     },

@@ -5,7 +5,6 @@ const CardFooter = ({
   categoryId,
   categoryName,
   date,
-  ownerAvatarUrl,
   ownerId,
   tags = [],
   title,
@@ -37,16 +36,6 @@ const CardFooter = ({
         <p className="game-name">{categoryName}</p>
       )}
       <div className="user-data">
-        {ownerAvatarUrl && (
-          <img
-            className="user-avatar-mini"
-            src={ownerAvatarUrl}
-            alt={userHandle}
-            onError={(event) => {
-              event.currentTarget.style.display = "none";
-            }}
-          />
-        )}
         {ownerId ? (
           <Link
             className="user-handle"

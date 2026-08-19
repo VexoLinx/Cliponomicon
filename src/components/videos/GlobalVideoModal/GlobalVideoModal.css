@@ -373,22 +373,22 @@ a.game-name-modal:hover {
 }
 
 .carousel-nav-btn {
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(0, 0, 0, 0.6);
-  color: white;
-  border: none;
-  border-radius: 50%;
-  width: 48px;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 24px;
-  cursor: pointer;
-  z-index: 10;
-  transition: background 0.2s, transform 0.2s;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.6);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s, transform 0.2s, opacity 0.3s;
 }
 
 .carousel-nav-btn:hover {
@@ -402,6 +402,11 @@ a.game-name-modal:hover {
 
 .carousel-nav-btn.next {
   right: 16px;
+}
+
+.modal-video-container:not(:hover) .carousel-nav-btn {
+    opacity: 0;
+    pointer-events: none;
 }
 
 .video-technical-dates {
