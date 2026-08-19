@@ -20,6 +20,8 @@ const VideoModalSidebar = ({
 }) => {
   const ownerId = activeVideo?.owner?.id || activeVideo?.userId || activeVideo?.user_id;
   const ownerAvatarUrl = activeVideo?.ownerAvatarUrl || (ownerId ? getAvatarUrl(ownerId) : "");
+  const categoryId =
+    activeVideo?.gameId || activeVideo?.category?.id || activeVideo?.categories?.[0]?.id;
 
   return (
     <div className="modal-sidebar">
@@ -60,7 +62,13 @@ const VideoModalSidebar = ({
               </>
             )}
           </div>
-          <p className="game-name-modal">{activeVideo.gameName || "General"}</p>
+          {categoryId ? (
+            <Link className="game-name-modal" to={`/games/${categoryId}`} onClick={closeVideo}>
+              {activeVideo.gameName || "General"}
+            </Link>
+          ) : (
+            <p className="game-name-modal">{activeVideo.gameName || "General"}</p>
+          )}
         </div>
 
         <div className="video-context-box">

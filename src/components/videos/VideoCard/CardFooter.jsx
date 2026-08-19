@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 
 const CardFooter = ({
   categoryIcon,
+  categoryId,
   categoryName,
   date,
   ownerAvatarUrl,
@@ -11,12 +12,30 @@ const CardFooter = ({
   userHandle,
 }) => (
   <div className="card-footer">
-    <div className="game-icon-container">
-      <img src={categoryIcon} alt={categoryName} className="game-icon" />
-    </div>
+    {categoryId ? (
+      <Link
+        className="game-icon-container"
+        to={`/games/${categoryId}`}
+        title={categoryName}
+        onClick={(event) => event.stopPropagation()}
+      >
+        <img src={categoryIcon} alt={categoryName} className="game-icon" />
+      </Link>
+    ) : (
+      <div className="game-icon-container">
+        <img src={categoryIcon} alt={categoryName} className="game-icon" />
+      </div>
+    )}
     <div className="card-details">
       <h3 className="video-title" title={title}>{title}</h3>
-      <p className="game-name">{categoryName}</p>
+      {categoryId ? (
+        <Link className="game-name" to={`/games/${categoryId}`} title={categoryName}
+          onClick={(event) => event.stopPropagation()}>
+          {categoryName}
+        </Link>
+      ) : (
+        <p className="game-name">{categoryName}</p>
+      )}
       <div className="user-data">
         {ownerAvatarUrl && (
           <img

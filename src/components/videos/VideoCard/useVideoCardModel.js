@@ -20,6 +20,7 @@ const formatDate = (isoString) => {
 
 export const useVideoCardModel = ({
   categoryIcon,
+  categoryId,
   categoryName,
   data,
   videoCore,
@@ -77,6 +78,7 @@ export const useVideoCardModel = ({
       edited: isEdited,
       gameName: categoryName,
       gameIcon: categoryIcon,
+      gameId: categoryId,
       userHandle,
       ownerId,
       ownerAvatarUrl,

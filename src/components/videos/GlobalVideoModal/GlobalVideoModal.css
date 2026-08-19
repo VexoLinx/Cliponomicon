@@ -114,6 +114,13 @@ a.user-handle-modal:hover {
     margin: 0;
     color: #64748b;
     font-size: 0.9rem;
+    display: block;
+    text-decoration: none;
+}
+
+a.game-name-modal:hover {
+    color: #94a3b8;
+    text-decoration: none;
 }
 
 /* Recuadro de contexto */

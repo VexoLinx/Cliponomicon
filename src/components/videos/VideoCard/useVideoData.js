@@ -31,6 +31,7 @@ export const useVideoData = (initialData) => {
   const [categoryIcon, setCategoryIcon] = useState(
     currentCategory?.thumbnail_horizontal_url || videoCore?.gameIcon || initialData?.gameIcon || "https://via.placeholder.com/40"
   );
+  const [categoryId, setCategoryId] = useState(currentCategory?.id || null);
 
   useEffect(() => {
     const freshCore = initialData?.video ? initialData.video : initialData;
@@ -41,6 +42,7 @@ export const useVideoData = (initialData) => {
     const cat = videoCore?.category || videoCore?.categories?.[0];
     setCategoryName(cat?.name || videoCore?.gameName || initialData?.gameName || "General");
     setCategoryIcon(cat?.thumbnail_horizontal_url || videoCore?.gameIcon || initialData?.gameIcon || "https://via.placeholder.com/40");
+    setCategoryId(cat?.id || null);
   }, [videoCore, initialData]);
 
   useEffect(() => {
@@ -73,5 +75,6 @@ export const useVideoData = (initialData) => {
     finalThumbnailSrc,
     categoryName,
     categoryIcon,
+    categoryId,
   };
 };

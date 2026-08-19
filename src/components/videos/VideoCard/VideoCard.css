@@ -29,9 +29,9 @@
 }
 
 .thumbnail {
-  position: absolute; /* 👈 Saca la imagen del flujo para que no empuje el header */
-  top: 0;             /* 👈 La ancla al borde superior */
-  left: 0;            /* 👈 La ancla al borde izquierdo */
+  position: absolute; 
+  top: 0;         
+  left: 0;        
   width: 100%;
   height: 100%;
   object-fit: cover;
@@ -147,6 +147,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: block;
+  text-decoration: none;
+}
+
+.game-name:hover {
+  color: #ffffff;
 }
 
 .user-data {
