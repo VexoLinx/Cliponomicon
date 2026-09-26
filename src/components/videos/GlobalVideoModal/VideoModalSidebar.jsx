@@ -90,7 +90,7 @@ const VideoModalSidebar = ({
           </div>
         )}
 
-        <div className="reaction-row">
+        {/* <div className="reaction-row">
           {reactionTypes.map((reaction) => (
             <button
               key={reaction.type}
@@ -104,7 +104,7 @@ const VideoModalSidebar = ({
               <strong>{reactionCounts[reaction.type] || 0}</strong>
             </button>
           ))}
-        </div>
+        </div> */}
       </div>
 
       <div className="sidebar-footer-video">

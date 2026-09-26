@@ -17,9 +17,22 @@ const GlobalVideoModal = () => {
 
   return ReactDOM.createPortal(
     <div className="modal-overlay" onClick={modal.closeVideo}>
-      <div className="modal-content" onClick={(event) => event.stopPropagation()}>
-        
-        <div className="modal-video-container" style={{ position: 'relative' }}>
+      <div
+        className="modal-content"
+        onClick={(event) => event.stopPropagation()}
+      >
+        <div
+          className={`modal-video-container 
+    ${
+      modal.activeVideo?.aspect_ratio === "9:16"
+        ? "is-vertical"
+        : modal.activeVideo?.aspect_ratio === "21:9"
+          ? "is-ultrawide"
+          : modal.activeVideo?.aspect_ratio === "4:3"
+            ? "is-retro"
+            : ""
+    }`}
+        >
           {modal.hasPrev && (
             <button className="carousel-nav-btn prev" onClick={modal.playPrev}>
               <IoChevronBack />
